@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "455173426400",
+    "project_id": "authtutorial-f147d",
+    "storage_bucket": "authtutorial-f147d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455173426400:android:64304585501f63fd729485",
+        "android_client_info": {
+          "package_name": "com.example.basic_auth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "455173426400-shqd85uhgfk2gjda0g5pksu8uedi60t7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvGLrQIXuGd_a1X4y1v7Roptglgx1Uj70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "455173426400-shqd85uhgfk2gjda0g5pksu8uedi60t7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "455173426400-mdvubl9of6fv1hfv7i61vu21of26bmv0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.basicAuth"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
