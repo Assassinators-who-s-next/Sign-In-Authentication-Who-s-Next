@@ -2,6 +2,7 @@ import 'package:basic_auth/components/my_button.dart';
 import 'package:basic_auth/components/my_textfield.dart';
 import 'package:basic_auth/components/square_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:basic_auth/pages/homepage.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -10,8 +11,12 @@ class LoginPage extends StatelessWidget {
   final passwordController = TextEditingController();
 
   // sign in user method
-  void signUserIn() {
+  void signUserIn(BuildContext context) {
     print("Sign in button pressed");
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
   }
 
   @override
@@ -25,122 +30,119 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-              // logo
-              const SizedBox(height: 50),
-              const Icon(
-                Icons.face_rounded,
-                size: 100,
-              ),
-              const SizedBox(height: 50),
-
-              // welcome back
-              Text(
-                'Who\'s Next?',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 25,
+                // logo
+                const SizedBox(height: 50),
+                const Icon(
+                  Icons.face_rounded,
+                  size: 100,
                 ),
-              ),
-              const SizedBox(height: 50),
+                const SizedBox(height: 50),
 
-              // username
-              MyTextField(
-                controller: usernameController,
-                hintText: "username",
-                obscureText: false,
-              ),
-              const SizedBox(height: 15),
-
-              // password
-              MyTextField(
-                controller: passwordController,
-                hintText: "password",
-                obscureText: true,
-              ),
-              const SizedBox(height: 10),
-
-              // forgot password STILL NEED FUNCTIONALITY
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Forgot Password?',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
+                // welcome back
+                Text(
+                  'Who\'s Next?',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontSize: 25,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 25),
+                const SizedBox(height: 50),
 
-              // sign in button
-              MyButton(
-                onTap: signUserIn,
-              ),
-              const SizedBox(height: 50),
+                // username
+                MyTextField(
+                  controller: usernameController,
+                  hintText: "username",
+                  obscureText: false,
+                ),
+                const SizedBox(height: 15),
 
-              // or sign in with
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        color: Colors.grey[400],
-                        thickness: 1,
+                // password
+                MyTextField(
+                  controller: passwordController,
+                  hintText: "password",
+                  obscureText: true,
+                ),
+                const SizedBox(height: 10),
+
+                // forgot password STILL NEED FUNCTIONALITY
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: Colors.grey[600]),
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        ' or sign in with ',
-                         style: TextStyle(color: Colors.grey[700]),
+                // sign in button
+                MyButton(
+                  onTap: () => signUserIn(context),
+                ),
+                const SizedBox(height: 50),
 
+                // or sign in with
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey[400],
+                          thickness: 1,
+                        ),
                       ),
-                    ),
-                    
-                    Expanded(
-                      child: Divider(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          ' or sign in with ',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                      ),
+                      Expanded(
+                          child: Divider(
                         color: Colors.grey[400],
                         thickness: 1.5,
-                      )
+                      ))
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
+
+                // google/apple sign in button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    // google button
+                    SquareTile(
+                      imagePath: 'lib/images/google-logo.png',
                     )
                   ],
                 ),
-              ),
-              const SizedBox(height: 25),
+                const SizedBox(height: 25),
 
-              // google/apple sign in button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  // google button
-                  SquareTile(imagePath: 'lib/images/google-logo.png',)
-                ],
-              ),
-              const SizedBox(height: 25),
-
-              // not a member? register here
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text('Not a member?'),
-                  SizedBox(width: 4),
-                  Text(
-                    'Register here',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                // not a member? register here
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text('Not a member?'),
+                    SizedBox(width: 4),
+                    Text(
+                      'Register here',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      )
-    );
+        ));
   }
 }
