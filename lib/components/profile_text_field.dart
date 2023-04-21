@@ -32,15 +32,21 @@ class TextFieldWidgetState extends State<ProfileTextField> {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
           widget.label,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
         ),
-        TextField(
-          controller: controller,
+        Padding(
+          padding: const EdgeInsets.only(left: 50),
+          child: SizedBox(
+            width: 350,
+            child: TextField(
+              controller: controller,
+            ),
+          ),
         ),
     ],
   );

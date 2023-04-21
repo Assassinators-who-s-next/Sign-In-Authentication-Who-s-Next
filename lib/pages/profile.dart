@@ -57,8 +57,18 @@ class Profile extends StatelessWidget {
   Widget buildDisplayedInfo(UserData userData) => Column(
     children: [
       ProfileTextField(
-        label: "Name", 
+        label: "Name:", 
         text: userData.name, 
+        onChanged: (name) {},
+        ),
+        ProfileTextField(
+        label: "Pronouns:", 
+        text: userData.pronouns, 
+        onChanged: (name) {},
+        ),
+        ProfileTextField(
+        label: "Description:", 
+        text: userData.description, 
         onChanged: (name) {},
         ),
     ],
