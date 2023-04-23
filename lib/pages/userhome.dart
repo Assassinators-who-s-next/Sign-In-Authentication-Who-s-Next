@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 class UserHome extends StatefulWidget {
   @override
@@ -17,7 +16,6 @@ class _UserHomeState extends State<UserHome> {
       screenWidth = MediaQuery.of(context).size.height;
     }
 
-    // TODO: make scrollable when in landscape mode
     return Scaffold(
       // top bar
       appBar: AppBar(
@@ -28,13 +26,8 @@ class _UserHomeState extends State<UserHome> {
       // TODO: each listTile will change the center and the appBar title
       drawer: Drawer(
         child: SafeArea(
-          child: ListView(
-            children: [
-              ListTile(
-                title: Text('data'),
-              )
-            ],
-          ),
+          child: GameList(),
+          // TODO: need button widget for "create/join game"
         ),
       ),
       // Column wrapped with Widget SingleChildScrollView, so the users can scroll in landscapemode
@@ -49,14 +42,14 @@ class _UserHomeState extends State<UserHome> {
                 maxRadius: screenWidth * 0.35,
                 child: Icon(Icons.person, size: screenWidth * 0.4),
               ),
-              // TODO: increase the font size
               Padding(
                 padding: const EdgeInsetsDirectional.all(40),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 238, 127, 119),
-                      minimumSize: Size.fromHeight(50),
-                      textStyle: TextStyle(fontSize: 25)),
+                    backgroundColor: Color.fromARGB(255, 238, 127, 119),
+                    minimumSize: Size.fromHeight(50),
+                    textStyle: TextStyle(fontSize: 25),
+                  ),
                   onPressed: () {
                     print('pressed elim button');
                   },
@@ -67,6 +60,28 @@ class _UserHomeState extends State<UserHome> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class GameList extends StatelessWidget {
+  const GameList({
+    super.key,
+  });
+
+  final numActiveGames = 10;
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      // TODO: num of games the player is it
+      // TODO: receive information on the number of games the player is in
+      itemCount: numActiveGames,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          title: Text('game ${index + 1}'),
+        );
+        // need button widget for "create/join game"
+      },
     );
   }
 }
