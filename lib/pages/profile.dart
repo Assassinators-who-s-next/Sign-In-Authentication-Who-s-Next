@@ -60,16 +60,20 @@ class Profile extends StatelessWidget {
         label: "Name:", 
         text: userData.name, 
         onChanged: (name) {},
+        maxLength: 26,
         ),
         ProfileTextField(
         label: "Pronouns:", 
         text: userData.pronouns, 
-        onChanged: (name) {},
+        onChanged: (pronouns) {},
+        maxLength: 10,
         ),
         ProfileTextField(
         label: "Description:", 
         text: userData.description, 
-        onChanged: (name) {},
+        onChanged: (description) {},
+        maxLines: 4,
+        maxLength: 200,
         ),
     ],
   );

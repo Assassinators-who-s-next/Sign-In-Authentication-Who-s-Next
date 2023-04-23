@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class ProfileTextField extends StatefulWidget{
     final String label;
     final String text;
+    final int? maxLines;
+    final int? maxLength;
     final ValueChanged<String> onChanged;
 
     const ProfileTextField({
@@ -10,6 +12,8 @@ class ProfileTextField extends StatefulWidget{
       required this.label,
       required this.text,
       required this.onChanged,
+      this.maxLines = 1,
+      this.maxLength,
     }) : super(key: key);
 
     @override
@@ -35,16 +39,24 @@ class TextFieldWidgetState extends State<ProfileTextField> {
   Widget build(BuildContext context) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
-          widget.label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 50),
-          child: SizedBox(
-            width: 350,
-            child: TextField(
-              controller: controller,
+      SizedBox(
+        width: 175,
+        child: Text(
+            widget.label,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+          ),
+      ),
+        SizedBox(
+          width: 300,
+          child: TextField(
+            controller: controller,
+            maxLength: widget.maxLength,
+            maxLines: widget.maxLines,
+            onChanged: widget.onChanged,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
             ),
           ),
         ),
