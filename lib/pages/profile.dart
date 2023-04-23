@@ -10,6 +10,7 @@ class Profile extends StatelessWidget {
     final user = UserPreferences.user;
 
     return Scaffold(
+        backgroundColor: Colors.grey[300],
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

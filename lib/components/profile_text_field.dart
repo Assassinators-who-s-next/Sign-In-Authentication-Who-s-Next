@@ -54,9 +54,18 @@ class TextFieldWidgetState extends State<ProfileTextField> {
             maxLines: widget.maxLines,
             onChanged: widget.onChanged,
             decoration: InputDecoration(
+              enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color: Colors.grey
+                        .shade400)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
+              fillColor: Colors.grey.shade200,
+              filled: true,
             ),
           ),
         ),
