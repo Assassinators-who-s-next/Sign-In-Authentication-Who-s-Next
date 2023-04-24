@@ -15,8 +15,8 @@ class LeaderboardElemnt extends StatelessWidget {
       children: [
         ProfilePicture(
           radius: 50,
-          imagePath: UserPreferences
-              .placeholderImage, //'assets/images/profile_picture.png',
+          imagePath: UserPreferences.placeholderImagePath,
+          isNetworkPath: false,
           onClicked: () {},
         ),
         const SizedBox(width: 10),
