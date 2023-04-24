@@ -6,6 +6,21 @@ class UserHome extends StatefulWidget {
 }
 
 class _UserHomeState extends State<UserHome> {
+  List<String> numActiveGames = [
+    'Game A',
+    'Game B',
+    'Game C',
+    'Game D',
+    'Game E',
+    'Game F',
+    'Game G',
+    'Game H',
+    'Game I',
+    'Game J',
+  ];
+
+  bool? isCheckedBox = false;
+
   @override
   Widget build(BuildContext context) {
     // for sizing the image
@@ -26,8 +41,40 @@ class _UserHomeState extends State<UserHome> {
       // TODO: each listTile will change the center and the appBar title
       drawer: Drawer(
         child: SafeArea(
-          child: GameList(),
-          // TODO: need button widget for "create/join game"
+          child: ListView(
+            children: <Widget>[
+              GameList(numActiveGames: numActiveGames),
+              TextButton(
+                // TODO: link button to join/create game page
+                onPressed: () {
+                  print('go to join/create page');
+                },
+                child: Text('Join/Create Game'),
+              ),
+//            Expanded(
+//              child: Align(
+//                alignment: Alignment.bottomCenter,
+//                child: Checkbox(
+//                  value: isCheckedBox,
+//                  onChanged: (bool? clickedChecked) {
+//                    setState(() {
+//                      isCheckedBox = clickedChecked;
+//                    });
+//                  },
+//                ),
+//              ),
+//            ),
+
+//            Checkbox(
+//                value: isCheckedBox,
+//                onChanged: (bool? clickedChecked) {
+//                  setState(() {
+//                    isCheckedBox = clickedChecked;
+//                  });
+//                })
+            ],
+          ),
+          //child: GameList(),
         ),
       ),
       // Column wrapped with Widget SingleChildScrollView, so the users can scroll in landscapemode
@@ -67,24 +114,67 @@ class _UserHomeState extends State<UserHome> {
 class GameList extends StatelessWidget {
   const GameList({
     super.key,
+    required this.numActiveGames,
   });
 
-  final numActiveGames = 10;
+  final List<String> numActiveGames;
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      // TODO: num of games the player is it
-      // TODO: receive information on the number of games the player is in
-      itemCount: numActiveGames,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text('game ${index + 1}'),
-        );
-        // need button widget for "create/join game"
-      },
+//    return ListView.builder(
+//      // TODO: num of games the player is it
+//      // TODO: receive information on the number of games the player is in
+//      itemCount: numActiveGames.length,
+//      itemBuilder: (BuildContext context, int index) {
+//        return ListTile(
+//          //title: Text('game ${index + 1}'),
+//          title: Text('${numActiveGames[index]}'),
+//        );
+//        // need button widget for "create/join game"
+//      },
+//    );
+//    return (for (var i = 0; i < numActiveGames.length; ++i) {
+//      Text('${numActiveGames[i]}');
+//    }
+//    return Text('finished');
+//    return Text('$numActiveGames');
+    return Column(
+      children: [
+        for (var i in numActiveGames)
+          Padding(
+            padding: const EdgeInsetsDirectional.all(15),
+            child: Text(
+              i.toString(),
+              style: const TextStyle(fontSize: 17),
+              textAlign: TextAlign.right,
+            ),
+          ),
+      ],
     );
   }
 }
+
+//class GameList extends StatelessWidget {
+//  const GameList({
+//    super.key,
+//  });
+//
+//  final numActiveGames = 10;
+//  @override
+//  Widget build(BuildContext context) {
+//    return ListView.builder(
+//      // TODO: num of games the player is it
+//      // TODO: receive information on the number of games the player is in
+//      itemCount: numActiveGames,
+//      itemBuilder: (BuildContext context, int index) {
+//        return ListTile(
+//          title: Text('game ${index + 1}'),
+//        );
+//        // need button widget for "create/join game"
+//      },
+//    );
+//  }
+//}
 
 //class EliminateButton extends StatelessWidget {
 //  const EliminateButton({
