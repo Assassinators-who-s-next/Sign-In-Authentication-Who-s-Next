@@ -15,10 +15,10 @@ class LoginPage extends StatelessWidget {
   // sign in user method
   void signUserIn(BuildContext context) {
     print("Sign in button pressed");
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => JoinCreatePage()),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => JoinCreatePage()),
+    // );
     login_custom(context, usernameController.text, passwordController.text);
   }
 
