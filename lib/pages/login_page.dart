@@ -3,6 +3,8 @@ import 'package:basic_auth/components/my_textfield.dart';
 import 'package:basic_auth/components/square_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/pages/homepage.dart';
+import 'package:basic_auth/pages/join_create_game_page.dart';
+import '../networking.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -15,8 +17,9 @@ class LoginPage extends StatelessWidget {
     print("Sign in button pressed");
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => JoinCreatePage()),
     );
+    login_custom(context, usernameController.text, passwordController.text);
   }
 
   @override
