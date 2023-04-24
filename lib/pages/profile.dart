@@ -20,10 +20,10 @@ class Profile extends StatelessWidget {
             ),
             buildPicture(user, context),
             Padding(
-              padding: const EdgeInsets.only(left: 50, top: 100),
+              padding: const EdgeInsets.only(left: 20, top: 80),
               child: Column(
                 children: [
-                  buildDisplayedInfo(user),
+                  buildDisplayedInfo(user, context),
                 ],
               ),
             ),
@@ -55,27 +55,36 @@ class Profile extends StatelessWidget {
           );
   }
 
-  Widget buildDisplayedInfo(UserData userData) => Column(
+  Widget buildDisplayedInfo(UserData userData, BuildContext context)
+  {
+    var mediaQueryData = MediaQuery.of(context);
+    var horizontalUnit = mediaQueryData.size.width / 100;
+    var width = horizontalUnit * 85;
+    return Column(
     children: [
       ProfileTextField(
         label: "Name:", 
         text: userData.name, 
+        width: width,
         onChanged: (name) {},
         maxLength: 26,
         ),
         ProfileTextField(
         label: "Pronouns:", 
         text: userData.pronouns, 
+        width: width,
         onChanged: (pronouns) {},
         maxLength: 10,
         ),
         ProfileTextField(
         label: "Description:", 
         text: userData.description, 
+        width: width,
         onChanged: (description) {},
         maxLines: 4,
         maxLength: 200,
         ),
-    ],
-  );
+      ],
+    );
+  }
 }
