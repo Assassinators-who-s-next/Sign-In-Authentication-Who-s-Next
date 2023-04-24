@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ProfilePicture extends StatelessWidget {
-  final int radius;
+  final double radius;
   final String imagePath;
   final VoidCallback onClicked;
 
@@ -24,8 +24,8 @@ class ProfilePicture extends StatelessWidget {
         child: Ink.image(
           image: NetworkImage(imagePath),
           fit: BoxFit.cover,
-          width: radius as double,
-          height: radius as double,
+          width: radius,
+          height: radius,
           child: InkWell(onTap: onClicked),
         ),
       ),
