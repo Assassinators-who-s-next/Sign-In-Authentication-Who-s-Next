@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:basic_auth/pages/leaderboard.dart';
 import 'package:basic_auth/pages/profile.dart';
 import 'package:basic_auth/pages/userhome.dart';
+import '../globals.dart' as globals;
 
 import '../game_group.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage(this.my_name, this.groups, {Key? key}) : super(key: key);
-
-  final String my_name;
-  final List<group> groups;
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();

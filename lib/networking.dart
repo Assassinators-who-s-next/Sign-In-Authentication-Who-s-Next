@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'pages/homepage.dart';
 
 import 'game_group.dart';
+import 'globals.dart' as globals;
 
 // sends
 
@@ -61,9 +62,13 @@ load_responce(BuildContext context, String my_name, List<group> groups) {
       MaterialPageRoute(builder: (context) => JoinCreatePage()),
     );
   } else {
+    globals.myName = my_name;
+    globals.myGroups = groups;
+    globals.selectedGroup = groups[0];
+
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HomePage(my_name, groups)),
+      MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
 }

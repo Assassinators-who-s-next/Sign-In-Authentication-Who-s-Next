@@ -11,71 +11,83 @@ class Profile extends StatelessWidget {
 
     return Scaffold(
         backgroundColor: Colors.grey[300],
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: const Text('Profile Page', style: TextStyle(fontSize: 50)),
-            ),
-            buildPicture(user, context),
-            Padding(
-              padding: const EdgeInsets.only(left: 50, top: 100),
-              child: Column(
-                children: [
-                  buildDisplayedInfo(user),
-                ],
-              ),
-            ),
-        ],
-    ));
-  }
-
-  Padding buildPicture(UserData user, BuildContext context) {
-    return Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ProfilePicture(
-                  radius: 250,
-                  imagePath: user.imagePath ?? UserPreferences.placeholderImage,
-                  onClicked: () => print("Profile picture clicked"),
-                  ),
+              const Padding(
+                padding: const EdgeInsets.all(8.0),
+                child:
+                    const Text('Profile Page', style: TextStyle(fontSize: 50)),
+              ),
+              buildPicture(user, context),
               Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Logout'),
+                padding: const EdgeInsets.only(left: 20, top: 80),
+                child: Column(
+                  children: [
+                    buildDisplayedInfo(user, context),
+                  ],
                 ),
               ),
             ],
           ),
-          );
+        ));
   }
 
-  Widget buildDisplayedInfo(UserData userData) => Column(
-    children: [
-      ProfileTextField(
-        label: "Name:", 
-        text: userData.name, 
-        onChanged: (name) {},
-        maxLength: 26,
+  Padding buildPicture(UserData user, BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          ProfilePicture(
+            radius: 250,
+            imagePath: user.imagePath ?? UserPreferences.placeholderImagePath,
+            isNetworkPath: false,
+            onClicked: () => print("Profile picture clicked"),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Logout'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildDisplayedInfo(UserData userData, BuildContext context) {
+    var mediaQueryData = MediaQuery.of(context);
+    var horizontalUnit = mediaQueryData.size.width / 100;
+    var width = horizontalUnit * 85;
+    return Column(
+      children: [
+        ProfileTextField(
+          label: "Name:",
+          text: userData.name,
+          width: width,
+          onChanged: (name) {},
+          maxLength: 26,
         ),
         ProfileTextField(
-        label: "Pronouns:", 
-        text: userData.pronouns, 
-        onChanged: (pronouns) {},
-        maxLength: 10,
+          label: "Pronouns:",
+          text: userData.pronouns,
+          width: width,
+          onChanged: (pronouns) {},
+          maxLength: 10,
         ),
         ProfileTextField(
-        label: "Description:", 
-        text: userData.description, 
-        onChanged: (description) {},
-        maxLines: 4,
-        maxLength: 200,
+          label: "Description:",
+          text: userData.description,
+          width: width,
+          onChanged: (description) {},
+          maxLines: 4,
+          maxLength: 200,
         ),
-    ],
-  );
+      ],
+    );
+  }
 }
