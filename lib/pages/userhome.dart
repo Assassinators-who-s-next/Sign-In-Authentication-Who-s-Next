@@ -1,3 +1,5 @@
+import 'package:basic_auth/pages/create_game_page.dart';
+import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:flutter/material.dart';
 
 class UserHome extends StatefulWidget {
@@ -47,7 +49,14 @@ class _UserHomeState extends State<UserHome> {
               TextButton(
                 // TODO: link button to join/create game page
                 onPressed: () {
-                  print('go to join/create page');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      //builder: (context) => JoinCreatePage(),
+                      builder: (context) => CreateGamePage(),
+                    ),
+                  );
+                  //print('go to join/create page');
                 },
                 child: Text('Join/Create Game'),
               ),
