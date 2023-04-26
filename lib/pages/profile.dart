@@ -41,7 +41,8 @@ class Profile extends StatelessWidget {
         children: [
           ProfilePicture(
             radius: 250,
-            imagePath: user.imagePath ?? UserPreferences.placeholderImage,
+            imagePath: user.imagePath ?? UserPreferences.placeholderImagePath,
+            isNetworkPath: false,
             onClicked: () => print("Profile picture clicked"),
           ),
           Padding(
