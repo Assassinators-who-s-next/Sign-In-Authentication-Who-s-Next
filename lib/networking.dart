@@ -22,7 +22,10 @@ void login_custom(BuildContext context, String userName, String password) {
   load_responce(context, my_name, empty_groups);
 }
 
-void login_google(BuildContext context, String token) {}
+void login_google(BuildContext context, String token) {
+
+  
+}
 
 void login_apple(BuildContext context, String token) {}
 

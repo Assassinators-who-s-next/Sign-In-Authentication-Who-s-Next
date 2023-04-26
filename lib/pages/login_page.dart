@@ -1,25 +1,67 @@
 import 'package:basic_auth/components/my_button.dart';
 import 'package:basic_auth/components/my_textfield.dart';
 import 'package:basic_auth/components/square_tile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:basic_auth/pages/homepage.dart';
-import 'package:basic_auth/pages/join_create_game_page.dart';
-import '../networking.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  final usernameController = TextEditingController();
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   // sign in user method
-  void signUserIn(BuildContext context) {
-    print("Sign in button pressed");
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => JoinCreatePage()),
-    // );
-    login_custom(context, usernameController.text, passwordController.text);
+  void signUserIn() async {
+    // loading circle thingy
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+
+    // try to sign user in
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      // pop off loading circle
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      // pop off loading circle
+      Navigator.pop(context);
+
+      // incorrect user name
+      showErrorMessage(e.code);
+    }
+  }
+
+  // error message for log in
+  void showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: AlertDialog(
+              title: Text(
+            message,
+            style: TextStyle(color: Colors.black),
+          )),
+        );
+      },
+    );
+  }
+
+  void incorrectPasswordMessage() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const AlertDialog(title: Text('Incorrect Password'));
+      },
+    );
   }
 
   @override
@@ -30,6 +72,17 @@ class LoginPage extends StatelessWidget {
         // safe area ignores 'notch area' on different phone shapes
         body: SafeArea(
           child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // logo
+                  const SizedBox(height: 50),
+                  const Icon(
+                    Icons.face_rounded,
+                    size: 100,
+                  ),
+                  const SizedBox(height: 50),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -41,16 +94,23 @@ class LoginPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 50),
 
-                // welcome back
-                Text(
-                  'Who\'s Next?',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 25,
+                  // welcome back
+                  Text(
+                    'Who\'s Next?',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 25,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 50),
+                  const SizedBox(height: 50),
 
+                  // username
+                  MyTextField(
+                    controller: emailController,
+                    hintText: "username",
+                    obscureText: false,
+                  ),
+                  const SizedBox(height: 15),
                 // username
                 MyTextField(
                   controller: usernameController,
@@ -59,6 +119,13 @@ class LoginPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 15),
 
+                  // password
+                  MyTextField(
+                    controller: passwordController,
+                    hintText: "password",
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 10),
                 // password
                 MyTextField(
                   controller: passwordController,
@@ -67,6 +134,20 @@ class LoginPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
 
+                  // forgot password STILL NEED FUNCTIONALITY
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 25),
                 // forgot password STILL NEED FUNCTIONALITY
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -116,17 +197,18 @@ class LoginPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 25),
 
-                // google/apple sign in button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    // google button
-                    SquareTile(
-                      imagePath: 'lib/images/google-logo.png',
-                    )
-                  ],
-                ),
-                const SizedBox(height: 25),
+                  // google/apple sign in button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // google button
+                      SquareTile(
+                        onTap: () => AuthService().signInWithGoogle(),
+                        imagePath: 'lib/images/google-logo.png',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 25),
 
                 // not a member? register here
                 Row(
