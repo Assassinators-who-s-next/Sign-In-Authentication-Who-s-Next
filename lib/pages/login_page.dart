@@ -4,14 +4,8 @@ import 'package:basic_auth/components/square_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
-
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
+class LoginPage extends StatelessWidget {
+  LoginPage({super.key});
 
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
@@ -89,6 +83,16 @@ class _LoginPageState extends State<LoginPage> {
                     size: 100,
                   ),
                   const SizedBox(height: 50),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // logo
+                const SizedBox(height: 50),
+                const Icon(
+                  Icons.face_rounded,
+                  size: 100,
+                ),
+                const SizedBox(height: 50),
 
                   // welcome back
                   Text(
@@ -107,6 +111,13 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: false,
                   ),
                   const SizedBox(height: 15),
+                // username
+                MyTextField(
+                  controller: usernameController,
+                  hintText: "username",
+                  obscureText: false,
+                ),
+                const SizedBox(height: 15),
 
                   // password
                   MyTextField(
@@ -115,6 +126,13 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: true,
                   ),
                   const SizedBox(height: 10),
+                // password
+                MyTextField(
+                  controller: passwordController,
+                  hintText: "password",
+                  obscureText: true,
+                ),
+                const SizedBox(height: 10),
 
                   // forgot password STILL NEED FUNCTIONALITY
                   Padding(
@@ -130,40 +148,54 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 25),
-
-                  // sign in button
-                  MyButton(
-                    onTap: signUserIn,
+                // forgot password STILL NEED FUNCTIONALITY
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 50),
+                ),
+                const SizedBox(height: 25),
 
-                  // or sign in with
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Colors.grey[400],
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            ' or sign in with ',
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                        ),
-                        Expanded(
-                            child: Divider(
+                // sign in button
+                MyButton(
+                  onTap: () => signUserIn(context),
+                ),
+                const SizedBox(height: 50),
+
+                // or sign in with
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
                           color: Colors.grey[400],
-                          thickness: 1.5,
-                        ))
-                      ],
-                    ),
+                          thickness: 1,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          ' or sign in with ',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                      ),
+                      Expanded(
+                          child: Divider(
+                        color: Colors.grey[400],
+                        thickness: 1.5,
+                      ))
+                    ],
                   ),
-                  const SizedBox(height: 25),
+                ),
+                const SizedBox(height: 25),
 
                   // google/apple sign in button
                   Row(
@@ -178,23 +210,22 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 25),
 
-                  // not a member? register here
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text('Not a member?'),
-                      SizedBox(width: 4),
-                      Text(
-                        'Register here',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
+                // not a member? register here
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text('Not a member?'),
+                    SizedBox(width: 4),
+                    Text(
+                      'Register here',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ));
