@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/components/leaderboard_element.dart';
 import '../player.dart';
 

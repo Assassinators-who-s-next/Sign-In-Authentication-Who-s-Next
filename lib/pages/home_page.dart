@@ -1,28 +1,59 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:basic_auth/pages/leaderboard.dart';
+import 'package:basic_auth/pages/profile.dart';
+import 'package:basic_auth/pages/userhome.dart';
+import '../globals.dart' as globals;
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+import '../game_group.dart';
 
-  final user = FirebaseAuth.instance.currentUser!; // !-mark makes it return NULL if no user
+class HomePage extends StatefulWidget {
+  const HomePage({
+    super.key,
+    String? name,
+    List<group>? groups,
+  });
+  @override
+  _HomePageState createState() => _HomePageState();
+}
 
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 1;
+
+  void _navigateBottomBar(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
+
+  final List<Widget> _pages = [
+    LeaderBoard(),
+    UserHome(),
+    Profile(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(onPressed: signUserOut, icon: const Icon(Icons.logout))
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _navigateBottomBar,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment_outlined),
+            label: 'Leaderboard',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
         ],
       ),
-      body: Center(
-        child: Text(
-          "LOGGED IN AS: ${user.email!}",
-          style: const TextStyle(fontSize: 20),
-          )),
     );
   }
 }

@@ -1,10 +1,9 @@
 import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/player.dart';
 import 'package:flutter/material.dart';
-import 'pages/homepage.dart';
+import 'pages/home_page.dart';
 
 import 'game_group.dart';
-import 'globals.dart' as globals;
 
 // sends
 
@@ -24,7 +23,7 @@ void login_custom(BuildContext context, String userName, String password) {
 
 void login_google(BuildContext context, String token) {
 
-  
+
 }
 
 void login_apple(BuildContext context, String token) {}
@@ -65,13 +64,9 @@ load_responce(BuildContext context, String my_name, List<group> groups) {
       MaterialPageRoute(builder: (context) => JoinCreatePage()),
     );
   } else {
-    globals.myName = my_name;
-    globals.myGroups = groups;
-    globals.selectedGroup = groups[0];
-
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => HomePage(name: my_name, groups: groups)),
     );
   }
 }
