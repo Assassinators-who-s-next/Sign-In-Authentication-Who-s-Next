@@ -52,8 +52,8 @@ class _UserHomeState extends State<UserHome> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      //builder: (context) => JoinCreatePage(),
-                      builder: (context) => CreateGamePage(),
+                      builder: (context) => JoinCreatePage(),
+                      //builder: (context) => CreateGamePage(),
                     ),
                   );
                   //print('go to join/create page');
