@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../networking.dart';
-import 'homepage.dart';
+import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
 

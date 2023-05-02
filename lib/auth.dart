@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:basic_auth/game_group.dart';
+import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import 'pages/home_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -12,12 +17,16 @@ class AuthPage extends StatelessWidget {
       body: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
-
             if (snapshot.hasData) {
+              
 
               // user logged in
-              return const HomePage();
+              String? email = FirebaseAuth.instance.currentUser?.email;
 
+              //return login_custom(context, email);
+
+              return HomePage(name: email);
+              
               // user not logged in
             } else {
               return LoginPage();

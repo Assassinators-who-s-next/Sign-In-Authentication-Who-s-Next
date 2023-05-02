@@ -14,7 +14,7 @@ class LeaderBoard extends StatefulWidget {
 
 class _LeaderboardState extends State<LeaderBoard> {
   //ScrollController _scrollController = new ScrollController();
-  List<Widget> _players = [];
+  final List<Widget> _players = [];
 
   @override
   void initState() {
@@ -31,6 +31,7 @@ class _LeaderboardState extends State<LeaderBoard> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Column(
           children: [

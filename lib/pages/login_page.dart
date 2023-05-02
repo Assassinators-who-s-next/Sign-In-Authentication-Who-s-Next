@@ -21,57 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   // sign in user method
-  void signUserIn() async {
-    // loading circle thingy
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
 
-    // try to sign user in
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-      // pop off loading circle
-      Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      // pop off loading circle
-      Navigator.pop(context);
-
-      // incorrect user name
-      showErrorMessage(e.code);
-    }
-  }
-
-  // error message for log in
-  void showErrorMessage(String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Center(
-          child: AlertDialog(
-              title: Text(
-            message,
-            style: TextStyle(color: Colors.black),
-          )),
-        );
-      },
-    );
-  }
-
-  void incorrectPasswordMessage() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const AlertDialog(title: Text('Incorrect Password'));
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 // sign in button
                 MyButton(
-                  onTap: () => signUserIn(),
+                  onTap: () => signUserIn(context, emailController.text, passwordController.text),
                 ),
                 const SizedBox(height: 50),
 
@@ -199,6 +149,8 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-        )));
+        ),
+      ),
+    );
   }
 }
