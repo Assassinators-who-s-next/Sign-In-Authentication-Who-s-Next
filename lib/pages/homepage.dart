@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:basic_auth/pages/leaderboard.dart';
 import 'package:basic_auth/pages/profile.dart';
-import 'package:basic_auth/pages/userhome.dart';
+import 'package:basic_auth/pages/user_home.dart';
 import '../globals.dart' as globals;
 
 import '../game_group.dart';
