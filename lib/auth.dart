@@ -7,6 +7,9 @@ import 'package:basic_auth/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'pages/home_page.dart';
+import 'pages/create_game_page.dart';
+
+
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -21,11 +24,10 @@ class AuthPage extends StatelessWidget {
               // user logged in
               String? email = FirebaseAuth.instance.currentUser?.email;
 
-              //return login_custom(context, email);
+              //login_custom(context, "whatever", "password");
 
-              login_custom(context, "username", "password");
-              
-              return LoginPage();
+
+              return CreateGamePage();
               // user not logged in
             }else{
               return LoginPage();
