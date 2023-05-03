@@ -60,30 +60,8 @@ class _UserHomeState extends State<UserHome> {
                 },
                 child: Text('Join/Create Game'),
               ),
-//            Expanded(
-//              child: Align(
-//                alignment: Alignment.bottomCenter,
-//                child: Checkbox(
-//                  value: isCheckedBox,
-//                  onChanged: (bool? clickedChecked) {
-//                    setState(() {
-//                      isCheckedBox = clickedChecked;
-//                    });
-//                  },
-//                ),
-//              ),
-//            ),
-
-//            Checkbox(
-//                value: isCheckedBox,
-//                onChanged: (bool? clickedChecked) {
-//                  setState(() {
-//                    isCheckedBox = clickedChecked;
-//                  });
-//                })
             ],
           ),
-          //child: GameList(),
         ),
       ),
       // Column wrapped with Widget SingleChildScrollView, so the users can scroll in landscapemode
@@ -130,23 +108,6 @@ class GameList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-//    return ListView.builder(
-//      // TODO: num of games the player is it
-//      // TODO: receive information on the number of games the player is in
-//      itemCount: numActiveGames.length,
-//      itemBuilder: (BuildContext context, int index) {
-//        return ListTile(
-//          //title: Text('game ${index + 1}'),
-//          title: Text('${numActiveGames[index]}'),
-//        );
-//        // need button widget for "create/join game"
-//      },
-//    );
-//    return (for (var i = 0; i < numActiveGames.length; ++i) {
-//      Text('${numActiveGames[i]}');
-//    }
-//    return Text('finished');
-//    return Text('$numActiveGames');
     return Column(
       children: [
         for (var i in numActiveGames)
@@ -162,51 +123,6 @@ class GameList extends StatelessWidget {
     );
   }
 }
-
-//class GameList extends StatelessWidget {
-//  const GameList({
-//    super.key,
-//  });
-//
-//  final numActiveGames = 10;
-//  @override
-//  Widget build(BuildContext context) {
-//    return ListView.builder(
-//      // TODO: num of games the player is it
-//      // TODO: receive information on the number of games the player is in
-//      itemCount: numActiveGames,
-//      itemBuilder: (BuildContext context, int index) {
-//        return ListTile(
-//          title: Text('game ${index + 1}'),
-//        );
-//        // need button widget for "create/join game"
-//      },
-//    );
-//  }
-//}
-
-//class EliminateButton extends StatelessWidget {
-//  const EliminateButton({
-//    super.key,
-//  });
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return const Padding(
-//      padding: EdgeInsetsDirectional.all(40),
-//      child: Card(
-//        color: Color.fromARGB(255, 234, 118, 110),
-//        child: Padding(
-//          padding: EdgeInsets.all(30),
-//          child: FittedBox(
-//            fit: BoxFit.fitWidth,
-//            child: Text('Eliminate'),
-//          ),
-//        ),
-//      ),
-//    );
-//  }
-//}
 
 class TargetName extends StatelessWidget {
   const TargetName({
