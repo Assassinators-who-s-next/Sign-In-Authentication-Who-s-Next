@@ -47,13 +47,11 @@ class _UserHomeState extends State<UserHome> {
             children: <Widget>[
               GameList(numActiveGames: numActiveGames),
               TextButton(
-                // TODO: link button to join/create game page
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => JoinCreatePage(),
-                      //builder: (context) => CreateGamePage(),
                     ),
                   );
                   //print('go to join/create page');

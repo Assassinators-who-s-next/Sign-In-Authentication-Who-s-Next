@@ -1,3 +1,4 @@
+import 'package:basic_auth/pages/userhome.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
 
@@ -80,7 +81,6 @@ class _CreateGamePage extends State<CreateGamePage> {
               padding: EdgeInsetsDirectional.only(bottom: 30),
             ),
 
-            // FIXME: both fields fill out
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -115,6 +115,19 @@ class _CreateGamePage extends State<CreateGamePage> {
             ),
             const Padding(
               padding: EdgeInsetsDirectional.only(bottom: 30),
+            ),
+            // TODO: change look of button
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserHome(),
+                  ),
+                );
+                //print('go to join/create page');
+              },
+              child: Text('Create'),
             ),
           ],
         ),
