@@ -7,11 +7,8 @@ import '../globals.dart' as globals;
 import '../game_group.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-    String? name,
-    List<group>? groups,
-  });
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -39,7 +36,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _selectedIndex,
         onTap: _navigateBottomBar,
         type: BottomNavigationBarType.fixed,
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment_outlined),
             label: 'Leaderboard',

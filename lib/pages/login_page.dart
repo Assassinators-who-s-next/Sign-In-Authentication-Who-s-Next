@@ -86,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 // sign in button
                 MyButton(
-                  onTap: () => signUserIn(context, emailController.text, passwordController.text),
+                  onTap: () => AuthService().signInWithEmailPassword(emailController.text, passwordController.text),
                 ),
                 const SizedBox(height: 50),
 
