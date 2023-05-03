@@ -1,3 +1,4 @@
+import 'package:basic_auth/pages/create_game_page.dart';
 import 'package:flutter/material.dart';
 import '../networking.dart';
 import 'homepage.dart';
@@ -82,7 +83,13 @@ class JoinCreatePage extends StatelessWidget {
                     foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.blue),
                   ),
-                  onPressed: () => CreateGame(context),
+                  onPressed: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CreateGamePage()),
+                    ),
+                  },
+                  //onPressed: () => CreateGame(context),
                   child: Text('Create Game'),
                 ),
               ],
