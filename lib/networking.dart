@@ -23,11 +23,32 @@ void login_custom(BuildContext context, String userName, String password) {
 }
 
 void login_google(BuildContext context, String token) {
+  String my_name = "temp_user_google";
+  List<player> players = [
+    player("p_one", 1),
+    player("p_two", 2),
+    player("p_three", 3),
+    player("p_four", 4)
+  ];
+  List<group> groups = [group("game_one", players)];
+  List<group> empty_groups = [];
 
-  
+  load_responce(context, my_name, empty_groups);
 }
 
-void login_apple(BuildContext context, String token) {}
+void login_apple(BuildContext context, String token) {
+  String my_name = "temp_user_apple";
+  List<player> players = [
+    player("p_one", 1),
+    player("p_two", 2),
+    player("p_three", 3),
+    player("p_four", 4)
+  ];
+  List<group> groups = [group("game_one", players)];
+  List<group> empty_groups = [];
+
+  load_responce(context, my_name, empty_groups);
+}
 
 void create_game(BuildContext context) {
   String my_name = "temp_user2";
