@@ -1,3 +1,4 @@
+import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/components/profile_text_field.dart';
 import 'package:basic_auth/models/user_data.dart';

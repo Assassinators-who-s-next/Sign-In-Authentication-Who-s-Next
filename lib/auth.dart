@@ -8,8 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'pages/home_page.dart';
 import 'pages/create_game_page.dart';
-
-
+import 'pages/join_create_game_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -26,10 +25,9 @@ class AuthPage extends StatelessWidget {
 
               //login_custom(context, "whatever", "password");
 
-
-              return CreateGamePage();
+              return JoinCreatePage();
               // user not logged in
-            }else{
+            } else {
               return LoginPage();
             }
           }),
