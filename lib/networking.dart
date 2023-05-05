@@ -1,7 +1,7 @@
 import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/player.dart';
 import 'package:flutter/material.dart';
-import 'pages/homepage.dart';
+import 'pages/home_page.dart';
 
 import 'game_group.dart';
 import 'globals.dart' as globals;
