@@ -1,7 +1,9 @@
 import 'package:basic_auth/pages/user_home.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
-import 'homepage.dart';
+
+// import 'homepage.dart';
+import 'home_page.dart';
 
 /**
  * Sources:
@@ -231,11 +233,16 @@ class _CreateGamePage extends State<CreateGamePage> {
             // TODO: change look of button
             TextButton(
               onPressed: () {
-                Navigator.push(
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => HomePage(),
+                //   ),
+                // );
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
+                      builder: (BuildContext context) => (HomePage())),
                 );
               },
               child: Text(
