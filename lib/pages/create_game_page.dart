@@ -72,9 +72,9 @@ class CreateGamePage extends StatefulWidget {
 }
 
 class _CreateGamePage extends State<CreateGamePage> {
-  String? elim_choice; // = types_of_elims.first;
-  String? respawn_choice; // = respawn_type.first;
-  String? duration_choice; // = respawn_type.first;
+  String? elim_choice;
+  String? respawn_choice;
+  String? duration_choice;
 
   List<String> selected_duration_list = <String>[];
 
@@ -112,11 +112,11 @@ class _CreateGamePage extends State<CreateGamePage> {
                   hint: Text('Select Respawn Time:'),
                   value: respawn_choice,
                   onChanged: (String? value) {
-                    //if (mounted) {
                     setState(() {
                       respawn_choice = value;
                       // reset second dropdown if changed respawn choice
                       duration_choice = null;
+                      // change duration list based on respawn choice
                       selected_duration_list =
                           receiveList(respawn_choice.toString());
                     });
@@ -131,7 +131,6 @@ class _CreateGamePage extends State<CreateGamePage> {
                 ),
               ],
             ),
-
             const Padding(padding: EdgeInsetsDirectional.only(bottom: 30)),
 
             Row(
@@ -201,7 +200,7 @@ class _CreateGamePage extends State<CreateGamePage> {
                   width: screenWidth / 2,
                   child: MyTextField(
                     controller: off_limit_controller,
-                    hintText: 'eg. School, Mall',
+                    hintText: 'eg. School, Mall...',
                     obscureText: false,
                   ),
                 ),
@@ -219,7 +218,7 @@ class _CreateGamePage extends State<CreateGamePage> {
                   width: screenWidth / 2,
                   child: MyTextField(
                     controller: stay_safe_controller,
-                    hintText: 'eg. floaties, ',
+                    hintText: 'eg. floaties...',
                     obscureText: false,
                   ),
                 ),
@@ -239,7 +238,10 @@ class _CreateGamePage extends State<CreateGamePage> {
                   ),
                 );
               },
-              child: Text('Create'),
+              child: Text(
+                'Create',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),
