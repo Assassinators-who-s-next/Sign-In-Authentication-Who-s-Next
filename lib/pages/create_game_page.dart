@@ -2,7 +2,8 @@ import 'package:basic_auth/pages/user_home.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
 
-import 'homepage.dart';
+// import 'homepage.dart';
+import 'home_page.dart';
 
 const List<String> types_of_elims = <String>[
   'Finger Guns',
@@ -29,7 +30,10 @@ class _CreateGamePage extends State<CreateGamePage> {
     var screenWidth = queryData.size.width;
 
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text('Create Game'), backgroundColor: Colors.orange),
+      appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Create Game'),
+          backgroundColor: Colors.orange),
       body: SafeArea(
         child: ListView(
           padding: EdgeInsets.only(left: 20, top: 30, right: 20),
@@ -66,7 +70,8 @@ class _CreateGamePage extends State<CreateGamePage> {
                       elim_choice = value!;
                     });
                   },
-                  items: types_of_elims.map<DropdownMenuItem<String>>((String value) {
+                  items: types_of_elims
+                      .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -117,11 +122,16 @@ class _CreateGamePage extends State<CreateGamePage> {
             // TODO: change look of button
             TextButton(
               onPressed: () {
-                Navigator.push(
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => HomePage(),
+                //   ),
+                // );
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
+                      builder: (BuildContext context) => (HomePage())),
                 );
                 //print('go to join/create page');
               },

@@ -81,18 +81,18 @@ void join_game(BuildContext context, String game_code) {
 // call this when the server responds with a list of groups
 load_responce(BuildContext context, String my_name, List<group> groups) {
   if (groups.isEmpty) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => JoinCreatePage()),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => JoinCreatePage()),
+    // );
   } else {
     globals.myName = my_name;
     globals.myGroups = groups;
     globals.selectedGroup = groups[0];
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => HomePage()),
+    // );
   }
 }
