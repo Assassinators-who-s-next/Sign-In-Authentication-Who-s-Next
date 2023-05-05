@@ -1,8 +1,11 @@
+import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/components/profile_text_field.dart';
 import 'package:basic_auth/models/user_data.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
+import 'join_create_game_page.dart';
+import 'login_page.dart';
 
 class Profile extends StatelessWidget {
   @override
@@ -49,7 +52,12 @@ class Profile extends StatelessWidget {
             padding: EdgeInsets.only(top: 10),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => (LoginPage())),
+                );
+                // Navigator.pop(context);
               },
               child: Text('Logout'),
             ),
