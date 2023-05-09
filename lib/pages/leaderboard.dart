@@ -40,49 +40,54 @@ class _LeaderboardState extends State<LeaderBoard> {
             children: [
               // top info
               const Padding(padding: EdgeInsets.only(top: 10)),
-              Column(
-                children: [
-                  const Text('Leaderboard',
-                      style:
-                          TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-                  const Padding(padding: EdgeInsets.only(bottom: 10)),
-                  const Text('Respawn in: xx:xx:xx'),
-                  const Padding(padding: EdgeInsets.only(bottom: 15)),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(bottom: 5, left: 20, right: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text('Players'), Text('Score')],
-                    ),
-                  ),
-                ],
-              ),
-
+              leaderboardTopInfo(),
               // list of players
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _players.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                color: Color.fromARGB(255, 204, 204, 204))),
-                      ),
-                      child: ListTile(
-                        title: _players[index],
-                        contentPadding: const EdgeInsets.only(
-                            top: 5, bottom: 5, right: 15, left: 15),
-                      ),
-                    );
-                  },
-                ),
-              )
+              leaderboardPlayerInfo(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Expanded leaderboardPlayerInfo() {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _players.length,
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                  bottom:
+                      BorderSide(color: Color.fromARGB(255, 204, 204, 204))),
+            ),
+            child: ListTile(
+              title: _players[index],
+              contentPadding:
+                  const EdgeInsets.only(top: 5, bottom: 5, right: 15, left: 15),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Column leaderboardTopInfo() {
+    return Column(
+      children: [
+        const Text('Leaderboard',
+            style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+        const Padding(padding: EdgeInsets.only(bottom: 10)),
+        const Text('Respawn in: xx:xx:xx'),
+        const Padding(padding: EdgeInsets.only(bottom: 15)),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 5, left: 20, right: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text('Players'), Text('Score')],
+          ),
+        ),
+      ],
     );
   }
 }
