@@ -107,6 +107,8 @@ import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 class JoinCreatePage extends StatelessWidget {
   var createButtonColor = Color.fromARGB(255, 233, 58, 45);
 
@@ -116,7 +118,8 @@ class JoinCreatePage extends StatelessWidget {
 
   void JoinGame(BuildContext context) async {
     print("Join Game button pressed");
-    join_game(context, gameCodeController.text);
+    User? user = FirebaseAuth.instance.currentUser;
+    join_game(context, gameCodeController.text, user?.uid);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
@@ -130,7 +133,8 @@ class JoinCreatePage extends StatelessWidget {
 
   void CreateGame(BuildContext context) async {
     print("Create Game button pressed");
-    create_game(context);
+    User? user = FirebaseAuth.instance.currentUser;
+    createGame(context, user?.uid);
 
     Navigator.pushReplacement(
       context,
@@ -164,6 +168,7 @@ class JoinCreatePage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextFormField(
+                    controller: gameCodeController,
                     decoration: InputDecoration(
                       labelText: 'Join Code',
                       border: OutlineInputBorder(),
