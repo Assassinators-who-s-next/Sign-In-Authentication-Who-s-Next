@@ -91,7 +91,7 @@ class CreateGamePage extends StatefulWidget {
 }
 
 class _CreateGamePage extends State<CreateGamePage> {
-  String? elim_choice;
+  String? elim_choice = types_of_elims[0];
   RespawnType? respawn_choice;
   int? respawn_duration_choice;
   TotalTimeType? total_game_choice;
@@ -165,56 +165,23 @@ class _CreateGamePage extends State<CreateGamePage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               onPressed: () {
-                User? user = FirebaseAuth.instance.currentUser;
-                createGame(context, user?.uid);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => (HomePage())),
-                );
-                //print('go to join/create page');
-                // check  all options have been filled
-                if (respawn_choice == null ||
-                    respawn_duration_choice == null ||
-                    total_game_choice == null ||
-                    total_game_duration_choice == null ||
-                    elim_choice == null ||
-                    off_limit_controller.text == '' ||
-                    stay_safe_controller.text == '') {
-                  showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      content: const Text('Fill out all fields',
-                          textAlign: TextAlign.center),
-                      actions: [
-                        TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Close'))
-                      ],
-                    ),
-                  );
-                  // check durations of respawn and total game time
+                if (respawn_choice == null || respawn_duration_choice == null) {
+                  popUp(context, 'Fill out Respawn Information');
+                } else if (total_game_choice == null ||
+                    total_game_duration_choice == null) {
+                  popUp(context, 'Fill out Game Duration Information');
                 } else if (checkRespawnToTotalGameTime(
                         respawn_choice!.name,
                         respawn_duration_choice!,
                         total_game_choice!.name,
                         total_game_duration_choice!) ==
                     false) {
-                  showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      content: const Text(
-                          'Total game time must be greater or equal to the respawn time',
-                          textAlign: TextAlign.center),
-                      actions: [
-                        TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Close'))
-                      ],
-                    ),
-                  );
+                  popUp(context,
+                      'Total game time must be greater or equal to the respawn time');
                   // otherwise go to home page
                 } else {
+                  User? user = FirebaseAuth.instance.currentUser;
+                  createGame(context, user?.uid);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -225,6 +192,21 @@ class _CreateGamePage extends State<CreateGamePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<dynamic> popUp(BuildContext context, String textInfo) {
+    return showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: null,
+        content: Text(textInfo, textAlign: TextAlign.center),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'))
+        ],
       ),
     );
   }
@@ -304,7 +286,7 @@ class _CreateGamePage extends State<CreateGamePage> {
       children: [
         const Text('Elimination Type:'),
         DropdownButton(
-          hint: const Text('Select Elimination'),
+          hint: const Text('Elimination Type'),
           value: elim_choice,
           onChanged: (String? value) {
             setState(() {
@@ -330,7 +312,7 @@ class _CreateGamePage extends State<CreateGamePage> {
         Column(
           children: [
             DropdownButton<TotalTimeType>(
-              hint: const Text('Select Time Type'),
+              hint: const Text('Duration Type'),
               value: total_game_choice,
               onChanged: (TotalTimeType? value) {
                 setState(() {
@@ -348,7 +330,7 @@ class _CreateGamePage extends State<CreateGamePage> {
               }).toList(),
             ),
             DropdownButton<int>(
-              hint: const Text('Select Total Time:'),
+              hint: const Text('Duration Time:'),
               value: total_game_duration_choice,
               onChanged: (int? new_value) {
                 setState(() {
