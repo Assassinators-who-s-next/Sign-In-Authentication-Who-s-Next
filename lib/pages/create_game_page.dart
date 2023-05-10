@@ -1,6 +1,9 @@
 import 'package:basic_auth/pages/user_home.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../networking.dart';
 
 // import 'homepage.dart';
 import 'home_page.dart';
@@ -173,6 +176,14 @@ class _CreateGamePage extends State<CreateGamePage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               onPressed: () {
+                User? user = FirebaseAuth.instance.currentUser;
+                createGame(context, user?.uid);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => (HomePage())),
+                );
+                //print('go to join/create page');
                 // check  all options have been filled
                 if (respawn_choice == null ||
                     respawn_duration_choice == null ||
