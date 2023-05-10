@@ -5,6 +5,7 @@ import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
 
+import 'package:basic_auth/models/match_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class JoinCreatePage extends StatelessWidget {
@@ -33,7 +34,16 @@ class JoinCreatePage extends StatelessWidget {
   void CreateGame(BuildContext context) async {
     print("Create Game button pressed");
     User? user = FirebaseAuth.instance.currentUser;
-    createGame(context, user?.uid);
+    MatchOptions placeholderMatchOptions = MatchOptions(
+      'Single',
+      'Fixed',
+      5,
+      'Limited',
+      60,
+      'Area A',
+      'Helmet',
+    );
+    createGame(context, user?.uid, placeholderMatchOptions);
 
     // Navigator.pushReplacement(
     //   context,

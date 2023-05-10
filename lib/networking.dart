@@ -107,7 +107,8 @@ Future<void> login_apple(BuildContext context, String token) async {
   load_responce(context, my_name, empty_groups);
 }
 
-void createGame(BuildContext context, String? userID) async {
+void createGame(
+    BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
   CollectionReference groupsRef =
@@ -120,6 +121,16 @@ void createGame(BuildContext context, String? userID) async {
     throw Exception('Game with ID $newGroupID already exists.');
   }
 
+  groupsRef.doc(newGroupID).set({
+    'eliminationType': matchOptions.eliminationType,
+    'respawnTimeType': matchOptions.respawnTimeType,
+    'respawnDuration': matchOptions.respawnDuration,
+    'totalGameTimeType': matchOptions.totalGameTimeType,
+    'totalGameTimeDuration': matchOptions.totalGameTimeDuration,
+    'offLimitAreas': matchOptions.offLimitAreas,
+    'safetyMethods': matchOptions.safetyMethods,
+  });
+
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
   await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
     'players': [
@@ -128,9 +139,11 @@ void createGame(BuildContext context, String? userID) async {
     // Add any other fields you want to initialize here
   });
 
-  join_game(context, newGroupID, userID!);
+  print('User $userID created new game: $newGroupID');
 
-  String my_name = userID;
+  //join_game(context, newGroupID, userID!);
+
+  String my_name = userID!;
   List<player> players = [
     player(userID, 1),
   ];
