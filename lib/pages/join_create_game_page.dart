@@ -119,8 +119,7 @@ class JoinCreatePage extends StatelessWidget {
   void JoinGame(BuildContext context) async {
     print("Join Game button pressed");
     User? user = FirebaseAuth.instance.currentUser;
-    //join_game(context, gameCodeController.text, user?.uid);
-    join_game(context, gameCodeController.text, "user1");
+    join_game(context, gameCodeController.text, user?.uid);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
