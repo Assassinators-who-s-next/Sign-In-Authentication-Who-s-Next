@@ -1,6 +1,9 @@
 import 'package:basic_auth/pages/user_home.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../networking.dart';
 
 // import 'homepage.dart';
 import 'home_page.dart';
@@ -128,6 +131,8 @@ class _CreateGamePage extends State<CreateGamePage> {
                 //     builder: (context) => HomePage(),
                 //   ),
                 // );
+                User? user = FirebaseAuth.instance.currentUser;
+                createGame(context, user?.uid);
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
