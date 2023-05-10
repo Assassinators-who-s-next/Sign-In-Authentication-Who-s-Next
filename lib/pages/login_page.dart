@@ -6,6 +6,7 @@ import 'package:basic_auth/components/square_tile.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'join_create_game_page.dart';
 
 import '../services/auth_service.dart';
 
@@ -22,15 +23,14 @@ class _LoginPageState extends State<LoginPage> {
 
   // sign in user method
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.grey[300],
 
-        // safe area ignores 'notch area' on different phone shapes
-        body: SafeArea(
-            child: Center(
+      // safe area ignores 'notch area' on different phone shapes
+      body: SafeArea(
+        child: Center(
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +86,8 @@ class _LoginPageState extends State<LoginPage> {
 
                 // sign in button
                 MyButton(
-                  onTap: () => AuthService().signInWithEmailPassword(emailController.text, passwordController.text),
+                  onTap: () => AuthService().signInWithEmailPassword(
+                      emailController.text, passwordController.text),
                 ),
                 const SizedBox(height: 50),
 
@@ -128,6 +129,24 @@ class _LoginPageState extends State<LoginPage> {
                       imagePath: 'lib/images/google-logo.png',
                     ),
                   ],
+                ),
+                const SizedBox(height: 25),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.purple, // background color
+                    onPrimary: Colors.white, // foreground color
+                    shadowColor: Colors.purple, // elevation color
+                    elevation: 5, // elevation of button
+                  ),
+                  onPressed: () => {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JoinCreatePage(),
+                        ))
+                  },
+                  child: Text('debug: -> joingamepage',
+                      style: (TextStyle(fontSize: 10.0))),
                 ),
                 const SizedBox(height: 25),
 

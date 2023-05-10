@@ -114,6 +114,14 @@ class _CreateGamePage extends State<CreateGamePage> {
   final off_limit_controller = TextEditingController();
   final stay_safe_controller = TextEditingController();
 
+  guidetoUserHome(BuildContext context) {
+    Navigator.pop(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var queryData = MediaQuery.of(context);
@@ -121,9 +129,15 @@ class _CreateGamePage extends State<CreateGamePage> {
 
     return Scaffold(
       appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Create Game'),
-          backgroundColor: Colors.orange),
+        centerTitle: true,
+        title: const Text('Create Game'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SafeArea(
         child: ListView(
           padding: EdgeInsets.only(left: 20, top: 20, right: 20),
@@ -178,12 +192,10 @@ class _CreateGamePage extends State<CreateGamePage> {
               onPressed: () {
                 User? user = FirebaseAuth.instance.currentUser;
                 createGame(context, user?.uid);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => (HomePage())),
-                );
-                //print('go to join/create page');
+
+                //For now, we put this here to test the game creation
+                guidetoUserHome(context);
+
                 // check  all options have been filled
                 if (respawn_choice == null ||
                     respawn_duration_choice == null ||
@@ -218,11 +230,7 @@ class _CreateGamePage extends State<CreateGamePage> {
                       });
                   // otherwise go to home page
                 } else {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => (HomePage())),
-                  );
+                  guidetoUserHome(context);
                 }
               },
             ),

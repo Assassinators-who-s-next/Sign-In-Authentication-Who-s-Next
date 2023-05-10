@@ -15,8 +15,7 @@ class GameListDrawer extends StatelessWidget {
     return Scaffold(
       // top bar
       appBar: AppBar(
-        backgroundColor: Colors.orange,
-        title: Text('game a'), // could have names of each game, or game code
+        title: Text('game code should be here'), // could have names of each game, or game code
       ),
       // a list of all games currently in, 3 lines on left
       // TODO: each listTile will change the center and the appBar title
@@ -27,12 +26,10 @@ class GameListDrawer extends StatelessWidget {
               GameList(numActiveGames: numActiveGames),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => JoinCreatePage(),
-                    ),
-                  );
+
+                  Navigator.pushReplacement(context,MaterialPageRoute(
+                    builder: (context) => JoinCreatePage(),
+                  ));
                   //print('go to join/create page');
                 },
                 child: Text('Join/Create Game'),
