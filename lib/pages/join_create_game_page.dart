@@ -1,106 +1,4 @@
-// import 'package:basic_auth/pages/create_game_page.dart';
-// import 'package:flutter/material.dart';
-// import '../networking.dart';
-// import 'home_page.dart';
-// import '../game_group.dart';
-// import '../player.dart';
-
-// class JoinCreatePage extends StatelessWidget {
-//   JoinCreatePage({super.key});
-//   final _formKey = GlobalKey<FormState>();
-//   TextEditingController gameCodeController = TextEditingController();
-
-//   void JoinGame(BuildContext context) {
-//     print("Join Game button pressed");
-
-//     join_game(context, gameCodeController.text);
-//   }
-
-//   void CreateGame(BuildContext context) {
-//     print("Create Game button pressed");
-
-//     create_game(context);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         backgroundColor: Colors.grey[300],
-
-//         // safe area ignores 'notch area' on different phone shapes
-//         body: SafeArea(
-//           child: Center(
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [
-//                 Text(
-//                   'Enter Game Code: (or create game)',
-//                   textAlign: TextAlign.center,
-//                   overflow: TextOverflow.ellipsis,
-//                   style: const TextStyle(fontWeight: FontWeight.bold),
-//                 ),
-//                 Form(
-//                   key: _formKey,
-//                   child: Column(
-//                     mainAxisSize: MainAxisSize.min,
-//                     children: <Widget>[
-//                       Padding(
-//                         padding: EdgeInsets.all(8.0),
-//                         child: TextFormField(
-//                           controller: gameCodeController,
-//                         ),
-//                       ),
-//                       Padding(
-//                         padding: EdgeInsets.all(8.0),
-//                         child: TextFormField(
-//                           controller: gameCodeController,
-//                         ),
-//                       ),
-//                       // Padding(
-//                       //   padding: const EdgeInsets.all(8.0),
-//                       //   child: ElevatedButton(
-//                       //     child: Text("Submitß"),
-//                       //     onPressed: () {
-//                       //       //if (_formKey.currentState.validate()) {
-//                       //       //  _formKey.currentState.save();
-//                       //       //}
-//                       //     },
-//                       //   ),
-//                       // )
-//                     ],
-//                   ),
-//                 ),
-//                 TextButton(
-//                   style: ButtonStyle(
-//                     foregroundColor:
-//                         MaterialStateProperty.all<Color>(Colors.blue),
-//                   ),
-//                   onPressed: () => JoinGame(context),
-//                   child: Text('Join Game'),
-//                 ),
-//                 TextButton(
-//                   style: ButtonStyle(
-//                     foregroundColor:
-//                         MaterialStateProperty.all<Color>(Colors.blue),
-//                   ),
-//                   onPressed: () => {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(builder: (context) => CreateGamePage()),
-//                     ),
-//                   },
-//                   //onPressed: () => CreateGame(context),
-//                   child: Text('Create Game'),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ));
-//   }
-// }
-
 import 'package:basic_auth/pages/create_game_page.dart';
-// import 'create_game_page.dart';
 import 'package:flutter/material.dart';
 import '../networking.dart';
 import 'home_page.dart';
@@ -111,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class JoinCreatePage extends StatelessWidget {
   var createButtonColor = Color.fromARGB(255, 233, 58, 45);
+  var joinButtonColor = Colors.blue;
 
   JoinCreatePage({super.key});
   final _formKey = GlobalKey<FormState>();
@@ -136,15 +35,15 @@ class JoinCreatePage extends StatelessWidget {
     User? user = FirebaseAuth.instance.currentUser;
     createGame(context, user?.uid);
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => (CreateGamePage())),
-    );
-
-    // Navigator.push(
+    // Navigator.pushReplacement(
     //   context,
-    //   MaterialPageRoute(builder: (context) => CreateGamePage()),
+    //   MaterialPageRoute(builder: (BuildContext context) => (CreateGamePage())),
     // );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateGamePage()),
+    );
   }
 
   @override
@@ -153,10 +52,10 @@ class JoinCreatePage extends StatelessWidget {
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
           title: Text('Enter the game'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {},
-          ),
+          // leading: IconButton(
+          //   icon: Icon(Icons.arrow_back),
+          //   onPressed: () {},
+          // ),
         ),
 
         // safe area ignores 'notch area' on different phone shapes
@@ -183,6 +82,12 @@ class JoinCreatePage extends StatelessWidget {
                       width: 130,
                       height: 50,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: joinButtonColor, // background color
+                          onPrimary: Colors.white, // foreground color
+                          shadowColor: joinButtonColor, // elevation color
+                          elevation: 5, // elevation of button
+                        ),
                         onPressed: () => JoinGame(context),
                         child: Text('Join Game',
                             style: (TextStyle(fontSize: 17.0))),

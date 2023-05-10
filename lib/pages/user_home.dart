@@ -1,5 +1,6 @@
 import 'package:basic_auth/components/game_list_drawer.dart';
 import 'package:basic_auth/components/profile_picture.dart';
+import 'package:basic_auth/models/match_options.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
@@ -105,8 +106,8 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
           onTap: () => showDialog(
               context: context,
               builder: (_) => AlertDialog(
-                    title: const Text("Match Info: ", style: const TextStyle(fontSize: 30)),
-                    content: Container(child: Text("Rules: "), width: screenWidth * .9, height: screenHeight * .9),
+                    title: const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+                    content: Container(child: AboutPopupContent(), width: screenWidth * .9, height: screenHeight * .9),
                     actions: [
                       TextButton(onPressed: () => Navigator.pop(context), child: const Text("Close", style: TextStyle(fontSize: 18))),
                     ],
@@ -116,6 +117,33 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
       ),
     ),
   );
+}
+
+Widget AboutPopupContent()
+{
+  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month", 3, "During class, in library", 
+  "Floaties");
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      MatchInfoText("Game Period", "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+      MatchInfoText("Respawn Time", "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
+      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
+      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
+      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
+    ],
+  );
+}
+
+Column MatchInfoText(String label, String text) {
+  return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("${label}: ", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(text),
+        SizedBox(height: 15,),
+      ],
+    );
 }
 
 class LargeUserHomeButton extends StatelessWidget {
