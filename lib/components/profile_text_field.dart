@@ -41,18 +41,17 @@ class TextFieldWidgetState extends State<ProfileTextField> {
   Widget build(BuildContext context)
   {
     var blockSizeHorizontal = widget.width / 100;
-    return Row(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+            widget.label,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        const SizedBox(height: 5),
         SizedBox(
-          width: blockSizeHorizontal * 45,
-          child: Text(
-              widget.label,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
-        ),
-        SizedBox(
-          width: blockSizeHorizontal * 55,
+          width: MediaQuery.of(context).size.width * .5,
           child: TextField(
             controller: controller,
             maxLength: widget.maxLength,
@@ -74,6 +73,8 @@ class TextFieldWidgetState extends State<ProfileTextField> {
             ),
           ),
         ),
+        const Divider(indent: 10),
+        const SizedBox(height: 5),
       ],
     );
   }
