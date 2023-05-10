@@ -14,25 +14,27 @@ class Profile extends StatelessWidget {
 
     return Scaffold(
         backgroundColor: Colors.grey[300],
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: const EdgeInsets.all(8.0),
-                child:
-                    const Text('Profile Page', style: TextStyle(fontSize: 50)),
-              ),
-              buildPicture(user, context),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, top: 80),
-                child: Column(
-                  children: [
-                    buildDisplayedInfo(user, context),
-                  ],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:
+                      const Text('Profile Page', style: TextStyle(fontSize: 50)),
                 ),
-              ),
-            ],
+                buildPicture(user, context),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Column(
+                    children: [
+                      buildDisplayedInfo(user, context),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ));
   }
@@ -88,10 +90,18 @@ class Profile extends StatelessWidget {
           maxLength: 10,
         ),
         ProfileTextField(
-          label: "Description:",
+          label: "About:",
           text: userData.description,
           width: width,
           onChanged: (description) {},
+          maxLines: 4,
+          maxLength: 200,
+        ),
+        ProfileTextField(
+          label: "Frequented Locations:",
+          text: userData.frequentedLocations,
+          width: width,
+          onChanged: (frequentedLocations) {},
           maxLines: 4,
           maxLength: 200,
         ),

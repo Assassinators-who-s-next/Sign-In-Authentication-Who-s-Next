@@ -8,5 +8,6 @@ class UserPreferences {
       name: "Joe Smith",
       email: "joe@ucsc.edu",
       pronouns: "he\\him",
-      description: "I love pizza and eliminating people!");
+      description: "I love pizza and eliminating people!",
+      frequentedLocations: "BSOE Library, Crown/Merrill Dining Hall");
 }
