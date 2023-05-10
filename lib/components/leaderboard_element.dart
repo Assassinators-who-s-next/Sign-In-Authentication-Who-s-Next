@@ -28,11 +28,13 @@ class LeaderboardElemnt extends StatelessWidget {
           onClicked: () {},
         ),
         const SizedBox(width: 10),
-        Text(
-          playerName,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
+        Flexible(
+          child: Text(
+            playerName,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
         const Spacer(),
@@ -45,26 +47,5 @@ class LeaderboardElemnt extends StatelessWidget {
         ),
       ],
     );
-    // return GestureDetector(
-    //   onTap: onTap,
-    //   child: Container(
-    //     padding: EdgeInsets.all(25),
-    //     margin: EdgeInsets.symmetric(horizontal: 25.0),
-    //     decoration: BoxDecoration(
-    //       color: Colors.black,
-    //       borderRadius: BorderRadius.circular(8), // remember to c
-    //     ),
-    //     child: const Center(
-    //       child: Text(
-    //         "Sign In",
-    //         style: TextStyle(
-    //           color: Colors.white,
-    //           fontSize: 18,
-    //           fontWeight: FontWeight.w800, // w700 is the same as bold font
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 }
