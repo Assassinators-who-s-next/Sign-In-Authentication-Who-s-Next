@@ -9,6 +9,8 @@ import 'home_page.dart';
  * Sources:
  * Dynamic DropDownItems based on previous DropDownItems selection:
  *    https://stackoverflow.com/questions/70140798/dynamic-drop-down-field-based-on-selection
+ * DropdownButton with enums:
+ *    https://stackoverflow.com/questions/54378290/dropdownbutton-with-int-items-not-working-it-does-not-select-new-value
  */
 
 const List<String> types_of_elims = <String>[
@@ -18,64 +20,51 @@ const List<String> types_of_elims = <String>[
   'Pied to the Face'
 ];
 
-const List<String> respawn_type = <String>['Weeks', 'Days'];
+enum RespawnType { Weeks, Days }
 
-const List<String> total_time_type = <String>['Months', 'Weeks', 'Days'];
+enum TotalTimeType { Months, Weeks, Days }
 
-const List<String> months_list = <String>[
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '10',
-  '11',
-  '12'
+const List<int> months_list = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+const List<int> weeks_list = <int>[1, 2, 3, 4];
+
+const List<int> days_list = <int>[
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28
 ];
 
-const List<String> weeks_list = <String>['1', '2', '3', '4'];
-
-const List<String> days_list = <String>[
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '10',
-  '11',
-  '12',
-  '13',
-  '14',
-  '15',
-  '16',
-  '17',
-  '18',
-  '19',
-  '20',
-  '21',
-  '22',
-  '23',
-  '24',
-  '25',
-  '26',
-  '27',
-  '28'
-];
-
-List<String> receiveTotalTimeList(String total_time_option) {
+List<int> receiveTotalTimeList(String total_time_option) {
   // return months list if respawn choice is 'Months'
-  if (total_time_option == total_time_type[0]) {
+  if (total_time_option == TotalTimeType.Months.name) {
     return months_list;
     // return weeks list if respawn choice is 'Weeks'
-  } else if (total_time_option == total_time_type[1]) {
+  } else if (total_time_option == TotalTimeType.Weeks.name) {
     return weeks_list;
   }
 
@@ -83,9 +72,9 @@ List<String> receiveTotalTimeList(String total_time_option) {
   return days_list;
 }
 
-List<String> receiveRespawnList(String respawn_option) {
+List<int> receiveRespawnList(String respawn_option) {
   // return weeks list if respawn choice is 'Weeks'
-  if (respawn_option == respawn_type[0]) {
+  if (respawn_option == RespawnType.Weeks.name) {
     return weeks_list;
   }
 
@@ -100,13 +89,13 @@ class CreateGamePage extends StatefulWidget {
 
 class _CreateGamePage extends State<CreateGamePage> {
   String? elim_choice;
-  String? respawn_choice;
-  String? respawn_duration_choice;
-  String? total_game_choice;
-  String? total_game_duration_choice;
+  RespawnType? respawn_choice;
+  int? respawn_duration_choice;
+  TotalTimeType? total_game_choice;
+  int? total_game_duration_choice;
 
-  List<String> selected_respawn_duration_list = <String>[];
-  List<String> selected_total_duration_list = <String>[];
+  List<int> selected_respawn_duration_list = <int>[];
+  List<int> selected_total_duration_list = <int>[];
 
   final off_limit_controller = TextEditingController();
   final stay_safe_controller = TextEditingController();
@@ -182,29 +171,37 @@ class _CreateGamePage extends State<CreateGamePage> {
                     off_limit_controller.text == '' ||
                     stay_safe_controller.text == '') {
                   showDialog(
-                      context: context,
-                      builder: (context) {
-                        return const AlertDialog(
-                          title: Text('Fill out all fields',
-                              textAlign: TextAlign.center),
-                        );
-                      });
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      content: const Text('Fill out all fields',
+                          textAlign: TextAlign.center),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Close'))
+                      ],
+                    ),
+                  );
                   // check durations of respawn and total game time
                 } else if (checkRespawnToTotalGameTime(
-                        respawn_choice.toString(),
-                        int.parse(respawn_duration_choice.toString()),
-                        total_game_choice.toString(),
-                        int.parse(total_game_duration_choice.toString())) ==
+                        respawn_choice!.name,
+                        respawn_duration_choice!,
+                        total_game_choice!.name,
+                        total_game_duration_choice!) ==
                     false) {
                   showDialog(
-                      context: context,
-                      builder: (context) {
-                        return const AlertDialog(
-                          title: Text(
-                              'Total game time must be greater or equal to the respawn time',
-                              textAlign: TextAlign.center),
-                        );
-                      });
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      content: const Text(
+                          'Total game time must be greater or equal to the respawn time',
+                          textAlign: TextAlign.center),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Close'))
+                      ],
+                    ),
+                  );
                   // otherwise go to home page
                 } else {
                   Navigator.pushReplacement(
@@ -224,14 +221,14 @@ class _CreateGamePage extends State<CreateGamePage> {
   bool checkRespawnToTotalGameTime(String respawn_choice, int respawn_duration,
       String total_game_type, int total_game_time) {
     // check day
-    if (respawn_choice == respawn_type[1]) {
+    if (respawn_choice == RespawnType.Days.name) {
       // respawn day vs total game time day
-      if (total_game_type == total_time_type[2]) {
+      if (total_game_type == TotalTimeType.Days.name) {
         if (respawn_duration > total_game_time) {
           return false;
         }
         // respawn day vs total game time week
-      } else if (total_game_type == total_time_type[1]) {
+      } else if (total_game_type == TotalTimeType.Weeks.name) {
         if (respawn_duration > total_game_time * 7) {
           return false;
         }
@@ -239,14 +236,14 @@ class _CreateGamePage extends State<CreateGamePage> {
     }
 
     // check week
-    if (respawn_choice == respawn_type[0]) {
+    if (respawn_choice == RespawnType.Weeks.name) {
       // respawn week vs total game time day
-      if (total_game_type == total_time_type[2]) {
+      if (total_game_type == TotalTimeType.Days.name) {
         if (respawn_duration * 7 > total_game_time) {
           return false;
         }
         // respawn week vs total game time week
-      } else if (total_game_type == total_time_type[1]) {
+      } else if (total_game_type == TotalTimeType.Weeks.name) {
         if (respawn_duration > total_game_time) {
           return false;
         }
@@ -321,38 +318,37 @@ class _CreateGamePage extends State<CreateGamePage> {
         const Text('Total Game Time:'),
         Column(
           children: [
-            DropdownButton(
-              hint: Text('Select Time Type'),
+            DropdownButton<TotalTimeType>(
+              hint: const Text('Select Time Type'),
               value: total_game_choice,
-              onChanged: (String? value) {
+              onChanged: (TotalTimeType? value) {
                 setState(() {
                   total_game_choice = value;
                   total_game_duration_choice = null;
                   selected_total_duration_list =
-                      receiveTotalTimeList(total_game_choice.toString());
+                      receiveTotalTimeList(total_game_choice!.name);
                 });
               },
-              items:
-                  total_time_type.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
+              items: TotalTimeType.values.map((TotalTimeType value) {
+                return DropdownMenuItem<TotalTimeType>(
                   value: value,
-                  child: Text(value),
+                  child: Text(value.name),
                 );
               }).toList(),
             ),
-            DropdownButton(
-              hint: Text('Select Total Time:'),
+            DropdownButton<int>(
+              hint: const Text('Select Total Time:'),
               value: total_game_duration_choice,
-              onChanged: (String? value) {
+              onChanged: (int? new_value) {
                 setState(() {
-                  total_game_duration_choice = value;
+                  total_game_duration_choice = new_value;
                 });
               },
               items: selected_total_duration_list
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
+                  .map<DropdownMenuItem<int>>((int value) {
+                return DropdownMenuItem<int>(
                   value: value,
-                  child: Text(value),
+                  child: Text('${value}'),
                 );
               }).toList(),
             ),
@@ -372,39 +368,39 @@ class _CreateGamePage extends State<CreateGamePage> {
         ),
         Column(
           children: [
-            DropdownButton(
-              hint: Text('Select Respawn Type:'),
+            DropdownButton<RespawnType>(
+              hint: const Text('Select Respawn Type:'),
               value: respawn_choice,
-              onChanged: (String? value) {
+              onChanged: (RespawnType? value) {
                 setState(() {
                   respawn_choice = value;
                   // reset second dropdown if changed respawn choice
                   respawn_duration_choice = null;
                   // change duration list based on respawn choice
                   selected_respawn_duration_list =
-                      receiveRespawnList(respawn_choice.toString());
+                      receiveRespawnList(respawn_choice!.name);
                 });
               },
-              items: respawn_type.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
+              items: RespawnType.values.map((RespawnType value) {
+                return DropdownMenuItem<RespawnType>(
                   value: value,
-                  child: Text(value),
+                  child: Text(value.name),
                 );
               }).toList(),
             ),
-            DropdownButton(
-              hint: Text('Select Respawn Time:'),
+            DropdownButton<int>(
+              hint: const Text('Select Respawn Time:'),
               value: respawn_duration_choice,
-              onChanged: (String? value) {
+              onChanged: (int? value) {
                 setState(() {
                   respawn_duration_choice = value;
                 });
               },
               items: selected_respawn_duration_list
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
+                  .map<DropdownMenuItem<int>>((int value) {
+                return DropdownMenuItem<int>(
                   value: value,
-                  child: Text(value),
+                  child: Text('${value}'),
                 );
               }).toList(),
             ),
