@@ -9,6 +9,14 @@ class LeaderboardElemnt extends StatelessWidget {
   const LeaderboardElemnt(
       {super.key, required this.playerName, required this.playerPoints});
 
+  String getName() {
+    return this.playerName;
+  }
+
+  String getPoints() {
+    return '${this.playerPoints}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
