@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/match_options.dart';
 import '../networking.dart';
 
 // import 'homepage.dart';
@@ -180,7 +181,16 @@ class _CreateGamePage extends State<CreateGamePage> {
               ),
               onPressed: () {
                 User? user = FirebaseAuth.instance.currentUser;
-                createGame(context, user?.uid);
+                MatchOptions placeholderMatchOptions = MatchOptions(
+                  'Single',
+                  'Fixed',
+                  5,
+                  'Limited',
+                  60,
+                  'Area A',
+                  'Helmet',
+                );
+                createGame(context, user?.uid, placeholderMatchOptions);
 
                 //For now, we put this here to test the game creation
                 //guidetoUserHome(context);

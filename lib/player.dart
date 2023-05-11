@@ -1,5 +1,8 @@
+import 'models/user_data.dart';
+
 class player {
   String name;
   int points;
-  player(this.name, this.points);
+  UserData? userData;
+  player(this.name, this.points, this.userData);
 }
