@@ -22,10 +22,11 @@ class AuthPage extends StatelessWidget {
             if (snapshot.hasData) {
               // user logged in
               String? email = FirebaseAuth.instance.currentUser?.email;
+              String? uid = FirebaseAuth.instance.currentUser?.uid;
 
               //login_custom(context, "whatever", "password");
 
-              login_google(context, email!);
+              login_google(context, email!, uid!);
               return JoinCreatePage();
               // user not logged in
             } else {
