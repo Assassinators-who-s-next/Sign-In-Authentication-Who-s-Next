@@ -186,7 +186,7 @@ void createGame(
     throw Exception('Game with ID $newGroupID already exists.');
   }
 
-  groupsRef.doc(newGroupID).set({
+  await groupsRef.doc(newGroupID).set({
     'eliminationType': matchOptions.eliminationType,
     'respawnTimeType': matchOptions.respawnTimeType,
     'respawnDuration': matchOptions.respawnDuration,
