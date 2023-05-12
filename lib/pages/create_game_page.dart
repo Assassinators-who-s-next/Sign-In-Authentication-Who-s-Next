@@ -190,11 +190,8 @@ class _CreateGamePage extends State<CreateGamePage> {
                   'Area A',
                   'Helmet',
                 );
-                createGame(context, user?.uid, placeholderMatchOptions);
 
-                //For now, we put this here to test the game creation
-                //guidetoUserHome(context);
-
+                // test if fields were inputed correctly
                 if (respawn_choice == null || respawn_duration_choice == null) {
                   popUp(context, 'Fill out Respawn Information');
                 } else if (total_game_choice == null ||
@@ -212,6 +209,8 @@ class _CreateGamePage extends State<CreateGamePage> {
                 } else {
                   guidetoUserHome(context);
                 }
+                createGame(context, user?.uid, placeholderMatchOptions);
+
               },
             ),
           ],

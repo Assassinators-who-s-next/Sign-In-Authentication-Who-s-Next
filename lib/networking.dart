@@ -11,6 +11,7 @@ import 'game_group.dart';
 import 'globals.dart' as globals;
 import 'models/match_options.dart';
 import 'models/user_data.dart';
+import 'auth.dart';
 
 final storage = FirebaseStorage.instance;
 
@@ -224,4 +225,10 @@ void join_game(BuildContext context, String game_code, String? userID,
   } catch (e) {
     print('Error adding user to game: $e');
   }
+}
+
+Future logout(context) async {
+  await FirebaseAuth.instance.signOut().then((value) => Navigator.of(context)
+      .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthPage()),
+          (route) => false));
 }

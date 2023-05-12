@@ -2,6 +2,7 @@ import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/components/profile_text_field.dart';
 import 'package:basic_auth/models/user_data.dart';
+import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'join_create_game_page.dart';
@@ -21,8 +22,8 @@ class Profile extends StatelessWidget {
               children: [
                 const Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child:
-                      const Text('Profile Page', style: TextStyle(fontSize: 50)),
+                  child: const Text('Profile Page',
+                      style: TextStyle(fontSize: 50)),
                 ),
                 buildPicture(user, context),
                 Padding(
@@ -54,12 +55,7 @@ class Profile extends StatelessWidget {
             padding: EdgeInsets.only(top: 10),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => (LoginPage())),
-                );
-                // Navigator.pop(context);
+                logout(context);
               },
               child: Text('Logout'),
             ),

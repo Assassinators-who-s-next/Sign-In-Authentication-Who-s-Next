@@ -62,10 +62,12 @@ class JoinCreatePage extends StatelessWidget {
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
           title: Text('Enter the game'),
-          // leading: IconButton(
-          //   icon: Icon(Icons.arrow_back),
-          //   onPressed: () {},
-          // ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              logout(context);
+            },
+          ),
         ),
 
         // safe area ignores 'notch area' on different phone shapes
@@ -137,8 +139,14 @@ class JoinCreatePage extends StatelessWidget {
                             shadowColor: createButtonColor, // elevation color
                             elevation: 5, // elevation of button
                             shape: StadiumBorder()),
-                        onPressed: () => CreateGame(context),
-                        child: Text('Create Game',
+                        onPressed: () 
+                        {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CreateGamePage()),
+                          );
+                        },
+                        child: const Text('Create Game',
                             style: TextStyle(fontSize: 18.0)),
                       ),
                     )
