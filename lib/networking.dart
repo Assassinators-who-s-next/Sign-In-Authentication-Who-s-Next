@@ -11,6 +11,7 @@ import 'game_group.dart';
 import 'globals.dart' as globals;
 import 'models/match_options.dart';
 import 'models/user_data.dart';
+import 'models/player_with_target.dart';
 import 'auth.dart';
 
 final storage = FirebaseStorage.instance;
@@ -92,10 +93,22 @@ Future<group> loadGroup(String groupID) async {
 
   if (groupDocument.exists) {
     List<player> players = [];
-    List<dynamic> playerDataList = await groupDocument.get('players');
+    //List<dynamic> playerDataList = await groupDocument.get('players');
+    //List<dynamic> playerDataList = await groupsRef.collection(groupID).get('players');
+    //await groupsRef.doc(groupID).collection('players').get();
 
-    for (var data in playerDataList) {
-      players.add(player(data['user_id'], data['points'], null));
+    QuerySnapshot playerSnapshot = await FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupID)
+        .collection('players')
+        .get();
+    List<dynamic> playerDataList =
+        playerSnapshot.docs.map((doc) => doc.data()).toList();
+
+    if (!playerDataList.isEmpty) {
+      for (var data in playerDataList) {
+        players.add(player(data['user_id'], data['points'], null));
+      }
     }
 
     MatchOptions matchOptions = MatchOptions(
@@ -127,7 +140,11 @@ Future<bool> load_my_user_data(String user_id) async {
   List<group> myGroups = [];
   for (int i = 0; i < my_user_groups.length; i++) {
     String element = my_user_groups[i];
-    myGroups[i] = await loadGroup(element);
+    try {
+      myGroups.add(await loadGroup(element));
+    } catch (e, stacktrace) {
+      print('Error loading group: \"$element\": $e at: $stacktrace');
+    }
   }
 
   globals.myUserData = my_user_data;
@@ -226,6 +243,18 @@ void join_game(BuildContext context, String game_code, String? userID,
 
   try {
     // Add the new user to the game's "users" subcollection
+
+    // Check if the game already exists
+    DocumentSnapshot gameSnapshot =
+        await gameRef.collection('players').doc(userID).get();
+    if (gameSnapshot.exists) {
+      // Handle error case where game already exists
+      //throw Exception('Game with ID $game_code already contains a player with ID: $userID');
+      print(
+          'Game with ID $game_code already contains a player with ID: $userID');
+      return;
+    }
+
     await gameRef
         .collection('players')
         .doc(userID)
@@ -240,8 +269,8 @@ void join_game(BuildContext context, String game_code, String? userID,
       globals.selectedGroup = joinedGame;
     }
     set_user_data(userID!, globals.myUserData, globals.myGroups);
-  } catch (e) {
-    print('Error adding user to game: $e');
+  } catch (e, stacktrace) {
+    print('Error adding user to game: $e at: $stacktrace');
   }
 }
 
