@@ -187,7 +187,7 @@ void createGame(
     throw Exception('Game with ID $newGroupID already exists.');
   }
 
-  groupsRef.doc(newGroupID).set({
+  await groupsRef.doc(newGroupID).set({
     'eliminationType': matchOptions.eliminationType,
     'respawnTimeType': matchOptions.respawnTimeType,
     'respawnDuration': matchOptions.respawnDuration,
@@ -207,21 +207,39 @@ void createGame(
 
   print('User $userID created new game: $newGroupID');
 
+  group newGroup = group(newGroupID, [player(userID!, 0, null)], matchOptions);
+
+  bool isNotInGroup = globals.myGroups.isEmpty;
+  globals.myGroups.add(newGroup);
+  if (isNotInGroup) {
+    globals.selectedGroup = newGroup;
+  }
+  set_user_data(userID, globals.myUserData, globals.myGroups);
+
   //join_game(context, newGroupID, userID!);
 }
 
 void join_game(BuildContext context, String game_code, String? userID,
-    {int points = 0}) {
+    {int points = 0}) async {
   DocumentReference gameRef =
       FirebaseFirestore.instance.collection('groups').doc(game_code);
 
   try {
     // Add the new user to the game's "users" subcollection
-    gameRef
+    await gameRef
         .collection('players')
         .doc(userID)
         .set({'user_id': userID, 'points': points});
     print('User $userID added to game $game_code');
+
+    var joinedGame = await loadGroup(game_code);
+
+    bool isNotInGroup = globals.myGroups.isEmpty;
+    globals.myGroups.add(joinedGame);
+    if (isNotInGroup) {
+      globals.selectedGroup = joinedGame;
+    }
+    set_user_data(userID!, globals.myUserData, globals.myGroups);
   } catch (e) {
     print('Error adding user to game: $e');
   }
