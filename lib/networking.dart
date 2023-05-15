@@ -85,6 +85,21 @@ void set_user_data(
   });
 }
 
+void applyName(List<player> players) async {
+  for (int i = 0; i < players.length; i++) {
+    String element = players[i].userID;
+    try {
+      UserData? userData = await get_user_data(element);
+      players[i].name = userData!.name;
+    } catch (e, stacktrace) {
+      print("Error loading player name! \n" +
+          e.toString() +
+          "\n" +
+          stacktrace.toString());
+    }
+  }
+}
+
 Future<group> loadGroup(String groupID) async {
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
@@ -107,7 +122,10 @@ Future<group> loadGroup(String groupID) async {
 
     if (!playerDataList.isEmpty) {
       for (var data in playerDataList) {
-        players.add(player(data['user_id'], data['points'], null));
+        String userId =
+            data['user_id'] ?? ''; // Use an empty string if the value is null
+        int points = data['points'] ?? 0; // Use 0 if the value is null
+        players.add(player(userId, points, null));
       }
     }
 
