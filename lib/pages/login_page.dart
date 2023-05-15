@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                           builder: (context) => JoinCreatePage(),
                         ))
                   },
-                  child: Text('debug: -> joingamepage',
+                  child: const Text('debug: -> joingamepage',
                       style: (TextStyle(fontSize: 10.0))),
                 ),
                 const SizedBox(height: 25),
