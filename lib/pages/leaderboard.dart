@@ -2,25 +2,66 @@ import 'package:flutter/material.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/components/leaderboard_element.dart';
 import '../player.dart';
+import '../game_group.dart';
+import '../networking.dart';
 
 import '../globals.dart' as globals;
 
 class LeaderBoard extends StatefulWidget {
   const LeaderBoard({Key? key}) : super(key: key);
 
+  void reload() {
+    reloadGroup();
+    // leaderboardState?.updatePlayers();
+  }
+
   @override
   _LeaderboardState createState() => _LeaderboardState();
 }
 
+void sortPlayers() {
+  globals.selectedGroup.players.sort((a, b) => b.points.compareTo(a.points));
+}
+
+void reloadGroup() async {
+  String groupID = globals.selectedGroup.group_name;
+  group fetchedGroup = await loadGroup(groupID);
+  globals.selectedGroup = fetchedGroup;
+
+  //replace old instance of group with new one
+  for (int i = 0; i < globals.myGroups.length; i++) {
+    if (globals.myGroups[i].group_name == groupID) {
+      globals.myGroups[i] = fetchedGroup;
+    }
+  }
+
+  // load names on this group
+  applyName(globals.selectedGroup.players);
+
+  print("finished reloading group");
+}
+
 class _LeaderboardState extends State<LeaderBoard> {
   final List<Widget> _players = [];
+
+  void updatePlayers() {
+    setState(() {
+      _players.clear();
+      for (int i = 0; i < globals.selectedGroup.players.length; i++) {
+        player cur_player = globals.selectedGroup.players[i];
+        _players.add(LeaderboardElemnt(
+            playerName: cur_player.get_name(),
+            playerPoints: cur_player.points));
+      }
+    });
+  }
 
   @override
   void initState() {
     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
       player cur_player = globals.selectedGroup.players[i];
       _players.add(LeaderboardElemnt(
-          playerName: cur_player.name, playerPoints: cur_player.points));
+          playerName: cur_player.get_name(), playerPoints: cur_player.points));
     }
     super.initState();
   }
