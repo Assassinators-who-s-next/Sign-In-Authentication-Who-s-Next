@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:basic_auth/pages/join_create_game_page.dart';
 
+import '../pages/logged_in_join_create_game_page.dart';
+
 class GameListDrawer extends StatelessWidget {
   const GameListDrawer({super.key, required this.numActiveGames, required this.screenWidth, required this.screenHeight, required this.content});
 
@@ -28,7 +30,7 @@ class GameListDrawer extends StatelessWidget {
                 onPressed: () {
 
                   Navigator.pushReplacement(context,MaterialPageRoute(
-                    builder: (context) => JoinCreatePage(),
+                    builder: (context) => LoggedInJoinCreatePage(),
                   ));
                   //print('go to join/create page');
                 },
