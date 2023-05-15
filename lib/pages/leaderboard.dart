@@ -20,7 +20,7 @@ class _LeaderboardState extends State<LeaderBoard> {
     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
       player cur_player = globals.selectedGroup.players[i];
       _players.add(LeaderboardElemnt(
-          playerName: cur_player.name, playerPoints: cur_player.points));
+          playerName: cur_player.name!, playerPoints: cur_player.points));
     }
     super.initState();
   }
