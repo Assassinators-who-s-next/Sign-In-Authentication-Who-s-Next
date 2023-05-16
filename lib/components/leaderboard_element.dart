@@ -1,3 +1,4 @@
+import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'profile_picture.dart';
@@ -23,7 +24,8 @@ class LeaderboardElemnt extends StatelessWidget {
       children: [
         ProfilePicture(
           radius: 50,
-          imagePath: UserPreferences.placeholderImagePath,
+          //imagePath: UserPreferences.placeholderImagePath,
+          imagePath: myUserData.imagePath!,
           isNetworkPath: false,
           onClicked: () {},
         ),

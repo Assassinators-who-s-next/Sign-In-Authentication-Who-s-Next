@@ -1,13 +1,14 @@
-class UserData
-{
-  final String? imagePath;
-  final String name;
-  final String email;
-  final String pronouns;
-  final String description;
-  final String frequentedLocations;
+class UserData {
+  String uid;
+  String? imagePath;
+  String name;
+  String email;
+  String pronouns;
+  String description;
+  String frequentedLocations;
 
-  const UserData({
+  UserData({
+    required this.uid,
     required this.imagePath,
     required this.name,
     required this.email,

@@ -1,9 +1,10 @@
 import 'package:basic_auth/models/user_data.dart';
 
 class UserPreferences {
-  static const String placeholderImagePath =
+  String placeholderImagePath =
       "lib/images/placeHolderProfileImage.jpg";
-  static const user = UserData(
+  var user = UserData(
+      uid: "default user id",
       imagePath: null,
       name: "Joe Smith",
       email: "joe@ucsc.edu",

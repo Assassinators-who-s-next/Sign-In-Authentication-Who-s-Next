@@ -5,6 +5,7 @@ import 'models/match_options.dart';
 import 'game_group.dart';
 
 UserData myUserData = UserData(
+  uid: "",
   imagePath: "",
   name: "",
   email: "",
