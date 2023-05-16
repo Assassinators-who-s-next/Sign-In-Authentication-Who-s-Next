@@ -180,17 +180,6 @@ class _CreateGamePage extends State<CreateGamePage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               onPressed: () {
-                User? user = FirebaseAuth.instance.currentUser;
-                MatchOptions placeholderMatchOptions = MatchOptions(
-                  'Single',
-                  'Fixed',
-                  5,
-                  'Limited',
-                  60,
-                  'Area A',
-                  'Helmet',
-                );
-
                 // test if fields were inputed correctly
                 if (respawn_choice == null || respawn_duration_choice == null) {
                   popUp(context, 'Fill out Respawn Information');
@@ -207,10 +196,22 @@ class _CreateGamePage extends State<CreateGamePage> {
                       'Total game time must be greater or equal to the respawn time');
                   // otherwise go to home page
                 } else {
+                  User? user = FirebaseAuth.instance.currentUser;
+                  MatchOptions placeholderMatchOptions = MatchOptions(
+                    'Single',
+                    'Fixed',
+                    5,
+                    'Limited',
+                    60,
+                    'Area A',
+                    'Helmet',
+                  );
+
+                  // creates game with game info and creates game code
+                  createGame(context, user?.uid, placeholderMatchOptions);
+
                   guidetoUserHome(context);
                 }
-                createGame(context, user?.uid, placeholderMatchOptions);
-
               },
             ),
           ],
