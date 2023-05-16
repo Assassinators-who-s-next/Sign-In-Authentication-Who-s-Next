@@ -1,5 +1,6 @@
 import 'package:basic_auth/components/game_list_drawer.dart';
 import 'package:basic_auth/components/profile_picture.dart';
+import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,8 @@ Widget homeScreenContent(BuildContext context, double screenWidth, double screen
 }
 
 Center eliminationTargetScreen(double screenWidth) {
-  UserData targetData = UserPreferences.user;
+  UserData targetData = myUserData;
+  //UserData targetData = UserPreferences.user;
   return Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +66,8 @@ Center eliminationTargetScreen(double screenWidth) {
         TargetName(username: targetData.name),
         ProfilePicture(
             radius: screenWidth * .40,
-            imagePath: targetData.imagePath ?? UserPreferences.placeholderImagePath,
+            imagePath: targetData.imagePath!,
+            //imagePath: targetData.imagePath ?? UserPreferences.placeholderImagePath,
             isNetworkPath: true,
             onClicked: () => print("clicked elimation target")),
         Padding(

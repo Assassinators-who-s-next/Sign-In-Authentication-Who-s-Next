@@ -32,6 +32,7 @@ Future<UserData?> get_user_data(String user_id) async {
 
     // Create a UserData object with the extracted field values
     UserData userData = UserData(
+      uid: user_id,
       imagePath: imagePath,
       name: name,
       email: email,
@@ -166,8 +167,10 @@ Future<bool> load_my_user_data(String user_id) async {
   }
 
   globals.myUserData = my_user_data;
+  print("Printing User data from load_my_user_data: ${globals.myUserData}");
   globals.myName = my_user_data.name;
   globals.myGroups = myGroups;
+
   if (!myGroups.isEmpty) {
     // this should instead remember locally what the last group was
     globals.selectedGroup = myGroups[0];
@@ -177,6 +180,7 @@ Future<bool> load_my_user_data(String user_id) async {
 
 void set_default_user_data(String token) async {
   UserData userData = UserData(
+    uid: "",
     imagePath: null,
     name: "New User",
     email: "null",
@@ -200,7 +204,10 @@ void login_custom(
 
 void login_google(BuildContext context, String email, String token) async {
   bool sucess = await load_my_user_data(token);
-  if (!sucess) set_default_user_data(token);
+  if (!sucess) {
+    print("oops");
+    set_default_user_data(token);
+  }
 }
 
 Future<void> login_apple(BuildContext context, String token) async {
@@ -291,6 +298,17 @@ void join_game(BuildContext context, String game_code, String? userID,
     print('Error adding user to game: $e at: $stacktrace');
   }
 }
+
+void update_user(BuildContext context, String whatToChange, String changeTo) {
+
+  var db = FirebaseFirestore.instance;
+  final nameRef = db.collection("users").doc(globals.myUserData.uid);
+  nameRef.update({whatToChange: changeTo}).then(
+    (value) => print("DocumentSnapshot successfully updated!"),
+    onError: (e) => print("Error updating document $e"));
+}
+
+class DatabaseReference {}
 
 Future logout(context) async {
   await FirebaseAuth.instance.signOut().then((value) => Navigator.of(context)

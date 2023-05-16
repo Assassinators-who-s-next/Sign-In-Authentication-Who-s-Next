@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import "package:basic_auth/globals.dart";
 
 class AuthService {
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -82,15 +83,21 @@ class AuthService {
     }
 
     if (user != null) {
-      uid = user.uid;
-      name = user.displayName;
-      userEmail = user.email;
-      imageUrl = user.photoURL;
+      myUserData.uid = user.uid;
+      myUserData.name = user.displayName ?? "Default Name";
+      myUserData.email = user.email ?? "";
+      myUserData.imagePath = user.photoURL ?? "";
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('auth', true);
+
+
+      print(
+          "uID: ${uid} \n name: ${myUserData.name} \n email: ${myUserData.email} \n imageURL ${myUserData.imagePath}");
+      print("Prefs: $prefs");
     }
-    print(user);
+    print("User Print from auth service: ${user}");
+
     return user;
   }
 
