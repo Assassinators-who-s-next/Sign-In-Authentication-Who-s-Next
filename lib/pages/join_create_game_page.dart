@@ -1,9 +1,11 @@
 import 'package:basic_auth/pages/create_game_page.dart';
 import 'package:flutter/material.dart';
+import '../models/join_game_results.dart';
 import '../networking.dart';
 import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
+import 'package:basic_auth/utils/popup_modal.dart';
 
 import 'package:basic_auth/models/match_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,10 +18,25 @@ class JoinCreatePage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   TextEditingController gameCodeController = TextEditingController();
 
-  void JoinGame(BuildContext context) async {
-    print("Join Game button pressed");
+  void TryJoinGame(BuildContext context) async {
+    String gameCode = gameCodeController.text;
+    print("Join Game button pressed with code $gameCode");
+    if (gameCode == "")   
+    {
+      showSimplePopupWithCancel(context,
+      contentText: "Must supply game code in order to join match.");
+      return;
+    }
     User? user = FirebaseAuth.instance.currentUser;
-    join_game(context, gameCodeController.text, user?.uid);
+    JoinGameResults results = JoinGameResults(false, "Join failure.");
+    await join_game(context, gameCode, user?.uid).then((value) => {results = value});
+
+    if (!results.success)
+    {
+      showSimplePopupWithCancel(context,
+      contentText: results.errorMessage);
+      return;
+    }
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
@@ -100,7 +117,7 @@ class JoinCreatePage extends StatelessWidget {
                           shadowColor: joinButtonColor, // elevation color
                           elevation: 5, // elevation of button
                         ),
-                        onPressed: () => JoinGame(context),
+                        onPressed: () => TryJoinGame(context),
                         child: Text('Join Game',
                             style: (TextStyle(fontSize: 17.0))),
                       ),

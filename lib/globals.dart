@@ -1,5 +1,7 @@
 library whos_next.globals;
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'models/user_data.dart';
 import 'models/match_options.dart';
 import 'game_group.dart';
@@ -27,3 +29,4 @@ group selectedGroup = group(
       'Helmet',
     ));
 List<group> myGroups = [];
+User? fireBaseUser;

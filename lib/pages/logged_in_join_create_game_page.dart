@@ -1,7 +1,9 @@
 import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/pages/create_game_page.dart';
 import 'package:flutter/material.dart';
+import '../models/join_game_results.dart';
 import '../networking.dart';
+import '../utils/popup_modal.dart';
 import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
@@ -18,9 +20,24 @@ class LoggedInJoinCreatePage extends StatelessWidget {
   TextEditingController gameCodeController = TextEditingController();
 
   void JoinGame(BuildContext context) async {
-    print("Join Game button pressed");
+    String gameCode = gameCodeController.text;
+    print("Join Game button pressed with code $gameCode");
+    if (gameCode == "")   
+    {
+      showSimplePopupWithCancel(context,
+      contentText: "Must supply game code in order to join match.");
+      return;
+    }
     User? user = FirebaseAuth.instance.currentUser;
-    join_game(context, gameCodeController.text, user?.uid);
+    JoinGameResults results = JoinGameResults(false, "Join failure.");
+    await join_game(context, gameCode, user?.uid).then((value) => {results = value});
+
+    if (!results.success)
+    {
+      showSimplePopupWithCancel(context,
+      contentText: results.errorMessage);
+      return;
+    }
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (BuildContext context) => (HomePage())),

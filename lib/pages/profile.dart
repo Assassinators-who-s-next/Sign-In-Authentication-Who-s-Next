@@ -65,8 +65,8 @@ class Profile extends StatelessWidget {
               radius: 250,
               //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
               imagePath:
-                  user.imagePath ?? "lib/images/placeHolderProfileImage.jpg",
-              isNetworkPath: true,
+                  user.imagePath == null || user.imagePath == "" ? "lib/images/placeHolderProfileImage.jpg" : user.imagePath!,
+              isNetworkPath: user.imagePath != null,
               onClicked: () {
                 print("Profile picture clicked");
               }),

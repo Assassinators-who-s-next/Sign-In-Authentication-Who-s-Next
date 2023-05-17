@@ -27,7 +27,8 @@ class AuthPage extends StatelessWidget {
               //login_custom(context, "whatever", "password");
 
               login_google(context, email!, uid!);
-              return JoinCreatePage();
+              
+              return HomePage();
               // user not logged in
             } else {
               return LoginPage();
