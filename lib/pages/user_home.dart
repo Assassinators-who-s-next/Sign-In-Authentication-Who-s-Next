@@ -2,7 +2,7 @@ import 'package:basic_auth/components/game_list_drawer.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
-import 'package:basic_auth/utils/user_preferences.dart';
+import 'package:basic_auth/utils/popup_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
 
@@ -49,7 +49,7 @@ class _UserHomeState extends State<UserHome> {
 }
 
 Widget homeScreenContent(BuildContext context, double screenWidth, double screenHeight) {
-  bool gameStarted = false;
+  bool gameStarted = true;
   return Stack(children: [
     InfoButton(context, screenWidth, screenHeight),
     gameStarted ? eliminationTargetScreen(screenWidth) : prematchScreen(screenWidth),
@@ -57,8 +57,9 @@ Widget homeScreenContent(BuildContext context, double screenWidth, double screen
 }
 
 Center eliminationTargetScreen(double screenWidth) {
-  UserData targetData = myUserData;
+  //UserData targetData = myUserData;
   //UserData targetData = UserPreferences.user;
+  UserData targetData = UserData(description: '', email: '', frequentedLocations: '', imagePath: '', name: 'target_name', pronouns: '', uid: '');
   return Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -106,15 +107,16 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
         padding: const EdgeInsets.all(10.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(size),
-          onTap: () => showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                    title: const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-                    content: Container(child: AboutPopupContent(), width: screenWidth * .9, height: screenHeight * .9),
-                    actions: [
-                      TextButton(onPressed: () => Navigator.pop(context), child: const Text("Close", style: TextStyle(fontSize: 18))),
-                    ],
-                  )),
+          onTap: () => showPopup(
+            context, 
+            const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+            AboutPopupContent(),
+            [
+              closeButton(context),
+            ], 
+            screenWidth * .9,
+            screenHeight * .9,
+            ),
           child: Icon(Icons.info, size: size),
         ),
       ),
