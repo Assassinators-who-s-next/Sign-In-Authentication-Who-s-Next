@@ -48,18 +48,28 @@ class _UserHomeState extends State<UserHome> {
   }
 }
 
-Widget homeScreenContent(BuildContext context, double screenWidth, double screenHeight) {
-  bool gameStarted = false;
+Widget homeScreenContent(
+    BuildContext context, double screenWidth, double screenHeight) {
+  bool gameStarted = true;
   return Stack(children: [
     InfoButton(context, screenWidth, screenHeight),
-    gameStarted ? eliminationTargetScreen(screenWidth) : prematchScreen(screenWidth),
+    gameStarted
+        ? eliminationTargetScreen(screenWidth, screenHeight, context)
+        : prematchScreen(screenWidth),
   ]);
 }
 
-Center eliminationTargetScreen(double screenWidth) {
+Center eliminationTargetScreen(double screenWidth, double screenHeight,BuildContext context) {
   //UserData targetData = myUserData;
   //UserData targetData = UserPreferences.user;
-  UserData targetData = UserData(description: '', email: '', frequentedLocations: '', imagePath: '', name: 'target_name', pronouns: '', uid: '');
+  UserData targetData = UserData(
+      description: '',
+      email: '',
+      frequentedLocations: '',
+      imagePath: '',
+      name: 'Joshua',
+      pronouns: '',
+      uid: '');
   return Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -73,10 +83,48 @@ Center eliminationTargetScreen(double screenWidth) {
             onClicked: () => print("clicked elimation target")),
         Padding(
           padding: const EdgeInsetsDirectional.all(40),
-          child: LargeUserHomeButton(label: "Eliminate", color: Color.fromARGB(255, 238, 127, 119), onPressed: () => print('pressed elim button')),
+          child: LargeUserHomeButton(
+              label: "Eliminate",
+              color: Color.fromARGB(255, 238, 127, 119),
+              onPressed: () => {eliminateNoti(targetData, context, screenWidth, screenHeight)}),
         ),
       ],
     ),
+  );
+}
+
+Future eliminateNoti(UserData targetData, BuildContext context, double screenWidth, double screenHeight) {
+  return showSimplePopup(
+    context,
+    title: "Eliminate",
+    contentText: "You got eliminated by ${targetData.name}. Is this you?",
+    bottomWidgets: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 238, 127, 119),
+              minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
+              textStyle: TextStyle(fontSize: 25),
+            ),
+            onPressed: () => print("eliminated"),
+            child: Text("Yes"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 43, 167, 204),
+              minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
+              textStyle: TextStyle(fontSize: 25),
+            ),
+            onPressed: () => print("eliminated failed"),
+            child: Text("No"),
+          ),
+        ],
+      )
+    ],
+    width: screenWidth * 0.5,
+    height: screenHeight * 0.1,
   );
 }
 
@@ -89,16 +137,20 @@ Center prematchScreen(double screenWidth) {
       padding: const EdgeInsets.all(20),
       child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
     ),
-    Text("${playersInMatch}/${maxPlayersInMatch}", style: TextStyle(fontSize: 25)),
+    Text("${playersInMatch}/${maxPlayersInMatch}",
+        style: TextStyle(fontSize: 25)),
     Padding(
       padding: const EdgeInsetsDirectional.all(40),
-      child:
-          LargeUserHomeButton(label: "Start match", color: Color.fromARGB(255, 43, 167, 204), onPressed: () => print("pressed start match button")),
+      child: LargeUserHomeButton(
+          label: "Start match",
+          color: Color.fromARGB(255, 43, 167, 204),
+          onPressed: () => print("pressed start match button")),
     ),
   ]));
 }
 
-Container InfoButton(BuildContext context, double screenWidth, double screenHeight) {
+Container InfoButton(
+    BuildContext context, double screenWidth, double screenHeight) {
   double size = screenWidth * .075;
   return Container(
     child: Align(
@@ -108,15 +160,18 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
         child: InkWell(
           borderRadius: BorderRadius.circular(size),
           onTap: () => showPopup(
-            context, 
-            const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-            AboutPopupContent(),
-            [
-              closeButton(context),
-            ], 
-            screenWidth * .9,
-            screenHeight * .9,
-            ),
+            context,
+
+            // {
+            //   const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+            //   AboutPopupContent(),
+            //   [
+            //     closeButton(context),
+            //   ],
+            //   screenWidth * .9, //width
+            //   screenHeight * .9, //height
+            // }
+          ),
           child: Icon(Icons.info, size: size),
         ),
       ),
@@ -124,15 +179,16 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
   );
 }
 
-Widget AboutPopupContent()
-{
-  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month", 3, "During class, in library", 
-  "Floaties");
+Widget AboutPopupContent() {
+  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month",
+      3, "During class, in library", "Floaties");
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      MatchInfoText("Game Period", "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
-      MatchInfoText("Respawn Time", "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
+      MatchInfoText("Game Period",
+          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+      MatchInfoText("Respawn Time",
+          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
       MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
       MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
       MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
@@ -142,13 +198,16 @@ Widget AboutPopupContent()
 
 Column MatchInfoText(String label, String text) {
   return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("${label}: ", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        Text(text),
-        SizedBox(height: 15,),
-      ],
-    );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("${label}: ",
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      Text(text),
+      SizedBox(
+        height: 15,
+      ),
+    ],
+  );
 }
 
 class LargeUserHomeButton extends StatelessWidget {
@@ -187,7 +246,8 @@ class TargetName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.all(40),
-      child: Text('Target: ${username}', style: TextStyle(fontSize: 30), textAlign: TextAlign.center),
+      child: Text('Target: ${username}',
+          style: TextStyle(fontSize: 30), textAlign: TextAlign.center),
     );
   }
 }
