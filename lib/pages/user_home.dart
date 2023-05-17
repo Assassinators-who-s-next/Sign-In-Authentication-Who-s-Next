@@ -109,13 +109,13 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
           borderRadius: BorderRadius.circular(size),
           onTap: () => showPopup(
             context, 
-            const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-            AboutPopupContent(),
-            [
+            title: const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+            content: AboutPopupContent(),
+            bottomWidgets: [
               closeButton(context),
             ], 
-            screenWidth * .9,
-            screenHeight * .9,
+            width: screenWidth * .9,
+            height: screenHeight * .9,
             ),
           child: Icon(Icons.info, size: size),
         ),
