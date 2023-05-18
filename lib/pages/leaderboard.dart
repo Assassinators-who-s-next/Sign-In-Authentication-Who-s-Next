@@ -18,7 +18,7 @@ class _LeaderboardState extends State<LeaderBoard> {
   @override
   void initState() {
     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-      player cur_player = globals.selectedGroup.players[i];
+      Player cur_player = globals.selectedGroup.players[i];
 
       String player_name = cur_player.get_name();
       int player_points = cur_player.points;
