@@ -263,7 +263,7 @@ Future<Group> createGame(
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
-  await setPlayerInGroup(newGroupID, userID!, Player(userID, 0, null));
+  await setPlayerInGroup(userID!, newGroupID, Player(userID, 0, null));
 
   print('User $userID created new game: $newGroupID');
 
@@ -281,7 +281,8 @@ Future<Group> createGame(
   //join_game(context, newGroupID, userID!);
 }
 
-Future<JoinGameResults> join_game(BuildContext context, String game_code, String? userID,
+Future<JoinGameResults> join_game(
+    BuildContext context, String game_code, String? userID,
     {int points = 0}) async {
   DocumentReference gameRef =
       FirebaseFirestore.instance.collection('groups').doc(game_code);
@@ -297,8 +298,7 @@ Future<JoinGameResults> join_game(BuildContext context, String game_code, String
       //throw Exception('Game with ID $game_code already contains a player with ID: $userID');
       return JoinGameResults(false, 'You are already a member of this game.');
     }
-    try
-    {
+    try {
       var joinedGame = await loadGroup(game_code);
 
       await gameRef
@@ -306,7 +306,7 @@ Future<JoinGameResults> join_game(BuildContext context, String game_code, String
           .doc(userID)
           .set({'user_id': userID, 'points': points});
       print('User $userID added to game $game_code');
-      
+
       bool isNotInGroup = globals.myGroups.isEmpty;
       globals.myGroups.add(joinedGame);
       if (isNotInGroup) {
@@ -314,9 +314,7 @@ Future<JoinGameResults> join_game(BuildContext context, String game_code, String
       }
       set_user_data(userID!, globals.myUserData, globals.myGroups);
       return JoinGameResults(true);
-    }
-    catch (e)
-    {
+    } catch (e) {
       return JoinGameResults(false, "Game Not Found");
     }
   } catch (e, stacktrace) {

@@ -27,8 +27,7 @@ class _UserHomeState extends State<UserHome> {
     });
   }
 
-  void SetSelectedGroup(Group group)
-  {
+  void SetSelectedGroup(Group group) {
     selectedGroup = group;
     setState(() {
       selGroup = group;
@@ -49,26 +48,36 @@ class _UserHomeState extends State<UserHome> {
     }
 
     return GameListDrawer(
-        screenWidth: screenWidth,
-        screenHeight: screenHeight,
-        content: homeScreenContent(context, screenWidth, screenHeight),
-        onSelectGroup:(p0) => SetSelectedGroup(p0),
-        );
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
+      content: homeScreenContent(context, screenWidth, screenHeight),
+      onSelectGroup: (p0) => SetSelectedGroup(p0),
+    );
   }
 }
 
-Widget homeScreenContent(BuildContext context, double screenWidth, double screenHeight) {
+Widget homeScreenContent(
+    BuildContext context, double screenWidth, double screenHeight) {
   bool gameStarted = false;
   return Stack(children: [
     InfoButton(context, screenWidth, screenHeight),
-    gameStarted ? eliminationTargetScreen(screenWidth) : prematchScreen(screenWidth),
+    gameStarted
+        ? eliminationTargetScreen(screenWidth)
+        : prematchScreen(screenWidth),
   ]);
 }
 
 Center eliminationTargetScreen(double screenWidth) {
   //UserData targetData = myUserData;
   //UserData targetData = UserPreferences.user;
-  UserData targetData = UserData(description: '', email: '', frequentedLocations: '', imagePath: '', name: 'target_name', pronouns: '', uid: '');
+  UserData targetData = UserData(
+      description: '',
+      email: '',
+      frequentedLocations: '',
+      imagePath: '',
+      name: 'target_name',
+      pronouns: '',
+      uid: '');
   return Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +91,10 @@ Center eliminationTargetScreen(double screenWidth) {
             onClicked: () => print("clicked elimation target")),
         Padding(
           padding: const EdgeInsetsDirectional.all(40),
-          child: LargeUserHomeButton(label: "Eliminate", color: Color.fromARGB(255, 238, 127, 119), onPressed: () => print('pressed elim button')),
+          child: LargeUserHomeButton(
+              label: "Eliminate",
+              color: Color.fromARGB(255, 238, 127, 119),
+              onPressed: () => print('pressed elim button')),
         ),
       ],
     ),
@@ -98,16 +110,20 @@ Center prematchScreen(double screenWidth) {
       padding: const EdgeInsets.all(20),
       child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
     ),
-    Text("${playersInMatch}/${maxPlayersInMatch}", style: TextStyle(fontSize: 25)),
+    Text("${playersInMatch}/${maxPlayersInMatch}",
+        style: TextStyle(fontSize: 25)),
     Padding(
       padding: const EdgeInsetsDirectional.all(40),
-      child:
-          LargeUserHomeButton(label: "Start match", color: Color.fromARGB(255, 43, 167, 204), onPressed: () => print("pressed start match button")),
+      child: LargeUserHomeButton(
+          label: "Start match",
+          color: Color.fromARGB(255, 43, 167, 204),
+          onPressed: () => print("pressed start match button")),
     ),
   ]));
 }
 
-Container InfoButton(BuildContext context, double screenWidth, double screenHeight) {
+Container InfoButton(
+    BuildContext context, double screenWidth, double screenHeight) {
   double size = screenWidth * .075;
   return Container(
     child: Align(
@@ -117,15 +133,17 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
         child: InkWell(
           borderRadius: BorderRadius.circular(size),
           onTap: () => showPopup(
-            context, 
-            title: const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+            context,
+            title: const Text("Match Info: ",
+                style:
+                    const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
             content: AboutPopupContent(),
             bottomWidgets: [
               closeButton(context),
-            ], 
+            ],
             width: screenWidth * .9,
             height: screenHeight * .9,
-            ),
+          ),
           child: Icon(Icons.info, size: size),
         ),
       ),
@@ -133,15 +151,16 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
   );
 }
 
-Widget AboutPopupContent()
-{
-  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month", 3, "During class, in library", 
-  "Floaties");
+Widget AboutPopupContent() {
+  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month",
+      3, "During class, in library", "Floaties");
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      MatchInfoText("Game Period", "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
-      MatchInfoText("Respawn Time", "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
+      MatchInfoText("Game Period",
+          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+      MatchInfoText("Respawn Time",
+          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
       MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
       MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
       MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
@@ -151,13 +170,16 @@ Widget AboutPopupContent()
 
 Column MatchInfoText(String label, String text) {
   return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("${label}: ", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        Text(text),
-        SizedBox(height: 15,),
-      ],
-    );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("${label}: ",
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      Text(text),
+      SizedBox(
+        height: 15,
+      ),
+    ],
+  );
 }
 
 class LargeUserHomeButton extends StatelessWidget {
@@ -196,7 +218,8 @@ class TargetName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.all(40),
-      child: Text('Target: ${username}', style: TextStyle(fontSize: 30), textAlign: TextAlign.center),
+      child: Text('Target: ${username}',
+          style: TextStyle(fontSize: 30), textAlign: TextAlign.center),
     );
   }
 }
