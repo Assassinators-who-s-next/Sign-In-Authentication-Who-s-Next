@@ -160,38 +160,30 @@ Container InfoButton(
 }
 
 Widget AboutPopupContent() {
-  MatchOptions exampleOptions = MatchOptions(100, "Finger Guns", "Week", 2,
-      "Month", 3, "During class, in library", "Floaties");
-//  print('selected group name: ${selectedGroup.group_name}');
-//  return Column(
-//    crossAxisAlignment: CrossAxisAlignment.start,
-//    children: [
-//      Expanded(
-//        child: FutureBuilder(
-//          future: getUserID(),
-//          builder: (context, snapshot) {
-//            return ListView.builder(
-//                itemCount: userIDs.length,
-//                itemBuilder: (context, index) {
-//                  return ListTile(title: Text(userIDs[index]));
-//                });
-//          },
-//        ),
-//      )
-//    ],
-//  );
+  print('selected group id: ${selectedGroup.group_name}');
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      MatchInfoText("Max Players", "${exampleOptions.maxPlayers}"),
+      MatchInfoText("Max Players", "${selectedGroup.matchOptions.maxPlayers}"),
       MatchInfoText("Game Period",
-          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+          "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}(s)"),
       MatchInfoText("Respawn Time",
-          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
-      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
-      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
-      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
+          "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}(s)"),
+      MatchInfoText("Permitted Elimation Type",
+          selectedGroup.matchOptions.eliminationType),
+      MatchInfoText(
+          "Off Limit Areas", selectedGroup.matchOptions.offLimitAreas),
+      MatchInfoText("Safety Methods", selectedGroup.matchOptions.safetyMethods),
+
+      //      MatchInfoText("Max Players", "${exampleOptions.maxPlayers}"),
+      //      MatchInfoText("Game Period",
+      //          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+      //      MatchInfoText("Respawn Time",
+      //          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
+      //      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
+      //      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
+      //      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
     ],
   );
 }
