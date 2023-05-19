@@ -3,8 +3,22 @@ import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
 import 'package:basic_auth/utils/popup_modal.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
+
+List<String> userIDs = [];
+
+Future getUserID() async {
+  await FirebaseFirestore.instance.collection('users').get().then(
+        (snapshot) => snapshot.docs.forEach(
+          (userID) {
+            print(userID.reference);
+            userIDs.add(userID.reference.id);
+          },
+        ),
+      );
+}
 
 class UserHome extends StatefulWidget {
   @override
@@ -29,6 +43,8 @@ class _UserHomeState extends State<UserHome> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        'in userhome\n user id: ${myUserData.uid}\n name: ${myUserData.name}');
     // for sizing the image
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
@@ -48,18 +64,28 @@ class _UserHomeState extends State<UserHome> {
   }
 }
 
-Widget homeScreenContent(BuildContext context, double screenWidth, double screenHeight) {
+Widget homeScreenContent(
+    BuildContext context, double screenWidth, double screenHeight) {
   bool gameStarted = false;
   return Stack(children: [
     InfoButton(context, screenWidth, screenHeight),
-    gameStarted ? eliminationTargetScreen(screenWidth) : prematchScreen(screenWidth),
+    gameStarted
+        ? eliminationTargetScreen(screenWidth)
+        : prematchScreen(screenWidth),
   ]);
 }
 
 Center eliminationTargetScreen(double screenWidth) {
   //UserData targetData = myUserData;
   //UserData targetData = UserPreferences.user;
-  UserData targetData = UserData(description: '', email: '', frequentedLocations: '', imagePath: '', name: 'target_name', pronouns: '', uid: '');
+  UserData targetData = UserData(
+      description: '',
+      email: '',
+      frequentedLocations: '',
+      imagePath: '',
+      name: 'target_name',
+      pronouns: '',
+      uid: '');
   return Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -73,7 +99,10 @@ Center eliminationTargetScreen(double screenWidth) {
             onClicked: () => print("clicked elimation target")),
         Padding(
           padding: const EdgeInsetsDirectional.all(40),
-          child: LargeUserHomeButton(label: "Eliminate", color: Color.fromARGB(255, 238, 127, 119), onPressed: () => print('pressed elim button')),
+          child: LargeUserHomeButton(
+              label: "Eliminate",
+              color: Color.fromARGB(255, 238, 127, 119),
+              onPressed: () => print('pressed elim button')),
         ),
       ],
     ),
@@ -89,16 +118,20 @@ Center prematchScreen(double screenWidth) {
       padding: const EdgeInsets.all(20),
       child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
     ),
-    Text("${playersInMatch}/${maxPlayersInMatch}", style: TextStyle(fontSize: 25)),
+    Text("${playersInMatch}/${maxPlayersInMatch}",
+        style: TextStyle(fontSize: 25)),
     Padding(
       padding: const EdgeInsetsDirectional.all(40),
-      child:
-          LargeUserHomeButton(label: "Start match", color: Color.fromARGB(255, 43, 167, 204), onPressed: () => print("pressed start match button")),
+      child: LargeUserHomeButton(
+          label: "Start match",
+          color: Color.fromARGB(255, 43, 167, 204),
+          onPressed: () => print("pressed start match button")),
     ),
   ]));
 }
 
-Container InfoButton(BuildContext context, double screenWidth, double screenHeight) {
+Container InfoButton(
+    BuildContext context, double screenWidth, double screenHeight) {
   double size = screenWidth * .075;
   return Container(
     child: Align(
@@ -108,15 +141,17 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
         child: InkWell(
           borderRadius: BorderRadius.circular(size),
           onTap: () => showPopup(
-            context, 
-            title: const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+            context,
+            title: const Text("Match Info: ",
+                style:
+                    const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
             content: AboutPopupContent(),
             bottomWidgets: [
               closeButton(context),
-            ], 
+            ],
             width: screenWidth * .9,
             height: screenHeight * .9,
-            ),
+          ),
           child: Icon(Icons.info, size: size),
         ),
       ),
@@ -124,15 +159,36 @@ Container InfoButton(BuildContext context, double screenWidth, double screenHeig
   );
 }
 
-Widget AboutPopupContent()
-{
-  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month", 3, "During class, in library", 
-  "Floaties");
+Widget AboutPopupContent() {
+  MatchOptions exampleOptions = MatchOptions(100, "Finger Guns", "Week", 2,
+      "Month", 3, "During class, in library", "Floaties");
+//  print('selected group name: ${selectedGroup.group_name}');
+//  return Column(
+//    crossAxisAlignment: CrossAxisAlignment.start,
+//    children: [
+//      Expanded(
+//        child: FutureBuilder(
+//          future: getUserID(),
+//          builder: (context, snapshot) {
+//            return ListView.builder(
+//                itemCount: userIDs.length,
+//                itemBuilder: (context, index) {
+//                  return ListTile(title: Text(userIDs[index]));
+//                });
+//          },
+//        ),
+//      )
+//    ],
+//  );
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      MatchInfoText("Game Period", "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
-      MatchInfoText("Respawn Time", "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
+      MatchInfoText("Max Players", "${exampleOptions.maxPlayers}"),
+      MatchInfoText("Game Period",
+          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+      MatchInfoText("Respawn Time",
+          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
       MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
       MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
       MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
@@ -142,13 +198,16 @@ Widget AboutPopupContent()
 
 Column MatchInfoText(String label, String text) {
   return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("${label}: ", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        Text(text),
-        SizedBox(height: 15,),
-      ],
-    );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("${label}: ",
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      Text(text),
+      SizedBox(
+        height: 15,
+      ),
+    ],
+  );
 }
 
 class LargeUserHomeButton extends StatelessWidget {
@@ -187,7 +246,8 @@ class TargetName extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.all(40),
-      child: Text('Target: ${username}', style: TextStyle(fontSize: 30), textAlign: TextAlign.center),
+      child: Text('Target: ${username}',
+          style: TextStyle(fontSize: 30), textAlign: TextAlign.center),
     );
   }
 }
