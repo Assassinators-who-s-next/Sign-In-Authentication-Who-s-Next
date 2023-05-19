@@ -33,17 +33,17 @@ class JoinCreatePage extends StatelessWidget {
 
   void CreateGame(BuildContext context) async {
     print("Create Game button pressed");
-    User? user = FirebaseAuth.instance.currentUser;
-    MatchOptions placeholderMatchOptions = MatchOptions(
-      'Single',
-      'Fixed',
-      5,
-      'Limited',
-      60,
-      'Area A',
-      'Helmet',
-    );
-    createGame(context, user?.uid, placeholderMatchOptions);
+//    User? user = FirebaseAuth.instance.currentUser;
+//    MatchOptions placeholderMatchOptions = MatchOptions(
+//      'Single',
+//      'Fixed',
+//      5,
+//      'Limited',
+//      60,
+//      'Area A',
+//      'Helmet',
+//    );
+//    createGame(context, user?.uid, placeholderMatchOptions);
 
     // Navigator.pushReplacement(
     //   context,
@@ -139,11 +139,11 @@ class JoinCreatePage extends StatelessWidget {
                             shadowColor: createButtonColor, // elevation color
                             elevation: 5, // elevation of button
                             shape: StadiumBorder()),
-                        onPressed: () 
-                        {
+                        onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CreateGamePage()),
+                            MaterialPageRoute(
+                                builder: (context) => CreateGamePage()),
                           );
                         },
                         child: const Text('Create Game',
