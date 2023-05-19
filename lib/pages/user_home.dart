@@ -102,7 +102,7 @@ Center eliminationTargetScreen(double screenWidth) {
 }
 
 Center prematchScreen(double screenWidth) {
-//  int maxPlayersInMatch = 2;
+  int maxPlayersInMatch = 2;
   int playersInMatch = 1;
   return Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -110,9 +110,9 @@ Center prematchScreen(double screenWidth) {
       padding: const EdgeInsets.all(20),
       child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
     ),
-    //Text("${playersInMatch}/${maxPlayersInMatch}",
-    Text(
-        "${selectedGroup.players.length}/${selectedGroup.matchOptions.maxPlayers}",
+    Text("${playersInMatch}/${maxPlayersInMatch}",
+        //Text(
+        //    "${selectedGroup.players.length}/${selectedGroup.matchOptions.maxPlayers}",
         style: TextStyle(fontSize: 25)),
     Padding(
       padding: const EdgeInsetsDirectional.all(40),
@@ -154,8 +154,8 @@ Container InfoButton(
 }
 
 Widget AboutPopupContent() {
-  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month",
-      3, "During class, in library", "Floaties");
+  MatchOptions exampleOptions = MatchOptions(100, "Finger Guns", "Week", 2,
+      "Month", 3, "During class, in library", "Floaties");
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [

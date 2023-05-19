@@ -1,3 +1,4 @@
+import 'package:basic_auth/components/number_textfield.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/pages/user_home.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:loader_overlay/loader_overlay.dart';
 import '../models/match_options.dart';
 import '../networking.dart';
 
-// import 'homepage.dart';
 import 'home_page.dart';
 
 /**
@@ -105,6 +105,7 @@ class _CreateGamePage extends State<CreateGamePage> {
 
   final off_limit_controller = TextEditingController();
   final stay_safe_controller = TextEditingController();
+  final max_player_controller = TextEditingController();
 
   guidetoUserHome(BuildContext context) {
     Navigator.pop(context);
@@ -142,41 +143,45 @@ class _CreateGamePage extends State<CreateGamePage> {
               const Padding(
                 padding: EdgeInsetsDirectional.only(bottom: 20),
               ),
-    
+
               // respawn info
               respawnType(),
               const Padding(padding: EdgeInsetsDirectional.only(bottom: 20)),
-    
+
               // total game info
               totalGameType(),
               const Padding(padding: EdgeInsetsDirectional.only(bottom: 20)),
-    
+
               const Text(
                 'Rules',
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
-    
               const Padding(
                 padding: EdgeInsetsDirectional.only(bottom: 20),
               ),
-    
+
+              maxPlayers(screenWidth: screenWidth),
+              const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 20),
+              ),
+
               // elimination type
               eliminationType(),
               const Padding(
                 padding: EdgeInsetsDirectional.only(bottom: 20),
               ),
-    
+
               // off limit info
               offLimitInfo(screenWidth),
               const Padding(
                 padding: EdgeInsetsDirectional.only(bottom: 20),
               ),
-    
+
               staySafeInfo(screenWidth),
               const Padding(
                 padding: EdgeInsetsDirectional.only(bottom: 20),
               ),
-    
+
               TextButton(
                 child: const Text(
                   'Create',
@@ -191,9 +196,8 @@ class _CreateGamePage extends State<CreateGamePage> {
     );
   }
 
-  void OnPressCreateGameButton(BuildContext context) async
-  {
-    // test if fields were inputed correctly
+  void OnPressCreateGameButton(BuildContext context) async {
+    // test if fields were inputted correctly
     if (respawn_choice == null || respawn_duration_choice == null) {
       popUp(context, 'Fill out Respawn Information');
     } else if (total_game_choice == null ||
@@ -208,21 +212,36 @@ class _CreateGamePage extends State<CreateGamePage> {
       popUp(context,
           'Total game time must be greater or equal to the respawn time');
       // otherwise go to home page
+    } else if (max_player_controller.text == '') {
+      popUp(context, 'Fill in the max number of players');
+    } else if (int.parse(max_player_controller.text) < 2 ||
+        int.parse(max_player_controller.text) > 100) {
+      popUp(context, 'Number of players must be 2 - 100 players');
     } else {
       User? user = FirebaseAuth.instance.currentUser;
       MatchOptions placeholderMatchOptions = MatchOptions(
-        'Single',
-        'Fixed',
-        5,
-        'Limited',
-        60,
-        'Area A',
-        'Helmet',
-      );
+          int.parse(max_player_controller.text),
+          elim_choice!,
+          respawn_choice!.name,
+          respawn_duration_choice!,
+          total_game_choice!.name,
+          total_game_duration_choice!,
+          off_limit_controller.text,
+          stay_safe_controller.text
+//        100,
+//        'Single',
+//        'Fixed',
+//        5,
+//        'Limited',
+//        60,
+//        'Area A',
+//        'Helmet',
+          );
 
       context.loaderOverlay.show();
       // creates game with game info and creates game code
-      await createGame(context, user?.uid, placeholderMatchOptions).then((value) => selectedGroup = value);
+      await createGame(context, user?.uid, placeholderMatchOptions)
+          .then((value) => selectedGroup = value);
 
       context.loaderOverlay.hide();
       guidetoUserHome(context);
@@ -300,12 +319,29 @@ class _CreateGamePage extends State<CreateGamePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('Off Limit Areas: '),
+        const Text('Off Limit Areas:'),
         SizedBox(
           width: screenWidth / 2,
           child: MyTextField(
             controller: off_limit_controller,
             hintText: 'eg. School, Mall...',
+            obscureText: false,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row maxPlayers({required double screenWidth}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text('Max Players:'),
+        SizedBox(
+          width: screenWidth / 2,
+          child: NumberTextField(
+            controller: max_player_controller,
+            hintText: 'range of 2 - 100 players',
             obscureText: false,
           ),
         ),

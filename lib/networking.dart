@@ -134,6 +134,7 @@ Future<Group> loadGroup(String groupID) async {
     }
 
     MatchOptions matchOptions = MatchOptions(
+      groupDocument.get('maxPlayers'),
       groupDocument.get('eliminationType'),
       groupDocument.get('respawnTimeType'),
       groupDocument.get('respawnDuration'),
@@ -258,6 +259,7 @@ Future<Group> createGame(
   }
 
   await groupsRef.doc(newGroupID).set({
+    'maxPlayers': matchOptions.maxPlayers,
     'eliminationType': matchOptions.eliminationType,
     'respawnTimeType': matchOptions.respawnTimeType,
     'respawnDuration': matchOptions.respawnDuration,

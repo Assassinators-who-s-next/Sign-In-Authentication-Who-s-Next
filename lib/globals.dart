@@ -20,11 +20,13 @@ UserData myUserData = UserData(
 );
 String myName = "no_name";
 bool finishedLoadingUser = false;
-StreamController finishedLoadingUserController = StreamController<bool>.broadcast();
+StreamController finishedLoadingUserController =
+    StreamController<bool>.broadcast();
 Group selectedGroup = Group(
     "no",
     [],
     MatchOptions(
+      100,
       'Single',
       'Fixed',
       5,
