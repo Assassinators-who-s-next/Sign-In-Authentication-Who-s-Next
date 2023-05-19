@@ -1,5 +1,6 @@
 import 'package:basic_auth/components/number_textfield.dart';
 import 'package:basic_auth/pages/user_home.dart';
+import 'package:basic_auth/utils/popup_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -187,23 +188,41 @@ class _CreateGamePage extends State<CreateGamePage> {
               onPressed: () {
                 // test if fields were inputted correctly
                 if (respawn_choice == null || respawn_duration_choice == null) {
-                  popUp(context, 'Fill out Respawn Information');
+                  showPopup(context,
+                      bottomWidgets: [closeButton(context)],
+                      content: const Text('Fill out Respawn Information'));
+                  //popUp(context, 'Fill out Respawn Information');
                 } else if (total_game_choice == null ||
                     total_game_duration_choice == null) {
-                  popUp(context, 'Fill out Game Duration Information');
+                  showPopup(context,
+                      bottomWidgets: [closeButton(context)],
+                      content:
+                          const Text('Fill out Game Duration Information'));
+                  //popUp(context, 'Fill out Game Duration Information');
                 } else if (checkRespawnToTotalGameTime(
                         respawn_choice!.name,
                         respawn_duration_choice!,
                         total_game_choice!.name,
                         total_game_duration_choice!) ==
                     false) {
-                  popUp(context,
-                      'Total game time must be greater or equal to the respawn time');
+                  showPopup(context,
+                      bottomWidgets: [closeButton(context)],
+                      content: const Text(
+                          'Total game time must be greater or equal to the respawn time'));
+                  //popUp(context,
+                  //    'Total game time must be greater or equal to the respawn time');
                 } else if (max_players_controller.text == '') {
-                  popUp(context, 'Fill in the max number of players');
+                  showPopup(context,
+                      bottomWidgets: [closeButton(context)],
+                      content: const Text('Fill in the max number of players'));
+                  //popUp(context, 'Fill in the max number of players');
                 } else if (int.parse(max_players_controller.text) < 2 ||
                     int.parse(max_players_controller.text) > 100) {
-                  popUp(context, 'Number of players must be from 2 - 100');
+                  showPopup(context,
+                      bottomWidgets: [closeButton(context)],
+                      content:
+                          const Text('Number of players must be from 2 - 100'));
+                  //popUp(context, 'Number of players must be from 2 - 100');
                   // otherwise go to home page
                 } else {
                   User? user = FirebaseAuth.instance.currentUser;
@@ -239,20 +258,20 @@ class _CreateGamePage extends State<CreateGamePage> {
     );
   }
 
-  Future<dynamic> popUp(BuildContext context, String textInfo) {
-    return showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: null,
-        content: Text(textInfo, textAlign: TextAlign.center),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'))
-        ],
-      ),
-    );
-  }
+//  Future<dynamic> popUp(BuildContext context, String textInfo) {
+//    return showDialog(
+//      context: context,
+//      builder: (_) => AlertDialog(
+//        title: null,
+//        content: Text(textInfo, textAlign: TextAlign.center),
+//        actions: [
+//          TextButton(
+//              onPressed: () => Navigator.pop(context),
+//              child: const Text('Close'))
+//        ],
+//      ),
+//    );
+//  }
 
   bool checkRespawnToTotalGameTime(String respawn_choice, int respawn_duration,
       String total_game_type, int total_game_time) {
