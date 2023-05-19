@@ -1,3 +1,4 @@
+import 'package:basic_auth/components/number_textfield.dart';
 import 'package:basic_auth/pages/user_home.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
@@ -103,6 +104,7 @@ class _CreateGamePage extends State<CreateGamePage> {
 
   final off_limit_controller = TextEditingController();
   final stay_safe_controller = TextEditingController();
+  final max_players_controller = TextEditingController();
 
   guidetoUserHome(BuildContext context) {
     Navigator.pop(context);
@@ -152,10 +154,13 @@ class _CreateGamePage extends State<CreateGamePage> {
               'Rules',
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
             ),
-
             const Padding(
               padding: EdgeInsetsDirectional.only(bottom: 20),
             ),
+
+            // max players
+            maxPlayers(screenWidth),
+            const Padding(padding: EdgeInsetsDirectional.only(bottom: 20)),
 
             // elimination type
             eliminationType(),
@@ -180,7 +185,7 @@ class _CreateGamePage extends State<CreateGamePage> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               onPressed: () {
-                // test if fields were inputed correctly
+                // test if fields were inputted correctly
                 if (respawn_choice == null || respawn_duration_choice == null) {
                   popUp(context, 'Fill out Respawn Information');
                 } else if (total_game_choice == null ||
@@ -194,18 +199,31 @@ class _CreateGamePage extends State<CreateGamePage> {
                     false) {
                   popUp(context,
                       'Total game time must be greater or equal to the respawn time');
+                } else if (max_players_controller.text == '') {
+                  popUp(context, 'Fill in the max number of players');
+                } else if (int.parse(max_players_controller.text) < 2 ||
+                    int.parse(max_players_controller.text) > 100) {
+                  popUp(context, 'Number of players must be from 2 - 100');
                   // otherwise go to home page
                 } else {
                   User? user = FirebaseAuth.instance.currentUser;
                   MatchOptions placeholderMatchOptions = MatchOptions(
-                    'Single',
-                    'Fixed',
-                    5,
-                    'Limited',
-                    60,
-                    'Area A',
-                    'Helmet',
-                  );
+                      elim_choice!,
+                      respawn_choice!.name,
+                      respawn_duration_choice!,
+                      total_game_choice!.name,
+                      total_game_duration_choice!,
+                      off_limit_controller.text,
+                      stay_safe_controller.text
+
+//                    'Single',
+//                    'Fixed',
+//                    5,
+//                    'Limited',
+//                    60,
+//                    'Area A',
+//                    'Helmet',
+                      );
 
                   // creates game with game info and creates game code
                   createGame(context, user?.uid, placeholderMatchOptions);
@@ -291,7 +309,7 @@ class _CreateGamePage extends State<CreateGamePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('Off Limit Areas: '),
+        const Text('Off Limit Areas:'),
         SizedBox(
           width: screenWidth / 2,
           child: MyTextField(
@@ -323,6 +341,23 @@ class _CreateGamePage extends State<CreateGamePage> {
               child: Text(value),
             );
           }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Row maxPlayers(double screenWidth) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text('Max Players'),
+        SizedBox(
+          width: screenWidth / 2,
+          child: NumberTextField(
+            controller: max_players_controller,
+            hintText: '2 - 100',
+            obscureText: false,
+          ),
         ),
       ],
     );

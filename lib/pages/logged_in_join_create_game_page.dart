@@ -34,17 +34,17 @@ class LoggedInJoinCreatePage extends StatelessWidget {
 
   void CreateGame(BuildContext context) async {
     print("Create Game button pressed");
-    User? user = FirebaseAuth.instance.currentUser;
-    MatchOptions placeholderMatchOptions = MatchOptions(
-      'Single',
-      'Fixed',
-      5,
-      'Limited',
-      60,
-      'Area A',
-      'Helmet',
-    );
-    createGame(context, user?.uid, placeholderMatchOptions);
+//    User? user = FirebaseAuth.instance.currentUser;
+//    MatchOptions placeholderMatchOptions = MatchOptions(
+//      'Single',
+//      'Fixed',
+//      5,
+//      'Limited',
+//      60,
+//      'Area A',
+//      'Helmet',
+//    );
+//    createGame(context, user?.uid, placeholderMatchOptions);
 
     // Navigator.pushReplacement(
     //   context,
@@ -68,7 +68,8 @@ class LoggedInJoinCreatePage extends StatelessWidget {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
+                MaterialPageRoute(
+                    builder: (BuildContext context) => (HomePage())),
               );
             },
           ),
