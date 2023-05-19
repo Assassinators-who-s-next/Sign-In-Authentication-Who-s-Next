@@ -208,6 +208,7 @@ class _CreateGamePage extends State<CreateGamePage> {
                 } else {
                   User? user = FirebaseAuth.instance.currentUser;
                   MatchOptions placeholderMatchOptions = MatchOptions(
+                      int.parse(max_players_controller.text),
                       elim_choice!,
                       respawn_choice!.name,
                       respawn_duration_choice!,
