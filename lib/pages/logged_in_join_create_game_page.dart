@@ -1,6 +1,7 @@
 import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/pages/create_game_page.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import '../models/join_game_results.dart';
 import '../networking.dart';
 import '../utils/popup_modal.dart';
@@ -28,9 +29,14 @@ class LoggedInJoinCreatePage extends StatelessWidget {
       contentText: "Must supply game code in order to join match.");
       return;
     }
+
+    context.loaderOverlay.show();
+
     User? user = FirebaseAuth.instance.currentUser;
     JoinGameResults results = JoinGameResults(false, "Join failure.");
     await join_game(context, gameCode, user?.uid).then((value) => {results = value});
+
+    context.loaderOverlay.hide();
 
     if (!results.success)
     {
@@ -49,6 +55,7 @@ class LoggedInJoinCreatePage extends StatelessWidget {
     // );
   }
 
+/*
   void CreateGame(BuildContext context) async {
     print("Create Game button pressed");
     User? user = FirebaseAuth.instance.currentUser;
@@ -73,10 +80,12 @@ class LoggedInJoinCreatePage extends StatelessWidget {
       MaterialPageRoute(builder: (context) => CreateGamePage()),
     );
   }
+  */
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return LoaderOverlay(
+      child: Scaffold(
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
           title: Text('Enter the game'),
@@ -90,7 +99,7 @@ class LoggedInJoinCreatePage extends StatelessWidget {
             },
           ),
         ),
-
+        
         // safe area ignores 'notch area' on different phone shapes
         body: SafeArea(
           child: Center(
@@ -176,6 +185,7 @@ class LoggedInJoinCreatePage extends StatelessWidget {
               ],
             ),
           ),
-        ));
+        )),
+    );
   }
 }

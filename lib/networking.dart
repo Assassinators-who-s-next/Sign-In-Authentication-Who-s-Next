@@ -67,8 +67,8 @@ Future<List<String>> get_user_groups(String user_id) async {
   }
 }
 
-void set_user_data(
-    String userID, UserData userData, List<group> playerGroups) async {
+Future set_user_data(
+    String userID, UserData userData, List<Group> playerGroups) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
   print("set_user_data(" + userID + ", " + userData.name + ")");
@@ -102,7 +102,7 @@ void applyName(List<player> players) async {
   }
 }
 
-Future<group> loadGroup(String groupID) async {
+Future<Group> loadGroup(String groupID) async {
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
 
@@ -141,7 +141,7 @@ Future<group> loadGroup(String groupID) async {
       groupDocument.get('safetyMethods'),
     );
 
-    return group(groupID, players, matchOptions);
+    return Group(groupID, players, matchOptions);
   } else {
     throw Exception('Group does not exist');
   }
@@ -157,7 +157,7 @@ Future<bool> load_my_user_data(String user_id) async {
   }
   var my_user_groups = await get_user_groups(user_id);
 
-  List<group> myGroups = [];
+  List<Group> myGroups = [];
   for (int i = 0; i < my_user_groups.length; i++) {
     String element = my_user_groups[i];
     try {
@@ -179,7 +179,7 @@ Future<bool> load_my_user_data(String user_id) async {
   return true;
 }
 
-void set_default_user_data(String token) async {
+Future set_default_user_data(String token) async {
   UserData userData = UserData(
     uid: globals.fireBaseUser!.uid,
     imagePath: "",
@@ -189,8 +189,8 @@ void set_default_user_data(String token) async {
     description: "",
     frequentedLocations: "",
   );
-  List<group> playerGroups = [];
-  set_user_data(token, userData, playerGroups);
+  List<Group> playerGroups = [];
+  await set_user_data(token, userData, playerGroups);
 
   globals.myUserData = userData;
   globals.myName = userData.name;
@@ -199,24 +199,23 @@ void set_default_user_data(String token) async {
 
 void login_custom(
     BuildContext context, String userName, String password) async {
-  bool sucess = await load_my_user_data(userName);
+  bool success = await load_my_user_data(userName);
   //if (!sucess) set_default_user_data(userName);
 }
 
-void login_google(BuildContext context, String email, String token) async {
-  bool sucess = await load_my_user_data(token);
-  if (!sucess) {
-    print("oops");
-    set_default_user_data(token);
+Future login_google(BuildContext context, String email, String token) async {
+  bool success = await load_my_user_data(token);
+  if (!success) {
+    await set_default_user_data(token);
   }
 }
 
 Future<void> login_apple(BuildContext context, String token) async {
-  bool sucess = await load_my_user_data(token);
-  if (!sucess) set_default_user_data(token);
+  bool success = await load_my_user_data(token);
+  if (!success) set_default_user_data(token);
 }
 
-void createGame(
+Future<Group> createGame(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
@@ -250,7 +249,7 @@ void createGame(
 
   print('User $userID created new game: $newGroupID');
 
-  group newGroup = group(newGroupID, [player(userID!, 0, null)], matchOptions);
+  Group newGroup = Group(newGroupID, [player(userID!, 0, null)], matchOptions);
 
   bool isNotInGroup = globals.myGroups.isEmpty;
   globals.myGroups.add(newGroup);
@@ -258,6 +257,8 @@ void createGame(
     globals.selectedGroup = newGroup;
   }
   set_user_data(userID, globals.myUserData, globals.myGroups);
+
+  return newGroup;
 
   //join_game(context, newGroupID, userID!);
 }

@@ -15,7 +15,6 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = myUserData;
-    print("USER IMAGE PATH: ${user.imagePath}");
     //final user = UserPreferences?.user;
 
     return Scaffold(
@@ -27,9 +26,9 @@ class Profile extends StatelessWidget {
               children: [
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Profile Page', style: TextStyle(fontSize: 50)),
+                  child: Center(child: Text('Profile Page', style: TextStyle(fontSize: 50, ), textAlign: TextAlign.center)),
                 ),
-                buildPicture(user, context),
+                Center(child: buildPicture(user, context)),
                 //buildPicture(myUserData, context),
 
                 Padding(
@@ -87,7 +86,7 @@ class Profile extends StatelessWidget {
   Widget buildDisplayedInfo(UserData userData, BuildContext context) {
     var mediaQueryData = MediaQuery.of(context);
     var horizontalUnit = mediaQueryData.size.width / 100;
-    var width = horizontalUnit * 85;
+    var width = horizontalUnit * 100;
     return Column(
       children: [
         ProfileTextField(

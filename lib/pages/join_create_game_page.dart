@@ -48,6 +48,7 @@ class JoinCreatePage extends StatelessWidget {
     // );
   }
 
+/*
   void CreateGame(BuildContext context) async {
     print("Create Game button pressed");
     User? user = FirebaseAuth.instance.currentUser;
@@ -72,6 +73,7 @@ class JoinCreatePage extends StatelessWidget {
       MaterialPageRoute(builder: (context) => CreateGamePage()),
     );
   }
+  */
 
   @override
   Widget build(BuildContext context) {

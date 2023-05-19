@@ -1,6 +1,9 @@
 library whos_next.globals;
 
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 import 'models/user_data.dart';
 import 'models/match_options.dart';
@@ -16,7 +19,9 @@ UserData myUserData = UserData(
   frequentedLocations: "",
 );
 String myName = "no_name";
-group selectedGroup = group(
+bool finishedLoadingUser = false;
+StreamController finishedLoadingUserController = StreamController<bool>.broadcast();
+Group selectedGroup = Group(
     "no",
     [],
     MatchOptions(
@@ -28,5 +33,5 @@ group selectedGroup = group(
       'Area A',
       'Helmet',
     ));
-List<group> myGroups = [];
+List<Group> myGroups = [];
 User? fireBaseUser;

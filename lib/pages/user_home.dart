@@ -6,26 +6,34 @@ import 'package:basic_auth/utils/popup_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
 
+import '../game_group.dart';
+
 class UserHome extends StatefulWidget {
   @override
   State<UserHome> createState() => _UserHomeState();
 }
 
 class _UserHomeState extends State<UserHome> {
-  List<String> numActiveGames = [
-    'Game A',
-    'Game B',
-    'Game C',
-    'Game D',
-    'Game E',
-    'Game F',
-    'Game G',
-    'Game H',
-    'Game I',
-    'Game J',
-  ];
-
   bool? isCheckedBox = false;
+  late Group selGroup;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    setState(() {
+      selGroup = selectedGroup;
+    });
+  }
+
+  void SetSelectedGroup(Group group)
+  {
+    selectedGroup = group;
+    setState(() {
+      selGroup = group;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +49,11 @@ class _UserHomeState extends State<UserHome> {
     }
 
     return GameListDrawer(
-        numActiveGames: numActiveGames,
         screenWidth: screenWidth,
         screenHeight: screenHeight,
-        content: homeScreenContent(context, screenWidth, screenHeight));
+        content: homeScreenContent(context, screenWidth, screenHeight),
+        onSelectGroup:(p0) => SetSelectedGroup(p0),
+        );
   }
 }
 
