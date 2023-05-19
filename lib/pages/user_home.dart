@@ -110,7 +110,7 @@ Center eliminationTargetScreen(double screenWidth) {
 }
 
 Center prematchScreen(double screenWidth) {
-  int maxPlayersInMatch = 2;
+//  int maxPlayersInMatch = 2;
   int playersInMatch = 1;
   return Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -118,7 +118,9 @@ Center prematchScreen(double screenWidth) {
       padding: const EdgeInsets.all(20),
       child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
     ),
-    Text("${playersInMatch}/${maxPlayersInMatch}",
+    //Text("${playersInMatch}/${maxPlayersInMatch}",
+    Text(
+        "${selectedGroup.players.length}/${selectedGroup.matchOptions.maxPlayers}",
         style: TextStyle(fontSize: 25)),
     Padding(
       padding: const EdgeInsetsDirectional.all(40),
