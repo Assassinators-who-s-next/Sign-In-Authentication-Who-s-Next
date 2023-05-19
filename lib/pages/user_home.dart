@@ -159,19 +159,33 @@ Container InfoButton(
         padding: const EdgeInsets.all(10.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(size),
-          onTap: () => showPopup(
-            context,
+          onTap: () => 
+          {
+            showPopup(context, 
+              title: Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+              content: AboutPopupContent(),
+              bottomWidgets: [
+                closeButton(context),
+              ],
+              width: screenWidth * .9, //width
+              height: screenHeight * .9, //height
+            )
+          },
+          
+          
+          // showPopup(
+          //   context,
 
-            // {
-            //   const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-            //   AboutPopupContent(),
-            //   [
-            //     closeButton(context),
-            //   ],
-            //   screenWidth * .9, //width
-            //   screenHeight * .9, //height
-            // }
-          ),
+          //   {
+          //     const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+          //     AboutPopupContent(),
+          //     [
+          //       closeButton(context),
+          //     ],
+          //     screenWidth * .9, //width
+          //     screenHeight * .9, //height
+          //   }
+          // ),
           child: Icon(Icons.info, size: size),
         ),
       ),

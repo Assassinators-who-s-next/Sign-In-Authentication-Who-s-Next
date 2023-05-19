@@ -37,7 +37,7 @@ class Profile extends StatelessWidget {
                   child: Column(
                     children: [
                       //buildDisplayedInfo(user, context),
-                      buildDisplayedInfo(myUserData, context),
+                      buildDisplayedInfo(user, context),
                     ],
                   ),
                 ),
