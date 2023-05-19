@@ -223,11 +223,16 @@ Future<void> setPlayerInGroup(
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
 
+  print(
+      'in setPlayerInGroup\nplayer id: ${player.userID}\nplayer points: ${player.points}\nplayer state: ${player.state.index}');
+
   await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
     'user_id': player.userID,
     'points': player.points,
     'state': player.state.index,
   });
+
+  print('finished setting player in group');
 
   /*
   await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
@@ -270,6 +275,19 @@ void createGame(
   print('User $userID created new game: $newGroupID');
 
   group newGroup = group(newGroupID, [Player(userID!, 0, null)], matchOptions);
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection('group')
+      .doc(newGroupID)
+      .collection('players')
+      .get();
+  if (snapshot.size == 0) {
+    print('no players collection to be found');
+  } else {
+    print('there is a player collection');
+  }
+
+  print('num plyaers in newly created group: ${newGroup.players.length}');
 
   bool isNotInGroup = globals.myGroups.isEmpty;
   globals.myGroups.add(newGroup);
