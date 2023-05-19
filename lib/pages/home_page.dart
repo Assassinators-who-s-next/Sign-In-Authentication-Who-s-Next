@@ -49,12 +49,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void dispose() {
-    finishedLoadingUserController.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(

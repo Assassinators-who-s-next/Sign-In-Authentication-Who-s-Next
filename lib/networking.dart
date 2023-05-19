@@ -87,7 +87,7 @@ Future set_user_data(
   });
 }
 
-void applyName(List<player> players) async {
+void applyName(List<Player> players) async {
   for (int i = 0; i < players.length; i++) {
     String element = players[i].userID;
     try {
@@ -108,8 +108,9 @@ Future<Group> loadGroup(String groupID) async {
 
   DocumentSnapshot groupDocument = await groupsRef.doc(groupID).get();
 
+  print("Loading group: " + groupID);
   if (groupDocument.exists) {
-    List<player> players = [];
+    List<Player> players = [];
     //List<dynamic> playerDataList = await groupDocument.get('players');
     //List<dynamic> playerDataList = await groupsRef.collection(groupID).get('players');
     //await groupsRef.doc(groupID).collection('players').get();
@@ -127,7 +128,8 @@ Future<Group> loadGroup(String groupID) async {
         String userId =
             data['user_id'] ?? ''; // Use an empty string if the value is null
         int points = data['points'] ?? 0; // Use 0 if the value is null
-        players.add(player(userId, points, null));
+        PlayerState playerState = PlayerState.values[data['state'] ?? 0];
+        players.add(Player(userId, points, null, state: playerState));
       }
     }
 
@@ -215,6 +217,27 @@ Future<void> login_apple(BuildContext context, String token) async {
   if (!success) set_default_user_data(token);
 }
 
+Future<void> setPlayerInGroup(
+    String userID, String newGroupID, Player player) async {
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
+
+  await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
+    'user_id': player.userID,
+    'points': player.points,
+    'state': player.state.index,
+  });
+
+  /*
+  await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
+    'players': [
+      {'user_id': userID, 'points': 0, 'state': (PlayerState.alive)}
+    ],
+    // Add any other fields you want to initialize here
+  });
+  */
+}
+
 Future<Group> createGame(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
@@ -240,16 +263,11 @@ Future<Group> createGame(
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
-  await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
-    'players': [
-      {'user_id': userID, 'points': 0}
-    ],
-    // Add any other fields you want to initialize here
-  });
+  await setPlayerInGroup(newGroupID, userID!, Player(userID, 0, null));
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup = Group(newGroupID, [player(userID!, 0, null)], matchOptions);
+  Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions);
 
   bool isNotInGroup = globals.myGroups.isEmpty;
   globals.myGroups.add(newGroup);
@@ -308,12 +326,11 @@ Future<JoinGameResults> join_game(BuildContext context, String game_code, String
 }
 
 void update_user(BuildContext context, String whatToChange, String changeTo) {
-
   var db = FirebaseFirestore.instance;
   final nameRef = db.collection("users").doc(globals.myUserData.uid);
   nameRef.update({whatToChange: changeTo}).then(
-    (value) => print("DocumentSnapshot successfully updated!"),
-    onError: (e) => print("Error updating document $e"));
+      (value) => print("DocumentSnapshot successfully updated!"),
+      onError: (e) => print("Error updating document $e"));
 }
 
 class DatabaseReference {}
