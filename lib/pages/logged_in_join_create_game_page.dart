@@ -1,7 +1,10 @@
 import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/pages/create_game_page.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import '../models/join_game_results.dart';
 import '../networking.dart';
+import '../utils/popup_modal.dart';
 import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
@@ -18,9 +21,29 @@ class LoggedInJoinCreatePage extends StatelessWidget {
   TextEditingController gameCodeController = TextEditingController();
 
   void JoinGame(BuildContext context) async {
-    print("Join Game button pressed");
+    String gameCode = gameCodeController.text;
+    print("Join Game button pressed with code $gameCode");
+    if (gameCode == "")   
+    {
+      showSimplePopupWithCancel(context,
+      contentText: "Must supply game code in order to join match.");
+      return;
+    }
+
+    context.loaderOverlay.show();
+
     User? user = FirebaseAuth.instance.currentUser;
-    join_game(context, gameCodeController.text, user?.uid);
+    JoinGameResults results = JoinGameResults(false, "Join failure.");
+    await join_game(context, gameCode, user?.uid).then((value) => {results = value});
+
+    context.loaderOverlay.hide();
+
+    if (!results.success)
+    {
+      showSimplePopupWithCancel(context,
+      contentText: results.errorMessage);
+      return;
+    }
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
@@ -32,19 +55,20 @@ class LoggedInJoinCreatePage extends StatelessWidget {
     // );
   }
 
+/*
   void CreateGame(BuildContext context) async {
     print("Create Game button pressed");
-//    User? user = FirebaseAuth.instance.currentUser;
-//    MatchOptions placeholderMatchOptions = MatchOptions(
-//      'Single',
-//      'Fixed',
-//      5,
-//      'Limited',
-//      60,
-//      'Area A',
-//      'Helmet',
-//    );
-//    createGame(context, user?.uid, placeholderMatchOptions);
+    User? user = FirebaseAuth.instance.currentUser;
+    MatchOptions placeholderMatchOptions = MatchOptions(
+      'Single',
+      'Fixed',
+      5,
+      'Limited',
+      60,
+      'Area A',
+      'Helmet',
+    );
+    createGame(context, user?.uid, placeholderMatchOptions);
 
     // Navigator.pushReplacement(
     //   context,
@@ -56,10 +80,12 @@ class LoggedInJoinCreatePage extends StatelessWidget {
       MaterialPageRoute(builder: (context) => CreateGamePage()),
     );
   }
+  */
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return LoaderOverlay(
+      child: Scaffold(
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
           title: Text('Enter the game'),
@@ -68,13 +94,12 @@ class LoggedInJoinCreatePage extends StatelessWidget {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => (HomePage())),
+                MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
               );
             },
           ),
         ),
-
+        
         // safe area ignores 'notch area' on different phone shapes
         body: SafeArea(
           child: Center(
@@ -160,6 +185,7 @@ class LoggedInJoinCreatePage extends StatelessWidget {
               ],
             ),
           ),
-        ));
+        )),
+    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/player.dart';
 import 'package:flutter/material.dart';
+import 'models/join_game_results.dart';
 import 'pages/home_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -66,8 +67,8 @@ Future<List<String>> get_user_groups(String user_id) async {
   }
 }
 
-void set_user_data(
-    String userID, UserData userData, List<group> playerGroups) async {
+Future set_user_data(
+    String userID, UserData userData, List<Group> playerGroups) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
   print("set_user_data(" + userID + ", " + userData.name + ")");
@@ -101,7 +102,7 @@ void applyName(List<Player> players) async {
   }
 }
 
-Future<group> loadGroup(String groupID) async {
+Future<Group> loadGroup(String groupID) async {
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
 
@@ -133,7 +134,6 @@ Future<group> loadGroup(String groupID) async {
     }
 
     MatchOptions matchOptions = MatchOptions(
-      groupDocument.get('maxPlayers'),
       groupDocument.get('eliminationType'),
       groupDocument.get('respawnTimeType'),
       groupDocument.get('respawnDuration'),
@@ -143,7 +143,7 @@ Future<group> loadGroup(String groupID) async {
       groupDocument.get('safetyMethods'),
     );
 
-    return group(groupID, players, matchOptions);
+    return Group(groupID, players, matchOptions);
   } else {
     throw Exception('Group does not exist');
   }
@@ -159,7 +159,7 @@ Future<bool> load_my_user_data(String user_id) async {
   }
   var my_user_groups = await get_user_groups(user_id);
 
-  List<group> myGroups = [];
+  List<Group> myGroups = [];
   for (int i = 0; i < my_user_groups.length; i++) {
     String element = my_user_groups[i];
     try {
@@ -181,18 +181,18 @@ Future<bool> load_my_user_data(String user_id) async {
   return true;
 }
 
-void set_default_user_data(String token) async {
+Future set_default_user_data(String token) async {
   UserData userData = UserData(
-    uid: "",
-    imagePath: null,
-    name: "New User",
-    email: "null",
-    pronouns: "null",
-    description: "null",
-    frequentedLocations: "null",
+    uid: globals.fireBaseUser!.uid,
+    imagePath: "",
+    name: globals.fireBaseUser!.displayName!,
+    email: globals.fireBaseUser!.email!,
+    pronouns: "",
+    description: "",
+    frequentedLocations: "",
   );
-  List<group> playerGroups = [];
-  set_user_data(token, userData, playerGroups);
+  List<Group> playerGroups = [];
+  await set_user_data(token, userData, playerGroups);
 
   globals.myUserData = userData;
   globals.myName = userData.name;
@@ -201,21 +201,20 @@ void set_default_user_data(String token) async {
 
 void login_custom(
     BuildContext context, String userName, String password) async {
-  bool sucess = await load_my_user_data(userName);
+  bool success = await load_my_user_data(userName);
   //if (!sucess) set_default_user_data(userName);
 }
 
-void login_google(BuildContext context, String email, String token) async {
-  bool sucess = await load_my_user_data(token);
-  if (!sucess) {
-    print("oops");
-    set_default_user_data(token);
+Future login_google(BuildContext context, String email, String token) async {
+  bool success = await load_my_user_data(token);
+  if (!success) {
+    await set_default_user_data(token);
   }
 }
 
 Future<void> login_apple(BuildContext context, String token) async {
-  bool sucess = await load_my_user_data(token);
-  if (!sucess) set_default_user_data(token);
+  bool success = await load_my_user_data(token);
+  if (!success) set_default_user_data(token);
 }
 
 Future<void> setPlayerInGroup(
@@ -244,7 +243,7 @@ Future<void> setPlayerInGroup(
   */
 }
 
-void createGame(
+Future<Group> createGame(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
@@ -259,7 +258,6 @@ void createGame(
   }
 
   await groupsRef.doc(newGroupID).set({
-    'maxPlayers': matchOptions.maxPlayers,
     'eliminationType': matchOptions.eliminationType,
     'respawnTimeType': matchOptions.respawnTimeType,
     'respawnDuration': matchOptions.respawnDuration,
@@ -270,11 +268,11 @@ void createGame(
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
-  await setPlayerInGroup(newGroupID, userID!, Player(userID, 0, null));
+  await setPlayerInGroup(userID!, newGroupID, Player(userID, 0, null));
 
   print('User $userID created new game: $newGroupID');
 
-  group newGroup = group(newGroupID, [Player(userID!, 0, null)], matchOptions);
+  Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions);
 
   final snapshot = await FirebaseFirestore.instance
       .collection('group')
@@ -296,10 +294,13 @@ void createGame(
   }
   set_user_data(userID, globals.myUserData, globals.myGroups);
 
+  return newGroup;
+
   //join_game(context, newGroupID, userID!);
 }
 
-void join_game(BuildContext context, String game_code, String? userID,
+Future<JoinGameResults> join_game(
+    BuildContext context, String game_code, String? userID,
     {int points = 0}) async {
   DocumentReference gameRef =
       FirebaseFirestore.instance.collection('groups').doc(game_code);
@@ -313,27 +314,30 @@ void join_game(BuildContext context, String game_code, String? userID,
     if (gameSnapshot.exists) {
       // Handle error case where game already exists
       //throw Exception('Game with ID $game_code already contains a player with ID: $userID');
-      print(
-          'Game with ID $game_code already contains a player with ID: $userID');
-      return;
+      return JoinGameResults(false, 'You are already a member of this game.');
     }
+    try {
+      var joinedGame = await loadGroup(game_code);
 
-    await gameRef
-        .collection('players')
-        .doc(userID)
-        .set({'user_id': userID, 'points': points});
-    print('User $userID added to game $game_code');
+      await gameRef
+          .collection('players')
+          .doc(userID)
+          .set({'user_id': userID, 'points': points});
+      print('User $userID added to game $game_code');
 
-    var joinedGame = await loadGroup(game_code);
-
-    bool isNotInGroup = globals.myGroups.isEmpty;
-    globals.myGroups.add(joinedGame);
-    if (isNotInGroup) {
-      globals.selectedGroup = joinedGame;
+      bool isNotInGroup = globals.myGroups.isEmpty;
+      globals.myGroups.add(joinedGame);
+      if (isNotInGroup) {
+        globals.selectedGroup = joinedGame;
+      }
+      set_user_data(userID!, globals.myUserData, globals.myGroups);
+      return JoinGameResults(true);
+    } catch (e) {
+      return JoinGameResults(false, "Game Not Found");
     }
-    set_user_data(userID!, globals.myUserData, globals.myGroups);
   } catch (e, stacktrace) {
-    print('Error adding user to game: $e at: $stacktrace');
+    print('Error adding user to game: $e');
+    return JoinGameResults(false, "Unexpected Error");
   }
 }
 

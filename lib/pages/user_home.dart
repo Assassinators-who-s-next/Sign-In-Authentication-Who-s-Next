@@ -3,22 +3,10 @@ import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
 import 'package:basic_auth/utils/popup_modal.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
 
-List<String> userIDs = [];
-
-Future getUserID() async {
-  await FirebaseFirestore.instance.collection('users').get().then(
-        (snapshot) => snapshot.docs.forEach(
-          (userID) {
-            print(userID.reference);
-            userIDs.add(userID.reference.id);
-          },
-        ),
-      );
-}
+import '../game_group.dart';
 
 class UserHome extends StatefulWidget {
   @override
@@ -26,25 +14,28 @@ class UserHome extends StatefulWidget {
 }
 
 class _UserHomeState extends State<UserHome> {
-  List<String> numActiveGames = [
-    'Game A',
-    'Game B',
-    'Game C',
-    'Game D',
-    'Game E',
-    'Game F',
-    'Game G',
-    'Game H',
-    'Game I',
-    'Game J',
-  ];
-
   bool? isCheckedBox = false;
+  late Group selGroup;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    setState(() {
+      selGroup = selectedGroup;
+    });
+  }
+
+  void SetSelectedGroup(Group group) {
+    selectedGroup = group;
+    setState(() {
+      selGroup = group;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    print(
-        'in userhome\n user id: ${myUserData.uid}\n name: ${myUserData.name}');
     // for sizing the image
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
@@ -57,10 +48,11 @@ class _UserHomeState extends State<UserHome> {
     }
 
     return GameListDrawer(
-        numActiveGames: numActiveGames,
-        screenWidth: screenWidth,
-        screenHeight: screenHeight,
-        content: homeScreenContent(context, screenWidth, screenHeight));
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
+      content: homeScreenContent(context, screenWidth, screenHeight),
+      onSelectGroup: (p0) => SetSelectedGroup(p0),
+    );
   }
 }
 
@@ -162,30 +154,18 @@ Container InfoButton(
 }
 
 Widget AboutPopupContent() {
-  print('selected group id: ${selectedGroup.group_name}');
-
+  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month",
+      3, "During class, in library", "Floaties");
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      MatchInfoText("Max Players", "${selectedGroup.matchOptions.maxPlayers}"),
       MatchInfoText("Game Period",
-          "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}(s)"),
+          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
       MatchInfoText("Respawn Time",
-          "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}(s)"),
-      MatchInfoText("Permitted Elimation Type",
-          selectedGroup.matchOptions.eliminationType),
-      MatchInfoText(
-          "Off Limit Areas", selectedGroup.matchOptions.offLimitAreas),
-      MatchInfoText("Safety Methods", selectedGroup.matchOptions.safetyMethods),
-
-      //      MatchInfoText("Max Players", "${exampleOptions.maxPlayers}"),
-      //      MatchInfoText("Game Period",
-      //          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
-      //      MatchInfoText("Respawn Time",
-      //          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
-      //      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
-      //      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
-      //      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
+          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
+      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
+      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
+      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
     ],
   );
 }
