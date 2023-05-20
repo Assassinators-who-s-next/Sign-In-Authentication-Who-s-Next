@@ -3,8 +3,10 @@ import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
 import 'package:basic_auth/utils/popup_modal.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../game_group.dart';
 
@@ -101,27 +103,44 @@ Center eliminationTargetScreen(double screenWidth) {
   );
 }
 
-Center prematchScreen(double screenWidth) {
-//  int maxPlayersInMatch = 2;
-//  int playersInMatch = 1;
-  return Center(
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-    Padding(
-      padding: const EdgeInsets.all(20),
-      child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
-    ),
-    //Text("${playersInMatch}/${maxPlayersInMatch}",
-    Text(
-        "${selectedGroup.players.length}/${selectedGroup.matchOptions.maxPlayers}",
-        style: TextStyle(fontSize: 25)),
-    Padding(
-      padding: const EdgeInsetsDirectional.all(40),
-      child: LargeUserHomeButton(
-          label: "Start match",
-          color: Color.fromARGB(255, 43, 167, 204),
-          onPressed: () => print("pressed start match button")),
-    ),
-  ]));
+//Center prematchScreen(double screenWidth) {
+StreamBuilder prematchScreen(double screenWidth) {
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('groups')
+        .doc(selectedGroup.group_name)
+        .collection('players')
+        .snapshots(),
+    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      // error
+      if (snapshot.hasError) {
+        return Center(
+            child: Text('Error loading game ${selectedGroup.group_name}'));
+        // receiving data
+      } else if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+//          return const Center(child: Text('Loading'));
+      }
+//        print('${snapshot.data!.size}');
+
+      return Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Padding(
+          padding: EdgeInsets.all(20),
+          child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
+        ),
+        Text("${snapshot.data!.size}/${selectedGroup.matchOptions.maxPlayers}",
+            style: const TextStyle(fontSize: 25)),
+        Padding(
+          padding: const EdgeInsetsDirectional.all(40),
+          child: LargeUserHomeButton(
+              label: "Start match",
+              color: const Color.fromARGB(255, 43, 167, 204),
+              onPressed: () => print("pressed start match button")),
+        ),
+      ]));
+    },
+  );
 }
 
 Container InfoButton(
@@ -154,9 +173,6 @@ Container InfoButton(
 }
 
 Widget AboutPopupContent() {
-//  MatchOptions exampleOptions = MatchOptions(100, "Finger Guns", "Week", 2,
-//      "Month", 3, "During class, in library", "Floaties");
-
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -169,13 +185,6 @@ Widget AboutPopupContent() {
       MatchInfoText(
           "Off Limit Areas", selectedGroup.matchOptions.offLimitAreas),
       MatchInfoText("Safety Methods", selectedGroup.matchOptions.safetyMethods),
-//      MatchInfoText("Game Period",
-//          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
-//      MatchInfoText("Respawn Time",
-//          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
-//      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
-//      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
-//      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
     ],
   );
 }
