@@ -1,5 +1,5 @@
-class MatchOptions
-{
+class MatchOptions {
+  int maxPlayers;
   String eliminationType;
   String respawnTimeType;
   int respawnDuration;
@@ -8,11 +8,13 @@ class MatchOptions
   String offLimitAreas;
   String safetyMethods;
 
-  MatchOptions(this.eliminationType,
-   this.respawnTimeType, 
-   this.respawnDuration, 
-   this.totalGameTimeType, 
-   this.totalGameTimeDuration, 
-   this.offLimitAreas, 
-   this.safetyMethods);
+  MatchOptions(
+      this.maxPlayers,
+      this.eliminationType,
+      this.respawnTimeType,
+      this.respawnDuration,
+      this.totalGameTimeType,
+      this.totalGameTimeDuration,
+      this.offLimitAreas,
+      this.safetyMethods);
 }

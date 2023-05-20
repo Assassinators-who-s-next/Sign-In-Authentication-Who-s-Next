@@ -21,12 +21,11 @@ class LoggedInJoinCreatePage extends StatelessWidget {
   TextEditingController gameCodeController = TextEditingController();
 
   void JoinGame(BuildContext context) async {
-    String gameCode = gameCodeController.text;
+    String gameCode = gameCodeController.text.trim();
     print("Join Game button pressed with code $gameCode");
-    if (gameCode == "")   
-    {
+    if (gameCode == "") {
       showSimplePopupWithCancel(context,
-      contentText: "Must supply game code in order to join match.");
+          contentText: "Must supply game code in order to join match.");
       return;
     }
 
@@ -34,14 +33,13 @@ class LoggedInJoinCreatePage extends StatelessWidget {
 
     User? user = FirebaseAuth.instance.currentUser;
     JoinGameResults results = JoinGameResults(false, "Join failure.");
-    await join_game(context, gameCode, user?.uid).then((value) => {results = value});
+    await join_game(context, gameCode, user?.uid)
+        .then((value) => {results = value});
 
     context.loaderOverlay.hide();
 
-    if (!results.success)
-    {
-      showSimplePopupWithCancel(context,
-      contentText: results.errorMessage);
+    if (!results.success) {
+      showSimplePopupWithCancel(context, contentText: results.errorMessage);
       return;
     }
     Navigator.pushReplacement(
@@ -86,106 +84,107 @@ class LoggedInJoinCreatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LoaderOverlay(
       child: Scaffold(
-        backgroundColor: Colors.grey[300],
-        appBar: AppBar(
-          title: Text('Enter the game'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
-              );
-            },
-          ),
-        ),
-        
-        // safe area ignores 'notch area' on different phone shapes
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    controller: gameCodeController,
-                    decoration: InputDecoration(
-                      labelText: 'Join Code',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    //This is Join Game Button
-                    SizedBox(
-                      width: 130,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: joinButtonColor, // background color
-                          onPrimary: Colors.white, // foreground color
-                          shadowColor: joinButtonColor, // elevation color
-                          elevation: 5, // elevation of button
-                        ),
-                        onPressed: () => JoinGame(context),
-                        child: Text('Join Game',
-                            style: (TextStyle(fontSize: 17.0))),
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Row(children: [
-                      Expanded(
-                        child: new Container(
-                            margin:
-                                const EdgeInsets.only(left: 30.0, right: 20.0),
-                            child: Divider(
-                              color: Colors.black,
-                              height: 36,
-                            )),
-                      ),
-                      Text("OR"),
-                      Expanded(
-                        child: new Container(
-                            margin:
-                                const EdgeInsets.only(left: 20.0, right: 30.0),
-                            child: Divider(
-                              color: Colors.black,
-                              height: 36,
-                            )),
-                      ),
-                    ]),
-                    SizedBox(height: 20.0),
-                    // This is Create Game Button
-                    SizedBox(
-                      width: 170.0,
-                      height: 70.0,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            primary: createButtonColor, // background color
-                            onPrimary: Colors.white, // foreground color
-                            shadowColor: createButtonColor, // elevation color
-                            elevation: 5, // elevation of button
-                            shape: StadiumBorder()),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateGamePage()),
-                          );
-                        },
-                        child: const Text('Create Game',
-                            style: TextStyle(fontSize: 18.0)),
-                      ),
-                    )
-                  ],
-                ),
-              ],
+          backgroundColor: Colors.grey[300],
+          appBar: AppBar(
+            title: Text('Enter the game'),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => (HomePage())),
+                );
+              },
             ),
           ),
-        )),
+
+          // safe area ignores 'notch area' on different phone shapes
+          body: SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextFormField(
+                      controller: gameCodeController,
+                      decoration: InputDecoration(
+                        labelText: 'Join Code',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      //This is Join Game Button
+                      SizedBox(
+                        width: 130,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: joinButtonColor, // background color
+                            onPrimary: Colors.white, // foreground color
+                            shadowColor: joinButtonColor, // elevation color
+                            elevation: 5, // elevation of button
+                          ),
+                          onPressed: () => JoinGame(context),
+                          child: Text('Join Game',
+                              style: (TextStyle(fontSize: 17.0))),
+                        ),
+                      ),
+                      SizedBox(height: 20.0),
+                      Row(children: [
+                        Expanded(
+                          child: new Container(
+                              margin: const EdgeInsets.only(
+                                  left: 30.0, right: 20.0),
+                              child: Divider(
+                                color: Colors.black,
+                                height: 36,
+                              )),
+                        ),
+                        Text("OR"),
+                        Expanded(
+                          child: new Container(
+                              margin: const EdgeInsets.only(
+                                  left: 20.0, right: 30.0),
+                              child: Divider(
+                                color: Colors.black,
+                                height: 36,
+                              )),
+                        ),
+                      ]),
+                      SizedBox(height: 20.0),
+                      // This is Create Game Button
+                      SizedBox(
+                        width: 170.0,
+                        height: 70.0,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              primary: createButtonColor, // background color
+                              onPrimary: Colors.white, // foreground color
+                              shadowColor: createButtonColor, // elevation color
+                              elevation: 5, // elevation of button
+                              shape: StadiumBorder()),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateGamePage()),
+                            );
+                          },
+                          child: const Text('Create Game',
+                              style: TextStyle(fontSize: 18.0)),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          )),
     );
   }
 }

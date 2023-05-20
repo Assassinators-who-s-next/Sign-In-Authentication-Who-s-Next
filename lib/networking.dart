@@ -134,6 +134,7 @@ Future<Group> loadGroup(String groupID) async {
     }
 
     MatchOptions matchOptions = MatchOptions(
+      groupDocument.get('maxPlayers'),
       groupDocument.get('eliminationType'),
       groupDocument.get('respawnTimeType'),
       groupDocument.get('respawnDuration'),
@@ -222,11 +223,16 @@ Future<void> setPlayerInGroup(
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
 
+  print(
+      'in setPlayerInGroup\nplayer id: ${player.userID}\nplayer points: ${player.points}\nplayer state: ${player.state.index}');
+
   await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
     'user_id': player.userID,
     'points': player.points,
     'state': player.state.index,
   });
+
+  print('finished setting player in group');
 
   /*
   await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
@@ -253,6 +259,7 @@ Future<Group> createGame(
   }
 
   await groupsRef.doc(newGroupID).set({
+    'maxPlayers': matchOptions.maxPlayers,
     'eliminationType': matchOptions.eliminationType,
     'respawnTimeType': matchOptions.respawnTimeType,
     'respawnDuration': matchOptions.respawnDuration,
@@ -268,6 +275,19 @@ Future<Group> createGame(
   print('User $userID created new game: $newGroupID');
 
   Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions);
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection('group')
+      .doc(newGroupID)
+      .collection('players')
+      .get();
+  if (snapshot.size == 0) {
+    print('no players collection to be found');
+  } else {
+    print('there is a player collection');
+  }
+
+  print('num plyaers in newly created group: ${newGroup.players.length}');
 
   bool isNotInGroup = globals.myGroups.isEmpty;
   globals.myGroups.add(newGroup);
