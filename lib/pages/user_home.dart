@@ -96,6 +96,7 @@ Center eliminationTargetScreen(double screenWidth) {
           child: LargeUserHomeButton(
               label: "Eliminate",
               color: Color.fromARGB(255, 238, 127, 119),
+              buttonState: true,
               onPressed: () => print('pressed elim button')),
         ),
       ],
@@ -118,11 +119,19 @@ StreamBuilder prematchScreen(double screenWidth) {
             child: Text('Error loading game ${selectedGroup.group_name}'));
         // receiving data
       } else if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
+        return const Padding(
+          padding: EdgeInsetsDirectional.all(20),
+          child: Center(child: CircularProgressIndicator()),
+        );
 //          return const Center(child: Text('Loading'));
       }
 //        print('${snapshot.data!.size}');
 
+      bool enoughPlayers = false;
+      if (snapshot.data!.size >= 2) {
+        enoughPlayers = true;
+      }
+      ;
       return Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Padding(
@@ -136,6 +145,8 @@ StreamBuilder prematchScreen(double screenWidth) {
           child: LargeUserHomeButton(
               label: "Start match",
               color: const Color.fromARGB(255, 43, 167, 204),
+              //currPlayers: snapshot.data!.size,
+              buttonState: enoughPlayers,
               onPressed: () => print("pressed start match button")),
         ),
       ]));
@@ -207,22 +218,30 @@ class LargeUserHomeButton extends StatelessWidget {
   final String label;
   final Color color;
   final VoidCallback onPressed;
-  const LargeUserHomeButton({
+// final int currPlayers;
+//  int currPlayers;
+  final bool buttonState;
+//  const LargeUserHomeButton({
+  LargeUserHomeButton({
     required this.label,
     required this.color,
     required this.onPressed,
+    //this.currPlayers = 2,
+    required this.buttonState,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+//    print('curr plauers: ${currPlayers}');
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         minimumSize: Size.fromHeight(50),
         textStyle: TextStyle(fontSize: 25),
       ),
-      onPressed: (selectedGroup.players.length < 2) ? null : onPressed,
+      //onPressed: (currPlayers < 2) ? null : onPressed,
+      onPressed: (buttonState) ? onPressed : null,
       child: Text(label),
     );
   }

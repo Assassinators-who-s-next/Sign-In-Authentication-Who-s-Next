@@ -9,6 +9,8 @@ import 'models/user_data.dart';
 import 'models/match_options.dart';
 import 'game_group.dart';
 
+enum GameState { gameWaiting, gameStarted, gameEnded }
+
 UserData myUserData = UserData(
   uid: "",
   imagePath: "",
@@ -23,17 +25,19 @@ bool finishedLoadingUser = false;
 StreamController finishedLoadingUserController =
     StreamController<bool>.broadcast();
 Group selectedGroup = Group(
-    "no",
-    [],
-    MatchOptions(
-      100,
-      'Single',
-      'Fixed',
-      5,
-      'Limited',
-      60,
-      'Area A',
-      'Helmet',
-    ));
+  "join or create games to play",
+  [],
+  MatchOptions(
+    -1,
+    'Single',
+    'Fixed',
+    5,
+    'Limited',
+    60,
+    'Area A',
+    'Helmet',
+  ),
+);
+//    GameState.gameWaiting.name);
 List<Group> myGroups = [];
 User? fireBaseUser;

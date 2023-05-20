@@ -19,22 +19,20 @@ class JoinCreatePage extends StatelessWidget {
   TextEditingController gameCodeController = TextEditingController();
 
   void TryJoinGame(BuildContext context) async {
-    String gameCode = gameCodeController.text;
+    String gameCode = gameCodeController.text.trim();
     print("Join Game button pressed with code $gameCode");
-    if (gameCode == "")   
-    {
+    if (gameCode == "") {
       showSimplePopupWithCancel(context,
-      contentText: "Must supply game code in order to join match.");
+          contentText: "Must supply game code in order to join match.");
       return;
     }
     User? user = FirebaseAuth.instance.currentUser;
     JoinGameResults results = JoinGameResults(false, "Join failure.");
-    await join_game(context, gameCode, user?.uid).then((value) => {results = value});
+    await join_game(context, gameCode, user?.uid)
+        .then((value) => {results = value});
 
-    if (!results.success)
-    {
-      showSimplePopupWithCancel(context,
-      contentText: results.errorMessage);
+    if (!results.success) {
+      showSimplePopupWithCancel(context, contentText: results.errorMessage);
       return;
     }
     Navigator.pushReplacement(
@@ -158,11 +156,11 @@ class JoinCreatePage extends StatelessWidget {
                             shadowColor: createButtonColor, // elevation color
                             elevation: 5, // elevation of button
                             shape: StadiumBorder()),
-                        onPressed: () 
-                        {
+                        onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CreateGamePage()),
+                            MaterialPageRoute(
+                                builder: (context) => CreateGamePage()),
                           );
                         },
                         child: const Text('Create Game',
