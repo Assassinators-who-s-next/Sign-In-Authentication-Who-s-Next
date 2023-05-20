@@ -1,11 +1,13 @@
+import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/pages/create_game_page.dart';
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import '../models/join_game_results.dart';
 import '../networking.dart';
+import '../utils/popup_modal.dart';
 import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
-import 'package:basic_auth/utils/popup_modal.dart';
 
 import 'package:basic_auth/models/match_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +20,7 @@ class JoinCreatePage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   TextEditingController gameCodeController = TextEditingController();
 
-  void TryJoinGame(BuildContext context) async {
+  void JoinGame(BuildContext context) async {
     String gameCode = gameCodeController.text;
     print("Join Game button pressed with code $gameCode");
     if (gameCode == "")   
@@ -27,9 +29,14 @@ class JoinCreatePage extends StatelessWidget {
       contentText: "Must supply game code in order to join match.");
       return;
     }
+
+    context.loaderOverlay.show();
+
     User? user = FirebaseAuth.instance.currentUser;
     JoinGameResults results = JoinGameResults(false, "Join failure.");
     await join_game(context, gameCode, user?.uid).then((value) => {results = value});
+
+    context.loaderOverlay.hide();
 
     if (!results.success)
     {
@@ -77,18 +84,22 @@ class JoinCreatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return LoaderOverlay(
+      child: Scaffold(
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
           title: Text('Enter the game'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              logout(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
+              );
             },
           ),
         ),
-
+        
         // safe area ignores 'notch area' on different phone shapes
         body: SafeArea(
           child: Center(
@@ -119,7 +130,7 @@ class JoinCreatePage extends StatelessWidget {
                           shadowColor: joinButtonColor, // elevation color
                           elevation: 5, // elevation of button
                         ),
-                        onPressed: () => TryJoinGame(context),
+                        onPressed: () => JoinGame(context),
                         child: Text('Join Game',
                             style: (TextStyle(fontSize: 17.0))),
                       ),
@@ -158,11 +169,11 @@ class JoinCreatePage extends StatelessWidget {
                             shadowColor: createButtonColor, // elevation color
                             elevation: 5, // elevation of button
                             shape: StadiumBorder()),
-                        onPressed: () 
-                        {
+                        onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => CreateGamePage()),
+                            MaterialPageRoute(
+                                builder: (context) => CreateGamePage()),
                           );
                         },
                         child: const Text('Create Game',
@@ -174,6 +185,7 @@ class JoinCreatePage extends StatelessWidget {
               ],
             ),
           ),
-        ));
+        )),
+    );
   }
 }
