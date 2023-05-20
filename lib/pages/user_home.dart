@@ -102,17 +102,17 @@ Center eliminationTargetScreen(double screenWidth) {
 }
 
 Center prematchScreen(double screenWidth) {
-  int maxPlayersInMatch = 2;
-  int playersInMatch = 1;
+//  int maxPlayersInMatch = 2;
+//  int playersInMatch = 1;
   return Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
     Padding(
       padding: const EdgeInsets.all(20),
       child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
     ),
-    Text("${playersInMatch}/${maxPlayersInMatch}",
-        //Text(
-        //    "${selectedGroup.players.length}/${selectedGroup.matchOptions.maxPlayers}",
+    //Text("${playersInMatch}/${maxPlayersInMatch}",
+    Text(
+        "${selectedGroup.players.length}/${selectedGroup.matchOptions.maxPlayers}",
         style: TextStyle(fontSize: 25)),
     Padding(
       padding: const EdgeInsetsDirectional.all(40),
@@ -154,18 +154,28 @@ Container InfoButton(
 }
 
 Widget AboutPopupContent() {
-  MatchOptions exampleOptions = MatchOptions(100, "Finger Guns", "Week", 2,
-      "Month", 3, "During class, in library", "Floaties");
+//  MatchOptions exampleOptions = MatchOptions(100, "Finger Guns", "Week", 2,
+//      "Month", 3, "During class, in library", "Floaties");
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       MatchInfoText("Game Period",
-          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+          "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
       MatchInfoText("Respawn Time",
-          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
-      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
-      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
-      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
+          "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
+      MatchInfoText("Permitted Elimation Type",
+          selectedGroup.matchOptions.eliminationType),
+      MatchInfoText(
+          "Off Limit Areas", selectedGroup.matchOptions.offLimitAreas),
+      MatchInfoText("Safety Methods", selectedGroup.matchOptions.safetyMethods),
+//      MatchInfoText("Game Period",
+//          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+//      MatchInfoText("Respawn Time",
+//          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
+//      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
+//      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
+//      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
     ],
   );
 }
@@ -203,7 +213,7 @@ class LargeUserHomeButton extends StatelessWidget {
         minimumSize: Size.fromHeight(50),
         textStyle: TextStyle(fontSize: 25),
       ),
-      onPressed: onPressed,
+      onPressed: (selectedGroup.players.length < 2) ? null : onPressed,
       child: Text(label),
     );
   }
