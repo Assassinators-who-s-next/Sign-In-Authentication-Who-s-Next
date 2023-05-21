@@ -193,10 +193,10 @@ Future<bool> load_my_user_data(String user_id) async {
 
 Future set_default_user_data(String token) async {
   UserData userData = UserData(
-    uid: globals.fireBaseUser!.uid,
+    uid: globals.fireBaseUser?.uid ?? 'default_uid',
     imagePath: "",
-    name: globals.fireBaseUser!.displayName!,
-    email: globals.fireBaseUser!.email!,
+    name: globals.fireBaseUser?.displayName! ?? 'default_name',
+    email: globals.fireBaseUser?.email! ?? 'default_email',
     pronouns: "",
     description: "",
     frequentedLocations: "",
