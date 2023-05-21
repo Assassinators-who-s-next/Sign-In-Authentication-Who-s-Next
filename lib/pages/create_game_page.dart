@@ -1,12 +1,15 @@
+import 'package:basic_auth/components/number_textfield.dart';
+import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/pages/user_home.dart';
+import 'package:basic_auth/utils/popup_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/components/my_textfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../models/match_options.dart';
 import '../networking.dart';
 
-// import 'homepage.dart';
 import 'home_page.dart';
 
 /**
@@ -103,6 +106,7 @@ class _CreateGamePage extends State<CreateGamePage> {
 
   final off_limit_controller = TextEditingController();
   final stay_safe_controller = TextEditingController();
+  final max_player_controller = TextEditingController();
 
   guidetoUserHome(BuildContext context) {
     Navigator.pop(context);
@@ -117,123 +121,184 @@ class _CreateGamePage extends State<CreateGamePage> {
     var queryData = MediaQuery.of(context);
     var screenWidth = queryData.size.width;
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Create Game'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    return LoaderOverlay(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Create Game'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.only(left: 20, top: 20, right: 20),
-          children: [
-            const Text(
-              'Game Time',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-            const Padding(
-              padding: EdgeInsetsDirectional.only(bottom: 20),
-            ),
-
-            // respawn info
-            respawnType(),
-            const Padding(padding: EdgeInsetsDirectional.only(bottom: 20)),
-
-            // total game info
-            totalGameType(),
-            const Padding(padding: EdgeInsetsDirectional.only(bottom: 20)),
-
-            const Text(
-              'Rules',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-
-            const Padding(
-              padding: EdgeInsetsDirectional.only(bottom: 20),
-            ),
-
-            // elimination type
-            eliminationType(),
-            const Padding(
-              padding: EdgeInsetsDirectional.only(bottom: 20),
-            ),
-
-            // off limit info
-            offLimitInfo(screenWidth),
-            const Padding(
-              padding: EdgeInsetsDirectional.only(bottom: 20),
-            ),
-
-            staySafeInfo(screenWidth),
-            const Padding(
-              padding: EdgeInsetsDirectional.only(bottom: 20),
-            ),
-
-            TextButton(
-              child: const Text(
-                'Create',
-                style: TextStyle(fontWeight: FontWeight.bold),
+        body: SafeArea(
+          child: ListView(
+            padding: EdgeInsets.only(left: 20, top: 20, right: 20),
+            children: [
+              const Text(
+                'Game Time',
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
-              onPressed: () {
-                // test if fields were inputed correctly
-                if (respawn_choice == null || respawn_duration_choice == null) {
-                  popUp(context, 'Fill out Respawn Information');
-                } else if (total_game_choice == null ||
-                    total_game_duration_choice == null) {
-                  popUp(context, 'Fill out Game Duration Information');
-                } else if (checkRespawnToTotalGameTime(
-                        respawn_choice!.name,
-                        respawn_duration_choice!,
-                        total_game_choice!.name,
-                        total_game_duration_choice!) ==
-                    false) {
-                  popUp(context,
-                      'Total game time must be greater or equal to the respawn time');
-                  // otherwise go to home page
-                } else {
-                  User? user = FirebaseAuth.instance.currentUser;
-                  MatchOptions placeholderMatchOptions = MatchOptions(
-                    'Single',
-                    'Fixed',
-                    5,
-                    'Limited',
-                    60,
-                    'Area A',
-                    'Helmet',
-                  );
+              const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 20),
+              ),
 
-                  // creates game with game info and creates game code
-                  createGame(context, user?.uid, placeholderMatchOptions);
+              // respawn info
+              respawnType(),
+              const Padding(padding: EdgeInsetsDirectional.only(bottom: 20)),
 
-                  guidetoUserHome(context);
-                }
-              },
-            ),
-          ],
+              // total game info
+              totalGameType(),
+              const Padding(padding: EdgeInsetsDirectional.only(bottom: 20)),
+
+              const Text(
+                'Rules',
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 20),
+              ),
+
+              maxPlayers(screenWidth: screenWidth),
+              const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 20),
+              ),
+
+              // elimination type
+              eliminationType(),
+              const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 20),
+              ),
+
+              // off limit info
+              offLimitInfo(screenWidth),
+              const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 20),
+              ),
+
+              staySafeInfo(screenWidth),
+              const Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 20),
+              ),
+
+              TextButton(
+                child: const Text(
+                  'Create',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onPressed: () => OnPressCreateGameButton(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Future<dynamic> popUp(BuildContext context, String textInfo) {
-    return showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: null,
-        content: Text(textInfo, textAlign: TextAlign.center),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'))
-        ],
-      ),
-    );
+  void OnPressCreateGameButton(BuildContext context) async {
+    // test if fields were inputted correctly
+    if (respawn_choice == null || respawn_duration_choice == null) {
+      //popUp(context, 'Fill out Respawn Information');
+      showPopup(context,
+          content: const Text('Fill out Respawn Information'),
+          bottomWidgets: [closeButton(context)]);
+    } else if (total_game_choice == null ||
+        total_game_duration_choice == null) {
+      //popUp(context, 'Fill out Game Duration Information');
+      showPopup(context,
+          content: const Text('Fill out Game Duration Information'),
+          bottomWidgets: [closeButton(context)]);
+    } else if (checkRespawnToTotalGameTime(
+            respawn_choice!.name,
+            respawn_duration_choice!,
+            total_game_choice!.name,
+            total_game_duration_choice!) ==
+        false) {
+      //popUp(context,
+      //    'Total game time must be greater or equal to the respawn time');
+      showPopup(context,
+          content: const Text(
+              'Total game time must be greater or equal to the respawn time'),
+          bottomWidgets: [closeButton(context)]);
+      // otherwise go to home page
+    } else if (max_player_controller.text == '') {
+      //popUp(context, 'Fill in the max number of players');
+      showPopup(context,
+          content: const Text('Fill in the max number of players'),
+          bottomWidgets: [closeButton(context)]);
+    } else if (int.parse(max_player_controller.text) < 2 ||
+        int.parse(max_player_controller.text) > 100) {
+      //popUp(context, 'Number of players must be 2 - 100 players');
+      showPopup(context,
+          content: const Text('Number of players must be 2 - 100 players'),
+          bottomWidgets: [closeButton(context)]);
+    } else {
+      // save plural or singular form depending on length of game time
+      var tot_game_time_plural;
+      if (total_game_duration_choice! == 1) {
+        tot_game_time_plural = total_game_choice!.name
+            .substring(0, total_game_choice!.name.length - 1);
+      } else {
+        tot_game_time_plural = total_game_choice!.name;
+      }
+
+      // save plural or singular form depending on length of respawn time
+      var respawn_time_plural;
+      if (respawn_duration_choice! == 1) {
+        respawn_time_plural =
+            respawn_choice!.name.substring(0, respawn_choice!.name.length - 1);
+      } else {
+        respawn_time_plural = respawn_choice!.name;
+      }
+
+      User? user = FirebaseAuth.instance.currentUser;
+      MatchOptions placeholderMatchOptions = MatchOptions(
+          int.parse(max_player_controller.text),
+          elim_choice!,
+          //respawn_choice!.name,
+          respawn_time_plural,
+          respawn_duration_choice!,
+          //total_game_choice!.name,
+          tot_game_time_plural,
+          total_game_duration_choice!,
+          off_limit_controller.text,
+          stay_safe_controller.text
+//        100,
+//        'Single',
+//        'Fixed',
+//        5,
+//        'Limited',
+//        60,
+//        'Area A',
+//        'Helmet',
+          );
+
+      context.loaderOverlay.show();
+      // creates game with game info and creates game code
+      await createGame(context, user?.uid, placeholderMatchOptions)
+          .then((value) => selectedGroup = value);
+
+      context.loaderOverlay.hide();
+      guidetoUserHome(context);
+    }
   }
+
+  //Future<dynamic> popUp(BuildContext context, String textInfo) {
+  //  return showDialog(
+  //    context: context,
+  //    builder: (_) => AlertDialog(
+  //      title: null,
+  //      content: Text(textInfo, textAlign: TextAlign.center),
+  //      actions: [
+  //        TextButton(
+  //            onPressed: () => Navigator.pop(context),
+  //            child: const Text('Close'))
+  //      ],
+  //    ),
+  //  );
+  //}
 
   bool checkRespawnToTotalGameTime(String respawn_choice, int respawn_duration,
       String total_game_type, int total_game_time) {
@@ -291,12 +356,29 @@ class _CreateGamePage extends State<CreateGamePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('Off Limit Areas: '),
+        const Text('Off Limit Areas:'),
         SizedBox(
           width: screenWidth / 2,
           child: MyTextField(
             controller: off_limit_controller,
             hintText: 'eg. School, Mall...',
+            obscureText: false,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row maxPlayers({required double screenWidth}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text('Max Players:'),
+        SizedBox(
+          width: screenWidth / 2,
+          child: NumberTextField(
+            controller: max_player_controller,
+            hintText: 'range of 2 - 100 players',
             obscureText: false,
           ),
         ),

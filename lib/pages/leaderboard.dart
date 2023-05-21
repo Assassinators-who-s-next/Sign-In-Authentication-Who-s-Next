@@ -18,9 +18,14 @@ class _LeaderboardState extends State<LeaderBoard> {
   @override
   void initState() {
     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-      player cur_player = globals.selectedGroup.players[i];
-      _players.add(LeaderboardElemnt(
-          playerName: cur_player.name!, playerPoints: cur_player.points));
+      Player cur_player = globals.selectedGroup.players[i];
+
+      String player_name = cur_player.get_name();
+      int player_points = cur_player.points;
+      var newElement = LeaderboardElemnt(
+          playerName: player_name ?? "unknown",
+          playerPoints: player_points ?? 0);
+      _players.add(newElement);
     }
     super.initState();
   }

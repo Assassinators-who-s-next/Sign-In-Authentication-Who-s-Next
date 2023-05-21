@@ -3,8 +3,12 @@ import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
 import 'package:basic_auth/utils/popup_modal.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+
+import '../game_group.dart';
 
 class UserHome extends StatefulWidget {
   @override
@@ -12,20 +16,25 @@ class UserHome extends StatefulWidget {
 }
 
 class _UserHomeState extends State<UserHome> {
-  List<String> numActiveGames = [
-    'Game A',
-    'Game B',
-    'Game C',
-    'Game D',
-    'Game E',
-    'Game F',
-    'Game G',
-    'Game H',
-    'Game I',
-    'Game J',
-  ];
-
   bool? isCheckedBox = false;
+  late Group selGroup;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    setState(() {
+      selGroup = selectedGroup;
+    });
+  }
+
+  void SetSelectedGroup(Group group) {
+    selectedGroup = group;
+    setState(() {
+      selGroup = group;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,20 +50,21 @@ class _UserHomeState extends State<UserHome> {
     }
 
     return GameListDrawer(
-        numActiveGames: numActiveGames,
-        screenWidth: screenWidth,
-        screenHeight: screenHeight,
-        content: homeScreenContent(context, screenWidth, screenHeight));
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
+      content: homeScreenContent(context, screenWidth, screenHeight),
+      onSelectGroup: (p0) => SetSelectedGroup(p0),
+    );
   }
 }
 
 Widget homeScreenContent(
     BuildContext context, double screenWidth, double screenHeight) {
-  bool gameStarted = true;
+  bool gameStarted = false;
   return Stack(children: [
     InfoButton(context, screenWidth, screenHeight),
     gameStarted
-        ? eliminationTargetScreen(screenWidth, screenHeight, context)
+        ? eliminationTargetScreen(screenWidth)
         : prematchScreen(screenWidth),
   ]);
 }
@@ -128,26 +138,57 @@ Future eliminateNoti(UserData targetData, BuildContext context, double screenWid
   );
 }
 
-Center prematchScreen(double screenWidth) {
-  int maxPlayersInMatch = 2;
-  int playersInMatch = 1;
-  return Center(
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-    Padding(
-      padding: const EdgeInsets.all(20),
-      child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
-    ),
-    Text("${playersInMatch}/${maxPlayersInMatch}",
-        style: TextStyle(fontSize: 25)),
-    Padding(
-      padding: const EdgeInsetsDirectional.all(40),
-      child: LargeUserHomeButton(
-          label: "Start match",
-          color: Color.fromARGB(255, 43, 167, 204),
-          onPressed: () => print("pressed start match button")),
-    ),
-  ]));
+
+//Center prematchScreen(double screenWidth) {
+StreamBuilder prematchScreen(double screenWidth) {
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('groups')
+        .doc(selectedGroup.group_name)
+        .collection('players')
+        .snapshots(),
+    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      // error
+      if (snapshot.hasError) {
+        return Center(
+            child: Text('Error loading game ${selectedGroup.group_name}'));
+        // receiving data
+      } else if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Padding(
+          padding: EdgeInsetsDirectional.all(20),
+          child: Center(child: CircularProgressIndicator()),
+        );
+//          return const Center(child: Text('Loading'));
+      }
+//        print('${snapshot.data!.size}');
+
+      bool enoughPlayers = false;
+      if (snapshot.data!.size >= 2) {
+        enoughPlayers = true;
+      }
+      ;
+      return Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Padding(
+          padding: EdgeInsets.all(20),
+          child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
+        ),
+        Text("${snapshot.data!.size}/${selectedGroup.matchOptions.maxPlayers}",
+            style: const TextStyle(fontSize: 25)),
+        Padding(
+          padding: const EdgeInsetsDirectional.all(40),
+          child: LargeUserHomeButton(
+              label: "Start match",
+              color: const Color.fromARGB(255, 43, 167, 204),
+              //currPlayers: snapshot.data!.size,
+              buttonState: enoughPlayers,
+              onPressed: () => print("pressed start match button")),
+        ),
+      ]));
+    },
+  );
 }
+
 
 Container InfoButton(
     BuildContext context, double screenWidth, double screenHeight) {
@@ -171,21 +212,7 @@ Container InfoButton(
               height: screenHeight * .9, //height
             )
           },
-          
-          
-          // showPopup(
-          //   context,
 
-          //   {
-          //     const Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-          //     AboutPopupContent(),
-          //     [
-          //       closeButton(context),
-          //     ],
-          //     screenWidth * .9, //width
-          //     screenHeight * .9, //height
-          //   }
-          // ),
           child: Icon(Icons.info, size: size),
         ),
       ),
@@ -194,18 +221,21 @@ Container InfoButton(
 }
 
 Widget AboutPopupContent() {
-  MatchOptions exampleOptions = MatchOptions("Finger Guns", "Week", 2, "Month",
-      3, "During class, in library", "Floaties");
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       MatchInfoText("Game Period",
-          "${exampleOptions.totalGameTimeDuration} ${exampleOptions.totalGameTimeType}(s)"),
+
+          "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
       MatchInfoText("Respawn Time",
-          "${exampleOptions.respawnDuration} ${exampleOptions.respawnTimeType}(s)"),
-      MatchInfoText("Permitted Elimation Type", exampleOptions.eliminationType),
-      MatchInfoText("Off Limit Areas", exampleOptions.offLimitAreas),
-      MatchInfoText("Safety Methods", exampleOptions.safetyMethods),
+          "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
+      MatchInfoText("Permitted Elimation Type",
+          selectedGroup.matchOptions.eliminationType),
+      MatchInfoText(
+          "Off Limit Areas", selectedGroup.matchOptions.offLimitAreas),
+      MatchInfoText("Safety Methods", selectedGroup.matchOptions.safetyMethods),
+
     ],
   );
 }
@@ -228,22 +258,30 @@ class LargeUserHomeButton extends StatelessWidget {
   final String label;
   final Color color;
   final VoidCallback onPressed;
-  const LargeUserHomeButton({
+// final int currPlayers;
+//  int currPlayers;
+  final bool buttonState;
+//  const LargeUserHomeButton({
+  LargeUserHomeButton({
     required this.label,
     required this.color,
     required this.onPressed,
+    //this.currPlayers = 2,
+    required this.buttonState,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+//    print('curr plauers: ${currPlayers}');
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         minimumSize: Size.fromHeight(50),
         textStyle: TextStyle(fontSize: 25),
       ),
-      onPressed: onPressed,
+      //onPressed: (currPlayers < 2) ? null : onPressed,
+      onPressed: (buttonState) ? onPressed : null,
       child: Text(label),
     );
   }

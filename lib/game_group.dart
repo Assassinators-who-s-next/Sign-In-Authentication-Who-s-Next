@@ -1,9 +1,9 @@
 import 'player.dart';
 import '../models/match_options.dart';
 
-class group {
+class Group {
   String group_name;
-  List<player> players;
+  List<Player> players;
   MatchOptions matchOptions;
-  group(this.group_name, this.players, this.matchOptions);
+  Group(this.group_name, this.players, this.matchOptions);
 }

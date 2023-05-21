@@ -78,19 +78,14 @@ class AuthService {
           await _auth.signInWithPopup(authProvider);
 
       user = userCredential.user;
+      fireBaseUser = user;
     } catch (e) {
       print(e);
     }
 
     if (user != null) {
-      myUserData.uid = user.uid;
-      myUserData.name = user.displayName ?? "Default Name";
-      myUserData.email = user.email ?? "";
-      myUserData.imagePath = user.photoURL ?? "";
-
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('auth', true);
-
 
       print(
           "uID: ${uid} \n name: ${myUserData.name} \n email: ${myUserData.email} \n imageURL ${myUserData.imagePath}");

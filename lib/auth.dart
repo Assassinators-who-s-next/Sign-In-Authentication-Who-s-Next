@@ -6,12 +6,16 @@ import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'globals.dart';
 import 'pages/home_page.dart';
 import 'pages/create_game_page.dart';
 import 'pages/join_create_game_page.dart';
 
 class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
+  AuthPage({super.key});
+
+  bool finishedLoading = false;
+  bool loadingUser = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +29,26 @@ class AuthPage extends StatelessWidget {
               String? uid = FirebaseAuth.instance.currentUser?.uid;
 
               //login_custom(context, "whatever", "password");
-
-              login_google(context, email!, uid!);
-              return JoinCreatePage();
+              if (!loadingUser)
+                Login(context, email, uid);
+              
+              return HomePage();
               // user not logged in
             } else {
               return LoginPage();
             }
           }),
     );
+  }
+
+  void Login(BuildContext context, String? email, String? uid) async
+  {
+    loadingUser = true;
+    finishedLoadingUser = false;
+    finishedLoadingUserController.add(false);
+    await login_google(context, email!, uid!);
+    finishedLoadingUser = true;
+    finishedLoadingUserController.add(true);
+    loadingUser = false;
   }
 }
