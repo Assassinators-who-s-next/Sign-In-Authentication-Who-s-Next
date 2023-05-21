@@ -12,7 +12,7 @@ class LeaderBoard extends StatefulWidget {
 
   void reload() {
     reloadGroup();
-    // leaderboardState?.updatePlayers();
+    leaderboardState?.updatePlayers();
   }
 
   @override
