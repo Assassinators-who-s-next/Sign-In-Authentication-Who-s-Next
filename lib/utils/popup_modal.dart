@@ -7,7 +7,7 @@ Future showPopup(BuildContext context, {Widget? title, Widget? content, List<Wid
     context: context,
     builder: (_) => AlertDialog(
     title: title,
-    content: content != null ? SizedBox(width: height, height: width, child: content) : null,
+    content: content != null ? SizedBox(height: height, width: width, child: content) : null,
     actions: bottomWidgets,
     ));
 }

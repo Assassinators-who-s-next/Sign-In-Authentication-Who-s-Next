@@ -69,7 +69,7 @@ Widget homeScreenContent(
   ]);
 }
 
-Center eliminationTargetScreen(double screenWidth) {
+Center eliminationTargetScreen(double screenWidth, double screenHeight,BuildContext context) {
   //UserData targetData = myUserData;
   //UserData targetData = UserPreferences.user;
   UserData targetData = UserData(
@@ -97,12 +97,48 @@ Center eliminationTargetScreen(double screenWidth) {
               label: "Eliminate",
               color: Color.fromARGB(255, 238, 127, 119),
               buttonState: true,
-              onPressed: () => print('pressed elim button')),
+              onPressed: () => {eliminateNoti(targetData, context, screenWidth, screenHeight)}),
         ),
       ],
     ),
   );
 }
+
+Future eliminateNoti(UserData targetData, BuildContext context, double screenWidth, double screenHeight) {
+  return showSimplePopup(
+    context,
+    title: "Eliminate",
+    contentText: "You got eliminated by ${targetData.name}. Is this you?",
+    bottomWidgets: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 238, 127, 119),
+              minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
+              textStyle: TextStyle(fontSize: 25),
+            ),
+            onPressed: () => print("eliminated"),
+            child: Text("Yes"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 43, 167, 204),
+              minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
+              textStyle: TextStyle(fontSize: 25),
+            ),
+            onPressed: () => print("eliminated failed"),
+            child: Text("No"),
+          ),
+        ],
+      )
+    ],
+    width: screenWidth * 0.5,
+    height: screenHeight * 0.1,
+  );
+}
+
 
 //Center prematchScreen(double screenWidth) {
 StreamBuilder prematchScreen(double screenWidth) {
@@ -154,6 +190,7 @@ StreamBuilder prematchScreen(double screenWidth) {
   );
 }
 
+
 Container InfoButton(
     BuildContext context, double screenWidth, double screenHeight) {
   double size = screenWidth * .075;
@@ -164,18 +201,19 @@ Container InfoButton(
         padding: const EdgeInsets.all(10.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(size),
-          onTap: () => showPopup(
-            context,
-            title: const Text("Match Info: ",
-                style:
-                    const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-            content: AboutPopupContent(),
-            bottomWidgets: [
-              closeButton(context),
-            ],
-            width: screenWidth * .9,
-            height: screenHeight * .9,
-          ),
+          onTap: () => 
+          {
+            showPopup(context, 
+              title: Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+              content: AboutPopupContent(),
+              bottomWidgets: [
+                closeButton(context),
+              ],
+              width: screenWidth * .9, //width
+              height: screenHeight * .9, //height
+            )
+          },
+
           child: Icon(Icons.info, size: size),
         ),
       ),
@@ -184,10 +222,12 @@ Container InfoButton(
 }
 
 Widget AboutPopupContent() {
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       MatchInfoText("Game Period",
+
           "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
       MatchInfoText("Respawn Time",
           "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
@@ -196,6 +236,7 @@ Widget AboutPopupContent() {
       MatchInfoText(
           "Off Limit Areas", selectedGroup.matchOptions.offLimitAreas),
       MatchInfoText("Safety Methods", selectedGroup.matchOptions.safetyMethods),
+
     ],
   );
 }
