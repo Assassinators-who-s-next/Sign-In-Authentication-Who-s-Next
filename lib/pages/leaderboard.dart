@@ -25,7 +25,7 @@ void sortPlayers() {
 
 void reloadGroup() async {
   String groupID = globals.selectedGroup.group_name;
-  group fetchedGroup = await loadGroup(groupID);
+  Group fetchedGroup = await loadGroup(groupID);
   globals.selectedGroup = fetchedGroup;
 
   //replace old instance of group with new one
@@ -48,7 +48,7 @@ class _LeaderboardState extends State<LeaderBoard> {
     setState(() {
       _players.clear();
       for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-        player cur_player = globals.selectedGroup.players[i];
+        Player cur_player = globals.selectedGroup.players[i];
         _players.add(LeaderboardElemnt(
             playerName: cur_player.get_name(),
             playerPoints: cur_player.points));
@@ -59,9 +59,14 @@ class _LeaderboardState extends State<LeaderBoard> {
   @override
   void initState() {
     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-      player cur_player = globals.selectedGroup.players[i];
-      _players.add(LeaderboardElemnt(
-          playerName: cur_player.get_name(), playerPoints: cur_player.points));
+      Player cur_player = globals.selectedGroup.players[i];
+
+      String player_name = cur_player.get_name();
+      int player_points = cur_player.points;
+      var newElement = LeaderboardElemnt(
+          playerName: player_name ?? "unknown",
+          playerPoints: player_points ?? 0);
+      _players.add(newElement);
     }
     super.initState();
   }

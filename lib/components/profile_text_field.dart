@@ -51,7 +51,7 @@ class TextFieldWidgetState extends State<ProfileTextField> {
           ),
         const SizedBox(height: 5),
         SizedBox(
-          width: MediaQuery.of(context).size.width * .5,
+          width: MediaQuery.of(context).size.width * 1,
           child: TextField(
             controller: controller,
             maxLength: widget.maxLength,

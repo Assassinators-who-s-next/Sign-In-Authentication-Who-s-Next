@@ -1,21 +1,26 @@
+import 'package:basic_auth/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:basic_auth/pages/join_create_game_page.dart';
 
-class GameListDrawer extends StatelessWidget {
-  const GameListDrawer({super.key, required this.numActiveGames, required this.screenWidth, required this.screenHeight, required this.content});
+import '../game_group.dart';
+import '../game_group.dart';
+import '../pages/logged_in_join_create_game_page.dart';
 
-  final List<String> numActiveGames;
+class GameListDrawer extends StatelessWidget {
+  const GameListDrawer({super.key, required this.screenWidth, required this.screenHeight, required this.content, required this.onSelectGroup});
+
   final double screenWidth;
   final double screenHeight;
   final Widget content;
+  final void Function(Group) onSelectGroup;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // top bar
       appBar: AppBar(
-        title: Text('game code should be here'), // could have names of each game, or game code
+        title: Text(selectedGroup.group_name), // could have names of each game, or game code
       ),
       // a list of all games currently in, 3 lines on left
       // TODO: each listTile will change the center and the appBar title
@@ -23,14 +28,12 @@ class GameListDrawer extends StatelessWidget {
         child: SafeArea(
           child: ListView(
             children: <Widget>[
-              GameList(numActiveGames: numActiveGames),
+              GameList(context),
               TextButton(
                 onPressed: () {
-
                   Navigator.pushReplacement(context,MaterialPageRoute(
-                    builder: (context) => JoinCreatePage(),
+                    builder: (context) => LoggedInJoinCreatePage(),
                   ));
-                  //print('go to join/create page');
                 },
                 child: Text('Join/Create Game'),
               ),
@@ -42,29 +45,42 @@ class GameListDrawer extends StatelessWidget {
       body: SingleChildScrollView(child: content),
     );
   }
+
+  void OnClickGameListItem(BuildContext context, Group group)
+  {
+    Navigator.pop(context);
+    onSelectGroup.call(group);
+  }
+
+  Column GameList(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: 
+      [
+        for (Group group in myGroups)
+          GameListItem(group: group, onPressed:(game) => OnClickGameListItem(context, group))
+      ],
+    );
+  }
 }
 
-class GameList extends StatelessWidget {
-  const GameList({
+class GameListItem extends StatelessWidget {
+  const GameListItem({
     super.key,
-    required this.numActiveGames,
+    required this.group,
+    required this.onPressed
   });
 
-  final List<String> numActiveGames;
+  final Group group;
+  final void Function(Group) onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (var i in numActiveGames)
-          Padding(
-            padding: const EdgeInsetsDirectional.all(15),
-            child: Text(
-              i.toString(),
-              style: const TextStyle(fontSize: 17),
-              textAlign: TextAlign.right,
-            ),
-          ),
+        SizedBox(child: TextButton(onPressed: () => onPressed(group), child: SizedBox(child: Center(child: Text(group.group_name, style: TextStyle(fontSize: 25))), height: 45,))),
+        Divider(height: 0,),
       ],
     );
   }
