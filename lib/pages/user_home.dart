@@ -77,7 +77,7 @@ Center eliminationTargetScreen(double screenWidth, double screenHeight,BuildCont
       email: '',
       frequentedLocations: '',
       imagePath: '',
-      name: 'Joshua',
+      name: 'target_name',
       pronouns: '',
       uid: '');
   return Center(
@@ -96,6 +96,7 @@ Center eliminationTargetScreen(double screenWidth, double screenHeight,BuildCont
           child: LargeUserHomeButton(
               label: "Eliminate",
               color: Color.fromARGB(255, 238, 127, 119),
+              buttonState: true,
               onPressed: () => {eliminateNoti(targetData, context, screenWidth, screenHeight)}),
         ),
       ],
