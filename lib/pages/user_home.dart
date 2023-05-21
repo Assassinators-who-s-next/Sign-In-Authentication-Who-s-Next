@@ -61,10 +61,12 @@ class _UserHomeState extends State<UserHome> {
 Widget homeScreenContent(
     BuildContext context, double screenWidth, double screenHeight) {
   bool gameStarted = false;
+    // bool gameStarted = true;
+
   return Stack(children: [
     InfoButton(context, screenWidth, screenHeight),
     gameStarted
-        ? eliminationTargetScreen(screenWidth)
+        ? eliminationTargetScreen(screenWidth, screenHeight, context)
         : prematchScreen(screenWidth),
   ]);
 }
