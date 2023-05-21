@@ -129,7 +129,8 @@ Future<Group> loadGroup(String groupID) async {
             data['user_id'] ?? ''; // Use an empty string if the value is null
         int points = data['points'] ?? 0; // Use 0 if the value is null
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
-        players.add(Player(userId, points, null, state: playerState));
+        players.add(
+            Player(userId, points, null, target_uid: "", state: playerState));
       }
     }
 
@@ -352,6 +353,29 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
 }
 
 class DatabaseReference {}
+
+void start_game_or_respawn() {
+
+
+  /* things to note
+
+    - game state is only initialized for player who created game
+    - previous game information shows if you log out and log back in with another account that isn't in that previous game
+    - need to store target_uid for each player in groups on db
+  */
+  globals.selectedGroup.players.shuffle();
+  print("Group len: ${globals.selectedGroup.players.length}");
+  for (int i = 0; i < globals.selectedGroup.players.length; i++) {
+    print(globals.selectedGroup.players[i].userID);
+  }
+
+  // asign targets
+  for (int i = 0; i < globals.selectedGroup.players.length; i++) {
+    print((i + 1) % globals.selectedGroup.players.length);
+    //globals.selectedGroup.play
+    
+  }
+}
 
 Future logout(context) async {
   await FirebaseAuth.instance.signOut().then((value) => Navigator.of(context)

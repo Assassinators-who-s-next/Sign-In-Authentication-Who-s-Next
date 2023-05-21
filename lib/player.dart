@@ -7,9 +7,9 @@ class Player {
   String userID;
   int points;
   UserData? userData;
+  String? target_uid;
   PlayerState state = PlayerState.alive;
-  Player(this.userID, this.points, this.userData,
-      {this.state = PlayerState.alive});
+  Player(this.userID, this.points, this.userData, {this.target_uid, this.state = PlayerState.alive});
 
   String get_name() {
     if (userData != null) {

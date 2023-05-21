@@ -2,6 +2,7 @@ import 'package:basic_auth/components/game_list_drawer.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
+import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/utils/popup_modal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,9 @@ Center eliminationTargetScreen(double screenWidth) {
               label: "Eliminate",
               color: Color.fromARGB(255, 238, 127, 119),
               buttonState: true,
-              onPressed: () => print('pressed elim button')),
+              onPressed: () {
+                print('pressed elim button');
+              }),
         ),
       ],
     ),
@@ -143,11 +146,15 @@ StreamBuilder prematchScreen(double screenWidth) {
         Padding(
           padding: const EdgeInsetsDirectional.all(40),
           child: LargeUserHomeButton(
-              label: "Start match",
-              color: const Color.fromARGB(255, 43, 167, 204),
-              //currPlayers: snapshot.data!.size,
-              buttonState: enoughPlayers,
-              onPressed: () => print("pressed start match button")),
+            label: "Start match",
+            color: const Color.fromARGB(255, 43, 167, 204),
+            //currPlayers: snapshot.data!.size,
+            buttonState: enoughPlayers,
+            onPressed: () {
+              print("pressed start match button");
+              start_game_or_respawn();
+            }
+          ),
         ),
       ]));
     },
