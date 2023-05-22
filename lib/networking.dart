@@ -144,7 +144,16 @@ Future<Group> loadGroup(String groupID) async {
       groupDocument.get('safetyMethods'),
     );
 
-    return Group(groupID, players, matchOptions);
+    int stateIndex = 0;
+    Map<String, dynamic>? data = groupDocument.data() as Map<String, dynamic>?;
+    if (data != null && data.containsKey('state')) {
+      stateIndex = data['state'];
+    } else {
+      stateIndex = GroupState.notStarted.index;
+    }
+    GroupState state = GroupState.values[stateIndex];
+
+    return Group(groupID, players, matchOptions, state: state);
   } else {
     throw Exception('Group does not exist');
   }
@@ -184,10 +193,10 @@ Future<bool> load_my_user_data(String user_id) async {
 
 Future set_default_user_data(String token) async {
   UserData userData = UserData(
-    uid: globals.fireBaseUser!.uid,
+    uid: globals.fireBaseUser?.uid ?? 'default_uid',
     imagePath: "",
-    name: globals.fireBaseUser!.displayName!,
-    email: globals.fireBaseUser!.email!,
+    name: globals.fireBaseUser?.displayName! ?? 'default_name',
+    email: globals.fireBaseUser?.email! ?? 'default_email',
     pronouns: "",
     description: "",
     frequentedLocations: "",
@@ -267,6 +276,7 @@ Future<Group> createGame(
     'totalGameTimeDuration': matchOptions.totalGameTimeDuration,
     'offLimitAreas': matchOptions.offLimitAreas,
     'safetyMethods': matchOptions.safetyMethods,
+    'state': GroupState.notStarted.index,
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
