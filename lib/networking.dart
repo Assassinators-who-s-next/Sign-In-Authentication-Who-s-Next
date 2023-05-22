@@ -355,8 +355,6 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
 class DatabaseReference {}
 
 void start_game_or_respawn() {
-
-
   /* things to note
 
     - game state is only initialized for player who created game
@@ -370,10 +368,13 @@ void start_game_or_respawn() {
   }
 
   // asign targets
-  for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-    print((i + 1) % globals.selectedGroup.players.length);
-    //globals.selectedGroup.play
-    
+  var groupSize = globals.selectedGroup.players.length;
+
+  for (int i = 0; i < groupSize; i++) {
+    print((i + 1) % groupSize);
+    globals.selectedGroup.players[i].target_uid =
+        globals.selectedGroup.players[(i + 1) % groupSize].userID;
+    print("target uid: ${globals.selectedGroup.players[i].target_uid}");
   }
 }
 
