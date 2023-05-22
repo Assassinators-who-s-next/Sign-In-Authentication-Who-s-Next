@@ -11,8 +11,10 @@ class LeaderBoard extends StatefulWidget {
   const LeaderBoard({Key? key}) : super(key: key);
 
   void reload() {
+    print("LeaderBoard.reload() 1");
     reloadGroup();
-    leaderboardState?.updatePlayers();
+    _LeaderboardState.instance?.updatePlayers();
+    print("LeaderBoard.reload() 2");
   }
 
   @override
@@ -42,7 +44,13 @@ void reloadGroup() async {
 }
 
 class _LeaderboardState extends State<LeaderBoard> {
+  static _LeaderboardState? instance;
+
   final List<Widget> _players = [];
+
+  _LeaderboardState() {
+    instance = this;
+  }
 
   void updatePlayers() {
     setState(() {
