@@ -22,7 +22,6 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   bool? isCheckedBox = false;
   late Group selGroup;
-  late Future<List<String>> playergroup;
 
   @override
   void initState() {
@@ -32,21 +31,6 @@ class _UserHomeState extends State<UserHome> {
     setState(() {
       selGroup = selectedGroup;
     });
-    playergroup = initPlayerGroups();
-  }
-
-  Future<List<String>> initPlayerGroups() async {
-    String? uid = FirebaseAuth.instance.currentUser?.uid;
-    List<String> groups = [];
-
-    if (uid == null) {
-      print("user not logged in");
-    } else {
-      groups = await get_user_groups(uid);
-      print(groups);
-    }
-
-    return groups;
   }
 
   void SetSelectedGroup(Group group) {
@@ -67,26 +51,17 @@ class _UserHomeState extends State<UserHome> {
       screenHeight = width;
     }
 
-    return FutureBuilder<List<String>>(
-      future: initPlayerGroups(),
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return snapshot.data!.isEmpty
-              ? noGroupScreenContent(context)
-              : GameListDrawer(
+    return myGroups.isEmpty ? noGroupScreenContent(context) : GameListDrawer(
                   screenWidth: screenWidth,
                   screenHeight: screenHeight,
                   content:
                       homeScreenContent(context, screenWidth, screenHeight),
                   onSelectGroup: (p0) => SetSelectedGroup(p0),
                 );
-        }
-      },
-    );
+    
+
+ 
+ 
   }
 }
 
