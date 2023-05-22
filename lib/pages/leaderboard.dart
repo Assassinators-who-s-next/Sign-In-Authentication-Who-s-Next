@@ -10,15 +10,22 @@ import '../globals.dart' as globals;
 class LeaderBoard extends StatefulWidget {
   const LeaderBoard({Key? key}) : super(key: key);
 
+  //_LeaderboardState? myState;
+
   void reload() {
-    print("LeaderBoard.reload() 1");
     reloadGroup();
     _LeaderboardState.instance?.updatePlayers();
-    print("LeaderBoard.reload() 2");
   }
 
   @override
   _LeaderboardState createState() => _LeaderboardState();
+
+  // @override
+  // _LeaderboardState createState() {
+  //   var newState = _LeaderboardState();
+  //   myState = newState;
+  //   return newState;
+  // }
 }
 
 void sortPlayers() {
@@ -48,10 +55,6 @@ class _LeaderboardState extends State<LeaderBoard> {
 
   final List<Widget> _players = [];
 
-  _LeaderboardState() {
-    instance = this;
-  }
-
   void updatePlayers() {
     setState(() {
       _players.clear();
@@ -66,6 +69,7 @@ class _LeaderboardState extends State<LeaderBoard> {
 
   @override
   void initState() {
+    instance = this;
     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
       Player cur_player = globals.selectedGroup.players[i];
 
