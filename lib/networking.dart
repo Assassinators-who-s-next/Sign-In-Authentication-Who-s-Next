@@ -382,7 +382,7 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
 
 class DatabaseReference {}
 
-void startGameOrRespawn() async {
+Future<void> startGameOrRespawn() async {
   /* things to note
 
     - game state is only initialized for player who created game
@@ -402,12 +402,13 @@ void startGameOrRespawn() async {
         globals.selectedGroup.group_name, globals.selectedGroup.players[i]);
 
     if (globals.selectedGroup.players[i].userID == globals.myUserData.uid) {
-      await set_curr_target(targetUID: globals.selectedGroup.players[i].target!);
+      await set_curr_target(
+          targetUID: globals.selectedGroup.players[i].target!);
       print("current target: ${globals.currentTarget!.uid}");
-
     }
   }
-  //for (int i = 0; i < groupSize; i++) {}
+
+  print("CURRENT TARGET NAME: ${globals.currentTarget!.name}");
 }
 
 Future<void> set_curr_target({required String targetUID}) async {
