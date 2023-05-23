@@ -97,7 +97,7 @@ Widget noGroupScreenContent(BuildContext context) {
 
 Widget homeScreenContent(
     BuildContext context, double screenWidth, double screenHeight) {
-  bool gameStarted = true;
+  bool gameStarted = false;
   // bool gameStarted = true;
 
   return Stack(children: [
