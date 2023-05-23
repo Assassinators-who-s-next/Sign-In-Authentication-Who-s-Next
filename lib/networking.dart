@@ -160,7 +160,12 @@ Future<Group> loadGroup(String groupID) async {
     }
     GroupState state = GroupState.values[stateIndex];
 
-    return Group(groupID, players, matchOptions, state: state);
+    String groupHost = "";
+    try {
+      groupDocument.get('host');
+    } catch (e) {}
+
+    return Group(groupID, players, matchOptions, groupHost, state: state);
   } else {
     throw Exception('Group does not exist');
   }
@@ -293,7 +298,8 @@ Future<Group> createGame(
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions);
+  Group newGroup =
+      Group(newGroupID, [Player(userID, 0, null)], matchOptions, userID);
 
   final snapshot = await FirebaseFirestore.instance
       .collection('group')
