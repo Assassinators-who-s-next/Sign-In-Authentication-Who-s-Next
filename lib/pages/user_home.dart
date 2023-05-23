@@ -51,17 +51,14 @@ class _UserHomeState extends State<UserHome> {
       screenHeight = width;
     }
 
-    return myGroups.isEmpty ? noGroupScreenContent(context) : GameListDrawer(
-                  screenWidth: screenWidth,
-                  screenHeight: screenHeight,
-                  content:
-                      homeScreenContent(context, screenWidth, screenHeight),
-                  onSelectGroup: (p0) => SetSelectedGroup(p0),
-                );
-    
-
- 
- 
+    return myGroups.isEmpty
+        ? noGroupScreenContent(context)
+        : GameListDrawer(
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+            content: homeScreenContent(context, screenWidth, screenHeight),
+            onSelectGroup: (p0) => SetSelectedGroup(p0),
+          );
   }
 }
 
@@ -225,12 +222,16 @@ StreamBuilder prematchScreen(double screenWidth) {
         Padding(
           padding: const EdgeInsetsDirectional.all(40),
           child: LargeUserHomeButton(
-              label: "Start match",
-              color: const Color.fromARGB(255, 43, 167, 204),
-              //currPlayers: snapshot.data!.size,
-              buttonState: enoughPlayers,
-              onPressed: () => print("pressed start match button")),
-        ),
+            label: "Start match",
+            color: const Color.fromARGB(255, 43, 167, 204),
+            //currPlayers: snapshot.data!.size,
+            buttonState: enoughPlayers,
+            onPressed: () {
+              print("pressed start match button");
+              startGameOrRespawn();
+            },
+          ),
+        )
       ]));
     },
   );
