@@ -1,6 +1,7 @@
 import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/player.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'models/join_game_results.dart';
 import 'pages/home_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,6 +15,10 @@ import 'models/match_options.dart';
 import 'models/user_data.dart';
 import 'models/player_with_target.dart';
 import 'auth.dart';
+
+// to check current platform
+// source: https://stackoverflow.com/questions/71249485/flutter-web-is-giving-error-about-unsupported-operation-platform-operatingsyst
+import 'package:flutter/foundation.dart';
 
 final storage = FirebaseStorage.instance;
 
@@ -367,6 +372,12 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
 class DatabaseReference {}
 
 Future logout(context) async {
+  if (defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS) {
+    GoogleSignIn _googleSignIn = GoogleSignIn();
+    await _googleSignIn.signOut();
+  }
+
   await FirebaseAuth.instance.signOut().then((value) => Navigator.of(context)
       .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthPage()),
           (route) => false));
