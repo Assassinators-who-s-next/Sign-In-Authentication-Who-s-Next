@@ -10,7 +10,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:basic_auth/networking.dart';
-import 'package:basic_auth/pages/logged_in_join_create_game_page.dart';
+import 'package:basic_auth/pages/join_create_game_page.dart';
 
 import '../game_group.dart';
 
@@ -111,7 +111,7 @@ Widget noGroupScreenContent(BuildContext context) {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoggedInJoinCreatePage(),
+                    builder: (context) => JoinCreatePage(),
                   )),
               print("pressed join/create button")
             },
