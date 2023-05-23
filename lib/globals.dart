@@ -37,6 +37,7 @@ Group selectedGroup = Group(
     'Helmet',
   ),
   state: GroupState.notStarted
+
 );
 //    GameState.gameWaiting.name);
 List<Group> myGroups = [];

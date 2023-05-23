@@ -1,6 +1,7 @@
 import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/player.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'models/join_game_results.dart';
 import 'pages/home_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,6 +15,10 @@ import 'models/match_options.dart';
 import 'models/user_data.dart';
 import 'models/player_with_target.dart';
 import 'auth.dart';
+
+// to check current platform
+// source: https://stackoverflow.com/questions/71249485/flutter-web-is-giving-error-about-unsupported-operation-platform-operatingsyst
+import 'package:flutter/foundation.dart';
 
 final storage = FirebaseStorage.instance;
 
@@ -87,12 +92,18 @@ Future set_user_data(
   });
 }
 
-void applyName(List<Player> players) async {
+Future<void> applyName(List<Player> players) async {
   for (int i = 0; i < players.length; i++) {
     String element = players[i].userID;
     try {
       UserData? userData = await get_user_data(element);
       players[i].name = userData!.name;
+      print("Player " +
+          i.toString() +
+          " : " +
+          players[i].userID +
+          " name: " +
+          players[i].name!);
     } catch (e, stacktrace) {
       print("Error loading player name! \n" +
           e.toString() +
@@ -155,7 +166,12 @@ Future<Group> loadGroup(String groupID) async {
     }
     GroupState state = GroupState.values[stateIndex];
 
-    return Group(groupID, players, matchOptions, state: state);
+    String groupHost = "";
+    try {
+      groupDocument.get('host');
+    } catch (e) {}
+
+    return Group(groupID, players, matchOptions, groupHost, state: state);
   } else {
     throw Exception('Group does not exist');
   }
@@ -295,15 +311,17 @@ Future<Group> createGame(
     'totalGameTimeDuration': matchOptions.totalGameTimeDuration,
     'offLimitAreas': matchOptions.offLimitAreas,
     'safetyMethods': matchOptions.safetyMethods,
+    'host': userID!,
     'state': GroupState.notStarted.index,
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
-  await setPlayerInGroup(userID!, newGroupID, Player(userID, 0, null));
+  await setPlayerInGroup(userID, newGroupID, Player(userID, 0, null));
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions);
+  Group newGroup =
+      Group(newGroupID, [Player(userID, 0, null)], matchOptions, userID);
 
   final snapshot = await FirebaseFirestore.instance
       .collection('group')
@@ -416,6 +434,12 @@ Future<void> set_curr_target({required String targetUID}) async {
 }
 
 Future logout(context) async {
+  if (defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS) {
+    GoogleSignIn _googleSignIn = GoogleSignIn();
+    await _googleSignIn.signOut();
+  }
+
   await FirebaseAuth.instance.signOut().then((value) => Navigator.of(context)
       .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthPage()),
           (route) => false));
