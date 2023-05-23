@@ -284,11 +284,12 @@ Future<Group> createGame(
     'totalGameTimeDuration': matchOptions.totalGameTimeDuration,
     'offLimitAreas': matchOptions.offLimitAreas,
     'safetyMethods': matchOptions.safetyMethods,
+    'host': userID!,
     'state': GroupState.notStarted.index,
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
-  await setPlayerInGroup(userID!, newGroupID, Player(userID, 0, null));
+  await setPlayerInGroup(userID, newGroupID, Player(userID, 0, null));
 
   print('User $userID created new game: $newGroupID');
 
