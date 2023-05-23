@@ -1,6 +1,7 @@
 import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/player.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'models/join_game_results.dart';
 import 'pages/home_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,6 +15,10 @@ import 'models/match_options.dart';
 import 'models/user_data.dart';
 import 'models/player_with_target.dart';
 import 'auth.dart';
+
+// to check current platform
+// source: https://stackoverflow.com/questions/71249485/flutter-web-is-giving-error-about-unsupported-operation-platform-operatingsyst
+import 'package:flutter/foundation.dart';
 
 final storage = FirebaseStorage.instance;
 
@@ -129,7 +134,9 @@ Future<Group> loadGroup(String groupID) async {
             data['user_id'] ?? ''; // Use an empty string if the value is null
         int points = data['points'] ?? 0; // Use 0 if the value is null
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
-        players.add(Player(userId, points, null, state: playerState));
+        String targetUID = data['target'] ?? "";
+        players.add(Player(userId, points, null,
+            state: playerState, target: targetUID));
       }
     }
 
@@ -144,7 +151,16 @@ Future<Group> loadGroup(String groupID) async {
       groupDocument.get('safetyMethods'),
     );
 
-    return Group(groupID, players, matchOptions);
+    int stateIndex = 0;
+    Map<String, dynamic>? data = groupDocument.data() as Map<String, dynamic>?;
+    if (data != null && data.containsKey('state')) {
+      stateIndex = data['state'];
+    } else {
+      stateIndex = GroupState.notStarted.index;
+    }
+    GroupState state = GroupState.values[stateIndex];
+
+    return Group(groupID, players, matchOptions, state: state);
   } else {
     throw Exception('Group does not exist');
   }
@@ -184,10 +200,10 @@ Future<bool> load_my_user_data(String user_id) async {
 
 Future set_default_user_data(String token) async {
   UserData userData = UserData(
-    uid: globals.fireBaseUser!.uid,
+    uid: globals.fireBaseUser?.uid ?? 'default_uid',
     imagePath: "",
-    name: globals.fireBaseUser!.displayName!,
-    email: globals.fireBaseUser!.email!,
+    name: globals.fireBaseUser?.displayName! ?? 'default_name',
+    email: globals.fireBaseUser?.email! ?? 'default_email',
     pronouns: "",
     description: "",
     frequentedLocations: "",
@@ -230,6 +246,7 @@ Future<void> setPlayerInGroup(
     'user_id': player.userID,
     'points': player.points,
     'state': player.state.index,
+    'target': player.target,
   });
 
   print('finished setting player in group');
@@ -267,10 +284,12 @@ Future<Group> createGame(
     'totalGameTimeDuration': matchOptions.totalGameTimeDuration,
     'offLimitAreas': matchOptions.offLimitAreas,
     'safetyMethods': matchOptions.safetyMethods,
+    'host': userID!,
+    'state': GroupState.notStarted.index,
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
-  await setPlayerInGroup(userID!, newGroupID, Player(userID, 0, null));
+  await setPlayerInGroup(userID, newGroupID, Player(userID, 0, null));
 
   print('User $userID created new game: $newGroupID');
 
@@ -354,6 +373,12 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
 class DatabaseReference {}
 
 Future logout(context) async {
+  if (defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS) {
+    GoogleSignIn _googleSignIn = GoogleSignIn();
+    await _googleSignIn.signOut();
+  }
+
   await FirebaseAuth.instance.signOut().then((value) => Navigator.of(context)
       .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthPage()),
           (route) => false));

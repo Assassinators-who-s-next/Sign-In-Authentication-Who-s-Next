@@ -8,6 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:basic_auth/networking.dart';
+import 'package:basic_auth/pages/join_create_game_page.dart';
+
 import '../game_group.dart';
 
 class UserHome extends StatefulWidget {
@@ -38,30 +42,66 @@ class _UserHomeState extends State<UserHome> {
 
   @override
   Widget build(BuildContext context) {
-    // for sizing the image
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
 
-    // if the orientation is landscape, size changes to the height of the device
     if (MediaQuery.of(context).orientation == Orientation.landscape) {
       var width = screenWidth;
       screenWidth = screenHeight;
       screenHeight = width;
     }
 
-    return GameListDrawer(
-      screenWidth: screenWidth,
-      screenHeight: screenHeight,
-      content: homeScreenContent(context, screenWidth, screenHeight),
-      onSelectGroup: (p0) => SetSelectedGroup(p0),
-    );
+    return myGroups.isEmpty ? noGroupScreenContent(context) : GameListDrawer(
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                  content:
+                      homeScreenContent(context, screenWidth, screenHeight),
+                  onSelectGroup: (p0) => SetSelectedGroup(p0),
+                );
+    
+
+ 
+ 
   }
+}
+
+Widget noGroupScreenContent(BuildContext context) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(20),
+          child: Text("No Group Selected", style: TextStyle(fontSize: 30)),
+        ),
+        Padding(
+          padding: const EdgeInsetsDirectional.all(40),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Color.fromARGB(255, 43, 167, 204),
+              minimumSize: Size(200, 50),
+              textStyle: TextStyle(fontSize: 25),
+            ),
+            onPressed: () => {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => JoinCreatePage(),
+                  )),
+              print("pressed join/create button")
+            },
+            child: Text("Join/Create"),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 Widget homeScreenContent(
     BuildContext context, double screenWidth, double screenHeight) {
   bool gameStarted = false;
-    // bool gameStarted = true;
+  // bool gameStarted = true;
 
   return Stack(children: [
     InfoButton(context, screenWidth, screenHeight),
@@ -71,7 +111,8 @@ Widget homeScreenContent(
   ]);
 }
 
-Center eliminationTargetScreen(double screenWidth, double screenHeight,BuildContext context) {
+Center eliminationTargetScreen(
+    double screenWidth, double screenHeight, BuildContext context) {
   //UserData targetData = myUserData;
   //UserData targetData = UserPreferences.user;
   UserData targetData = UserData(
@@ -99,14 +140,18 @@ Center eliminationTargetScreen(double screenWidth, double screenHeight,BuildCont
               label: "Eliminate",
               color: Color.fromARGB(255, 238, 127, 119),
               buttonState: true,
-              onPressed: () => {eliminateNoti(targetData, context, screenWidth, screenHeight)}),
+              onPressed: () => {
+                    eliminateNoti(
+                        targetData, context, screenWidth, screenHeight)
+                  }),
         ),
       ],
     ),
   );
 }
 
-Future eliminateNoti(UserData targetData, BuildContext context, double screenWidth, double screenHeight) {
+Future eliminateNoti(UserData targetData, BuildContext context,
+    double screenWidth, double screenHeight) {
   return showSimplePopup(
     context,
     title: "Eliminate",
@@ -140,7 +185,6 @@ Future eliminateNoti(UserData targetData, BuildContext context, double screenWid
     height: screenHeight * 0.1,
   );
 }
-
 
 //Center prematchScreen(double screenWidth) {
 StreamBuilder prematchScreen(double screenWidth) {
@@ -192,7 +236,6 @@ StreamBuilder prematchScreen(double screenWidth) {
   );
 }
 
-
 Container InfoButton(
     BuildContext context, double screenWidth, double screenHeight) {
   double size = screenWidth * .075;
@@ -203,10 +246,12 @@ Container InfoButton(
         padding: const EdgeInsets.all(10.0),
         child: InkWell(
           borderRadius: BorderRadius.circular(size),
-          onTap: () => 
-          {
-            showPopup(context, 
-              title: Text("Match Info: ", style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+          onTap: () => {
+            showPopup(
+              context,
+              title: Text("Match Info: ",
+                  style: const TextStyle(
+                      fontSize: 35, fontWeight: FontWeight.bold)),
               content: AboutPopupContent(),
               bottomWidgets: [
                 closeButton(context),
@@ -215,7 +260,6 @@ Container InfoButton(
               height: screenHeight * .9, //height
             )
           },
-
           child: Icon(Icons.info, size: size),
         ),
       ),
@@ -224,12 +268,10 @@ Container InfoButton(
 }
 
 Widget AboutPopupContent() {
-
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       MatchInfoText("Game Period",
-
           "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
       MatchInfoText("Respawn Time",
           "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
@@ -238,7 +280,6 @@ Widget AboutPopupContent() {
       MatchInfoText(
           "Off Limit Areas", selectedGroup.matchOptions.offLimitAreas),
       MatchInfoText("Safety Methods", selectedGroup.matchOptions.safetyMethods),
-
     ],
   );
 }
