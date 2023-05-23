@@ -97,7 +97,7 @@ Widget noGroupScreenContent(BuildContext context) {
 
 Widget homeScreenContent(
     BuildContext context, double screenWidth, double screenHeight) {
-  bool gameStarted = false;
+  bool gameStarted = true;
   // bool gameStarted = true;
 
   return Stack(children: [
@@ -113,13 +113,13 @@ Center eliminationTargetScreen(
   //UserData targetData = myUserData;
   //UserData targetData = UserPreferences.user;
   UserData targetData = UserData(
-      description: '',
-      email: '',
-      frequentedLocations: '',
-      imagePath: '',
-      name: 'target_name',
-      pronouns: '',
-      uid: '');
+      description: "it's a me",
+      email: "email here",
+      frequentedLocations: "joe's crab shack",
+      imagePath: "image here",
+      name: 'Cashmoney',
+      pronouns: 'he/him',
+      uid: 'uid');
   return Center(
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,

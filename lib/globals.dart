@@ -2,13 +2,13 @@ library whos_next.globals;
 
 import 'dart:async';
 
+import 'package:basic_auth/models/player_with_target.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'models/user_data.dart';
 import 'models/match_options.dart';
 import 'game_group.dart';
-
 
 UserData myUserData = UserData(
   uid: "",
@@ -39,4 +39,18 @@ Group selectedGroup = Group(
 );
 //    GameState.gameWaiting.name);
 List<Group> myGroups = [];
+
+/*
+TargetInfo currentTarget = TargetInfo(
+  targetUID: "",
+  targetName: "",
+  targetImage: "",
+  targetDescription: "",
+  targetPronouns: "",
+  targetFrequentedLocations: "",
+);
+*/
+
+UserData? currentTarget;
+
 User? fireBaseUser;

@@ -256,6 +256,22 @@ Future<void> setPlayerInGroup(
   */
 }
 
+Future<Player?> getUser({required String targetUID}) async {
+  var db = FirebaseFirestore.instance;
+
+  final docRef = db.collection("users").doc(targetUID);
+
+  docRef.get().then(
+    (DocumentSnapshot doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      print(data);
+    },
+    onError: (e) => print("Error getting document: $e"),
+  );
+
+  return null;
+}
+
 Future<Group> createGame(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
@@ -366,22 +382,36 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
 
 class DatabaseReference {}
 
-void startGameOrRespawn() {
+void startGameOrRespawn() async {
   /* things to note
 
     - game state is only initialized for player who created game
     - previous game information shows if you log out and log back in with another account that isn't in that previous game 
     - need to store target_uid for each player in groups on db (CHECK)
   */
+
   globals.selectedGroup.players.shuffle();
 
   // asign targets
   var groupSize = globals.selectedGroup.players.length;
 
   for (int i = 0; i < groupSize; i++) {
-    globals.selectedGroup.players[i].target = globals.selectedGroup.players[(i + 1) % groupSize].userID;
-    setPlayerInGroup(globals.selectedGroup.players[i].userID, globals.selectedGroup.group_name, globals.selectedGroup.players[i]);
+    globals.selectedGroup.players[i].target =
+        globals.selectedGroup.players[(i + 1) % groupSize].userID;
+    setPlayerInGroup(globals.selectedGroup.players[i].userID,
+        globals.selectedGroup.group_name, globals.selectedGroup.players[i]);
+
+    if (globals.selectedGroup.players[i].userID == globals.myUserData.uid) {
+      await set_curr_target(targetUID: globals.selectedGroup.players[i].target!);
+      print("current target: ${globals.currentTarget!.uid}");
+
+    }
   }
+  //for (int i = 0; i < groupSize; i++) {}
+}
+
+Future<void> set_curr_target({required String targetUID}) async {
+  globals.currentTarget = await get_user_data(targetUID);
 }
 
 Future logout(context) async {
