@@ -9,7 +9,6 @@ import 'models/user_data.dart';
 import 'models/match_options.dart';
 import 'game_group.dart';
 
-
 UserData myUserData = UserData(
   uid: "",
   imagePath: "",
@@ -36,6 +35,7 @@ Group selectedGroup = Group(
     'Area A',
     'Helmet',
   ),
+  "",
 );
 //    GameState.gameWaiting.name);
 List<Group> myGroups = [];
