@@ -13,10 +13,27 @@ class Player {
       {this.state = PlayerState.alive, target = ""});
 
   String get_name() {
+    if (name != null) return name!;
+
     if (userData != null) {
       return userData!.name;
     } else {
       return userID ?? "Unknown";
     }
+  }
+
+  @override
+  String toString() {
+    return "Player:[ userID: " +
+        userID +
+        "\nname: " +
+        (name ?? "null") +
+        "\nPoints: " +
+        "Points: " +
+        points.toString() +
+        "\n" +
+        "State: " +
+        state.toString() +
+        "]";
   }
 }
