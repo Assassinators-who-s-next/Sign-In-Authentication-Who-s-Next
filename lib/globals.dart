@@ -9,7 +9,6 @@ import 'models/user_data.dart';
 import 'models/match_options.dart';
 import 'game_group.dart';
 
-enum GameState { gameWaiting, gameStarted, gameEnded }
 
 UserData myUserData = UserData(
   uid: "",
