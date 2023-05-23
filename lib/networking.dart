@@ -92,12 +92,18 @@ Future set_user_data(
   });
 }
 
-void applyName(List<Player> players) async {
+Future<void> applyName(List<Player> players) async {
   for (int i = 0; i < players.length; i++) {
     String element = players[i].userID;
     try {
       UserData? userData = await get_user_data(element);
       players[i].name = userData!.name;
+      print("Player " +
+          i.toString() +
+          " : " +
+          players[i].userID +
+          " name: " +
+          players[i].name!);
     } catch (e, stacktrace) {
       print("Error loading player name! \n" +
           e.toString() +

@@ -10,11 +10,27 @@ import '../globals.dart' as globals;
 class LeaderBoard extends StatefulWidget {
   const LeaderBoard({Key? key}) : super(key: key);
 
+  static GlobalKey<_LeaderboardState> leaderboardKey = GlobalKey();
+
   //_LeaderboardState? myState;
 
-  void reload() {
-    reloadGroup();
-    _LeaderboardState.instance?.updatePlayers();
+  void reload(BuildContext context) async {
+    print("Testing reload 1");
+    await reloadGroup();
+    print("Testing reload 2: " + globals.selectedGroup.toString());
+    //_LeaderboardState.instance?.updatePlayers();
+    final state = leaderboardKey.currentState;
+    //state?.updatePlayers();
+    print("Testing reload 3, state null? " + (state == null).toString());
+
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (BuildContext context) => LeaderBoard(),
+    //   ),
+    // );
+
+    print("Testing reload 4, state null? " + (state == null).toString());
   }
 
   @override
@@ -32,7 +48,7 @@ void sortPlayers() {
   globals.selectedGroup.players.sort((a, b) => b.points.compareTo(a.points));
 }
 
-void reloadGroup() async {
+Future<void> reloadGroup() async {
   String groupID = globals.selectedGroup.group_name;
   Group fetchedGroup = await loadGroup(groupID);
   globals.selectedGroup = fetchedGroup;
@@ -45,31 +61,48 @@ void reloadGroup() async {
   }
 
   // load names on this group
-  applyName(globals.selectedGroup.players);
+  await applyName(globals.selectedGroup.players);
 
   print("finished reloading group");
 }
 
 class _LeaderboardState extends State<LeaderBoard> {
-  static _LeaderboardState? instance;
-
   final List<Widget> _players = [];
 
-  void updatePlayers() {
-    setState(() {
-      _players.clear();
-      for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-        Player cur_player = globals.selectedGroup.players[i];
-        _players.add(LeaderboardElemnt(
-            playerName: cur_player.get_name(),
-            playerPoints: cur_player.points));
-      }
-    });
-  }
+  // void updatePlayers() {
+  //   setState(() {
+  //     _players.clear();
+  //     print("Updating player with : " +
+  //         globals.selectedGroup.players.length.toString() +
+  //         " players");
+  //     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
+  //       Player cur_player = globals.selectedGroup.players[i];
+  //       _players.add(LeaderboardElemnt(
+  //           playerName: cur_player.get_name(),
+  //           playerPoints: cur_player.points));
+  //       print("Adding player: " + cur_player.get_name());
+  //     }
+  //   });
+  // }
 
   @override
   void initState() {
-    instance = this;
+    // for (int i = 0; i < globals.selectedGroup.players.length; i++) {
+    //   Player cur_player = globals.selectedGroup.players[i];
+
+    //   String player_name = cur_player.get_name();
+    //   int player_points = cur_player.points;
+    //   var newElement = LeaderboardElemnt(
+    //       playerName: player_name ?? "unknown",
+    //       playerPoints: player_points ?? 0);
+    //   _players.add(newElement);
+    // }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _players.clear();
     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
       Player cur_player = globals.selectedGroup.players[i];
 
@@ -80,11 +113,7 @@ class _LeaderboardState extends State<LeaderBoard> {
           playerPoints: player_points ?? 0);
       _players.add(newElement);
     }
-    super.initState();
-  }
 
-  @override
-  Widget build(BuildContext context) {
     // TODO: sort everytime read from Firebase, need to figure out where in ListView.builder
     _players.sort((a, b) => int.parse((b as LeaderboardElemnt).getPoints())
         .compareTo(int.parse((a as LeaderboardElemnt).getPoints())));

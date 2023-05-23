@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
     super.key,
     String? name,
     List<Group>? groups,
-  }); 
+  });
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
       if (_pages[_selectedIndex] is LeaderBoard) {
-        (_pages[_selectedIndex] as LeaderBoard).reload();
+        (_pages[_selectedIndex] as LeaderBoard).reload(context);
       }
     });
   }
@@ -38,30 +38,27 @@ class _HomePageState extends State<HomePage> {
     Profile(),
   ];
 
-  Widget LoadingScreen()
-  {
-    return Stack(
-      children: [
-        /*
+  Widget LoadingScreen() {
+    return Stack(children: [
+      /*
         const Opacity(
         opacity: 0.8,
         child: ModalBarrier(dismissible: false, color: Colors.black),
       ),*/
-        Center(child: const CircularProgressIndicator()),
-      ]);
+      Center(child: const CircularProgressIndicator()),
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-        stream: finishedLoadingUserController.stream,
-        builder: (context, snapshot) 
-        {
-          if (!finishedLoadingUser && (!snapshot.hasData || !snapshot.data))
-            return LoadingScreen();
-          return _pages[_selectedIndex];
-        }),
+          stream: finishedLoadingUserController.stream,
+          builder: (context, snapshot) {
+            if (!finishedLoadingUser && (!snapshot.hasData || !snapshot.data))
+              return LoadingScreen();
+            return _pages[_selectedIndex];
+          }),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _navigateBottomBar,
