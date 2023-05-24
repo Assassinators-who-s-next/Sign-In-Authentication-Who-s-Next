@@ -93,10 +93,16 @@ Future set_user_data(
 }
 
 Future<void> applyName(List<Player> players) async {
+  var userDataGetters = <Future<UserData?>>[];
   for (int i = 0; i < players.length; i++) {
-    String element = players[i].userID;
+    Future<UserData?> userDataGetter = get_user_data(players[i].userID);
+    userDataGetters.add(userDataGetter);
+  }
+  List<UserData?> userDatas = await Future.wait(userDataGetters);
+
+  for (int i = 0; i < userDatas.length; i++) {
+    UserData? userData = userDatas[i];
     try {
-      UserData? userData = await get_user_data(element);
       players[i].name = userData!.name;
       print("Player " +
           i.toString() +
