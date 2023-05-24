@@ -39,9 +39,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchAndReload() async {
     await reloadSelectedGroup();
+
     int oldIndex = _selectedIndex;
-    _navigateBottomBar(1, fetchAgain: false);
+    // _navigateBottomBar(1, fetchAgain: false);
     Future.delayed(Duration(milliseconds: 20), () {
+      _navigateBottomBar(1, fetchAgain: false);
       _navigateBottomBar(oldIndex, fetchAgain: false);
       // Navigator.push(context, MaterialPageRoute(builder: (_) => Screen2()));
     });
