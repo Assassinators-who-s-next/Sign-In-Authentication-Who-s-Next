@@ -21,6 +21,7 @@ class LeaderboardElemnt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ProfilePicture(
           radius: 50,
@@ -31,6 +32,7 @@ class LeaderboardElemnt extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         Flexible(
+          fit: FlexFit.tight,
           child: Text(
             playerName,
             style: const TextStyle(
@@ -39,7 +41,7 @@ class LeaderboardElemnt extends StatelessWidget {
             ),
           ),
         ),
-        const Spacer(),
+//        const Spacer(),
         Text(
           playerPoints.toString(),
           style: const TextStyle(

@@ -26,7 +26,12 @@ class Profile extends StatelessWidget {
               children: [
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Center(child: Text('Profile Page', style: TextStyle(fontSize: 50, ), textAlign: TextAlign.center)),
+                  child: Center(
+                      child: Text('Profile Page',
+                          style: TextStyle(
+                            fontSize: 50,
+                          ),
+                          textAlign: TextAlign.center)),
                 ),
                 Center(child: buildPicture(user, context)),
                 //buildPicture(myUserData, context),
@@ -63,9 +68,11 @@ class Profile extends StatelessWidget {
           ProfilePicture(
               radius: 250,
               //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
-              imagePath:
-                  user.imagePath == null || user.imagePath == "" ? "lib/images/placeHolderProfileImage.jpg" : user.imagePath!,
-              isNetworkPath: user.imagePath != null,
+              imagePath: user.imagePath == null || user.imagePath == ""
+                  ? "lib/images/placeHolderProfileImage.jpg"
+                  : user.imagePath!,
+              //isNetworkPath: user.imagePath != null,
+              isNetworkPath: user.imagePath != null && user.imagePath != "",
               onClicked: () {
                 print("Profile picture clicked");
               }),
@@ -125,8 +132,10 @@ class Profile extends StatelessWidget {
           text: userData.frequentedLocations,
           width: width,
           onChanged: (frequentedLocations) {
-            myUserData.frequentedLocations = frequentedLocations; // change locally (maybe doesn't need to happen but we'll deal with that later)
-            update_user(context, 'frequentedLocations', frequentedLocations); // change on database
+            myUserData.frequentedLocations =
+                frequentedLocations; // change locally (maybe doesn't need to happen but we'll deal with that later)
+            update_user(context, 'frequentedLocations',
+                frequentedLocations); // change on database
           },
           maxLines: 4,
           maxLength: 200,
