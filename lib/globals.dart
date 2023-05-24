@@ -36,7 +36,8 @@ Group selectedGroup = Group(
     'Area A',
     'Helmet',
   ),
-  state: GroupState.notStarted
+  "",
+  state: GroupState.notStarted,
 
 );
 //    GameState.gameWaiting.name);
