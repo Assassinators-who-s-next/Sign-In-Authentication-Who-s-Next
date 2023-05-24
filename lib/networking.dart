@@ -260,8 +260,7 @@ Future set_default_user_data(String token) async {
   globals.myGroups = playerGroups;
 }
 
-void login_custom(
-    BuildContext context, String userName, String password) async {
+void login_custom(BuildContext context, String userName, String password) async {
   bool success = await load_my_user_data(userName);
   //if (!sucess) set_default_user_data(userName);
 }
