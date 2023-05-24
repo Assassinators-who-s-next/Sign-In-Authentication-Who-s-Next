@@ -24,13 +24,28 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 1;
 
-  void _navigateBottomBar(int index) {
+  void _navigateBottomBar(int index, {bool fetchAgain = true}) {
     setState(() {
+      print("Navigate 1");
       _selectedIndex = index;
       if (_pages[_selectedIndex] is LeaderBoard) {
-        (_pages[_selectedIndex] as LeaderBoard).reload(context);
+        if (fetchAgain) {
+          fetchAndReload();
+        }
       }
+      print("Navigate 2");
     });
+  }
+
+  Future<void> fetchAndReload() async {
+    await reloadSelectedGroup();
+    int oldIndex = _selectedIndex;
+    _navigateBottomBar(1, fetchAgain: false);
+    Future.delayed(Duration(milliseconds: 20), () {
+      _navigateBottomBar(oldIndex, fetchAgain: false);
+      // Navigator.push(context, MaterialPageRoute(builder: (_) => Screen2()));
+    });
+    // _navigateBottomBar(oldIndex, fetchAgain: false);
   }
 
   final List<Widget> _pages = [
