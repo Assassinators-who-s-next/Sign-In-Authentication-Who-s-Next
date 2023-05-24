@@ -465,6 +465,20 @@ Future<void> set_curr_target({required String targetUID}) async {
   globals.currentTarget = await get_user_data(targetUID);
 }
 
+Future<void> load_curr_target({required String uid}) async {
+  print("In load curr target in networking");
+  var groupSize = globals.selectedGroup.players.length;
+  print("group size: ${groupSize}");
+
+  for (int i = 0; i < groupSize; i++) {
+    if (globals.selectedGroup.players[i].userID == globals.myUserData.uid) {
+      await set_curr_target(
+          targetUID: globals.selectedGroup.players[i].target!);
+      print("current target: ${globals.currentTarget!.uid}");
+    }
+  }
+}
+
 Future logout(context) async {
   if (defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS) {

@@ -138,11 +138,11 @@ class _UserHomeState extends State<UserHome> {
     //UserData targetData = myUserData;
     //UserData targetData = UserPreferences.user;
     UserData targetData = UserData(
-        description: "it's a me",
+        description: currentTarget!.description,
         email: "email here",
-        frequentedLocations: "joe's crab shack",
-        imagePath: myUserData.imagePath,
-        name: "whatever",
+        frequentedLocations: "",
+        imagePath: "",
+        name: currentTarget!.name,
         pronouns: 'he/him',
         uid: 'uid');
     return Center(

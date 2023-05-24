@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:basic_auth/models/user_data.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:basic_auth/game_group.dart';
 import 'package:basic_auth/networking.dart';
@@ -44,6 +45,15 @@ class AuthPage extends StatelessWidget {
     loadingUser = true;
     SetFinishedLoadingState(false);
     await login_google(context, email!, uid!);
+    print("In login");
+    //currentTarget = await get_user_data(selectedGroup.get(uid)!.target!);
+    try {
+      print("uid: $uid");
+      await load_curr_target(uid: uid!);
+    } catch (E) {
+      print("ERROR!!!!: ${E}");
+    }
+
     SetFinishedLoadingState(true);
     loadingUser = false;
   }

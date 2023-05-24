@@ -35,7 +35,7 @@ class Profile extends StatelessWidget {
                 ),
                 Center(child: buildPicture(user, context)),
                 //buildPicture(myUserData, context),
-
+                
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Column(
