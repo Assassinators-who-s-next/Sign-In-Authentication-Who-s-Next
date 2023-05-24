@@ -192,10 +192,22 @@ Future<Group> loadGroup(String groupID) async {
 
     String groupHost = "";
     try {
-      groupDocument.get('host');
+      groupHost = groupDocument.get('host');
     } catch (e) {}
 
-    return Group(groupID, players, matchOptions, groupHost, state: state);
+    DateTime timeStarted = DateTime.utc(1989, 11, 9);
+    try {
+      timeStarted = groupDocument.get('timeStarted');
+    } catch (e) {}
+
+    DateTime timeEnding = DateTime.utc(1989, 11, 9);
+    try {
+      timeEnding = groupDocument.get('timeEnding');
+    } catch (e) {}
+
+    return Group(
+        groupID, players, matchOptions, groupHost, timeStarted, timeEnding,
+        state: state);
   } else {
     throw Exception('Group does not exist');
   }
@@ -260,7 +272,8 @@ Future set_default_user_data(String token) async {
   globals.myGroups = playerGroups;
 }
 
-void login_custom(BuildContext context, String userName, String password) async {
+void login_custom(
+    BuildContext context, String userName, String password) async {
   bool success = await load_my_user_data(userName);
   //if (!sucess) set_default_user_data(userName);
 }
@@ -320,6 +333,8 @@ Future<Group> createGame(
     'safetyMethods': matchOptions.safetyMethods,
     'host': userID!,
     'state': GroupState.notStarted.index,
+    'timeStarted': DateTime.utc(1989, 11, 9),
+    'timeEnding': DateTime.utc(1989, 11, 9),
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
@@ -327,8 +342,8 @@ Future<Group> createGame(
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup =
-      Group(newGroupID, [Player(userID, 0, null)], matchOptions, userID);
+  Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions,
+      userID, DateTime.utc(1989, 11, 9), DateTime.utc(1989, 11, 9));
 
   final snapshot = await FirebaseFirestore.instance
       .collection('group')
