@@ -305,6 +305,23 @@ Future<Player?> getUser({required String targetUID}) async {
   return null;
 }
 
+Future<void> setPlayer(String gameID, String userID, Player player) async {
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
+
+  print(
+      'in setPlayer\nplayer id: ${player.userID}\nplayer points: ${player.points}\nplayer state: ${player.state.index}');
+
+  await groupsRef.doc(gameID).collection('players').doc(userID).set({
+    'user_id': player.userID,
+    'points': player.points,
+    'state': player.state.index,
+    'target': player.target,
+  });
+
+  print('finished setting player');
+}
+
 Future<Group> createGame(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
