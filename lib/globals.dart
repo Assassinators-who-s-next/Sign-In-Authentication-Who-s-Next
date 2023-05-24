@@ -26,7 +26,8 @@ void SetFinishedLoadingState(bool state) {
 }
 
 bool finishedLoadingUser = false;
-StreamController finishedLoadingUserController = StreamController<bool>.broadcast();
+StreamController finishedLoadingUserController =
+    StreamController<bool>.broadcast();
 Group selectedGroup = Group(
   "join or create a game to play",
   [],
@@ -41,6 +42,8 @@ Group selectedGroup = Group(
     '',
   ),
   "",
+  new DateTime.utc(1989, 11, 9),
+  new DateTime.utc(1989, 11, 9),
   state: GroupState.notStarted,
 );
 //    GameState.gameWaiting.name);

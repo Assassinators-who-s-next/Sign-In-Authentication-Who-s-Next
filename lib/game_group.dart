@@ -8,9 +8,13 @@ class Group {
   List<Player> players;
   MatchOptions matchOptions;
 
+  DateTime timeStarted;
+  DateTime timeEnding;
+
   String groupHost;
   GroupState state = GroupState.notStarted;
   Group(this.group_name, this.players, this.matchOptions, this.groupHost,
+      this.timeStarted, this.timeEnding,
       {this.state = GroupState.notStarted});
 
   @override
