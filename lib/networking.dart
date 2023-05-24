@@ -398,6 +398,16 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
+void update_group(Group selectedGroup) async {
+  String groupID = selectedGroup.group_name;
+  GroupState groupState = selectedGroup.state;
+  print(groupState.index);
+  await FirebaseFirestore.instance
+      .collection('groups')
+      .doc(groupID)
+      .update({'state': groupState.index});
+}
+
 class DatabaseReference {}
 
 Future<void> startGameOrRespawn() async {

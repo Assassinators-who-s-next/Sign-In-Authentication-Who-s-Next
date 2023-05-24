@@ -175,6 +175,7 @@ class _UserHomeState extends State<UserHome> {
                   buttonState: true,
                   onPressed: () => {
                         selectedGroup.state = GroupState.finished,
+                        update_group(selectedGroup),
                         setState(() {
                           selGroup = selectedGroup;
                           print("current state is now ${selGroup.state}");
@@ -270,6 +271,7 @@ class _UserHomeState extends State<UserHome> {
                 print("pressed start match button");
                 //await startGameOrRespawn();
                 selectedGroup.state = GroupState.running;
+                update_group(selectedGroup);
                 setState(() {
                   selGroup = selectedGroup;
                   print("current state is now ${selGroup.state}");
@@ -282,36 +284,36 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
+
+
   Center postmatchScreen() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Text("Match Finished!", style: TextStyle(fontSize: 30)),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: Text("Match Finished!", style: TextStyle(fontSize: 30)),
+        ),
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: Text("Winner: ", style: TextStyle(fontSize: 20)),
+        ),
+        Padding(
+          padding: const EdgeInsetsDirectional.all(40),
+          child: LargeUserHomeButton(
+            label: "Start a new match",
+            color: const Color.fromARGB(255, 43, 167, 204),
+            buttonState: true,
+            onPressed: () => {
+              selectedGroup.state = GroupState.notStarted,
+              update_group(selectedGroup),
+              setState(() {
+                selGroup = selectedGroup;
+                print("current state is now ${selGroup.state}");
+              })
+            },
           ),
-          Padding(
-            padding: EdgeInsets.all(20), 
-            child: Text("Winner: ", style: TextStyle(fontSize: 20)),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.all(40),
-            child: LargeUserHomeButton(
-              label: "Start a new match",
-              color: const Color.fromARGB(255, 43, 167, 204),
-              buttonState: true,
-              onPressed: () => {
-                selectedGroup.state = GroupState.notStarted,
-                setState(() {
-                  selGroup = selectedGroup;
-                  print("current state is now ${selGroup.state}");
-                })
-              },
-            ),
-          ),
-        ]
-      ),
+        ),
+      ]),
     );
   }
 
