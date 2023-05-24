@@ -42,11 +42,9 @@ class AuthPage extends StatelessWidget {
 
   void Login(BuildContext context, String? email, String? uid) async {
     loadingUser = true;
-    finishedLoadingUser = false;
-    finishedLoadingUserController.add(false);
+    SetFinishedLoadingState(false);
     await login_google(context, email!, uid!);
-    finishedLoadingUser = true;
-    finishedLoadingUserController.add(true);
+    SetFinishedLoadingState(true);
     loadingUser = false;
   }
 }

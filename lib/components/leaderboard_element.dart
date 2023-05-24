@@ -3,12 +3,11 @@ import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'profile_picture.dart';
 
-class LeaderboardElemnt extends StatelessWidget {
+class LeaderboardElement extends StatelessWidget {
   final String playerName;
   final int playerPoints;
 
-  const LeaderboardElemnt(
-      {super.key, required this.playerName, required this.playerPoints});
+  const LeaderboardElement({super.key, required this.playerName, required this.playerPoints});
 
   String getName() {
     return this.playerName;

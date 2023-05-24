@@ -19,26 +19,29 @@ UserData myUserData = UserData(
   description: "",
   frequentedLocations: "",
 );
-String myName = "no_name";
+
+void SetFinishedLoadingState(bool state) {
+  finishedLoadingUser = state;
+  finishedLoadingUserController.add(state);
+}
+
 bool finishedLoadingUser = false;
-StreamController finishedLoadingUserController =
-    StreamController<bool>.broadcast();
+StreamController finishedLoadingUserController = StreamController<bool>.broadcast();
 Group selectedGroup = Group(
-  "join or create games to play",
+  "join or create a game to play",
   [],
   MatchOptions(
     -1,
-    'Single',
-    'Fixed',
-    5,
-    'Limited',
-    60,
-    'Area A',
-    'Helmet',
+    '',
+    '',
+    -1,
+    '',
+    -1,
+    '',
+    '',
   ),
   "",
   state: GroupState.notStarted,
-
 );
 //    GameState.gameWaiting.name);
 List<Group> myGroups = [];
