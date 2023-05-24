@@ -108,15 +108,12 @@ class _LeaderboardState extends State<LeaderBoard> {
 
       String player_name = cur_player.get_name();
       int player_points = cur_player.points;
-      var newElement = LeaderboardElemnt(
-          playerName: player_name ?? "unknown",
-          playerPoints: player_points ?? 0);
+      var newElement = LeaderboardElement(playerName: player_name ?? "unknown", playerPoints: player_points ?? 0);
       _players.add(newElement);
     }
 
     // TODO: sort everytime read from Firebase, need to figure out where in ListView.builder
-    _players.sort((a, b) => int.parse((b as LeaderboardElemnt).getPoints())
-        .compareTo(int.parse((a as LeaderboardElemnt).getPoints())));
+    _players.sort((a, b) => int.parse((b as LeaderboardElement).getPoints()).compareTo(int.parse((a as LeaderboardElement).getPoints())));
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -162,8 +159,7 @@ class _LeaderboardState extends State<LeaderBoard> {
   Column leaderboardTopInfo() {
     return Column(
       children: [
-        const Text('Leaderboard',
-            style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+        const Text('Leaderboard', style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
         const Padding(padding: EdgeInsets.only(bottom: 10)),
         const Text('Respawn in: xx:xx:xx'),
         const Padding(padding: EdgeInsets.only(bottom: 15)),
