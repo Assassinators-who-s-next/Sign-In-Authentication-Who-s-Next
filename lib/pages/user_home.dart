@@ -96,12 +96,12 @@ class _UserHomeState extends State<UserHome> {
 
   Widget homeScreenContent(
       BuildContext context, double screenWidth, double screenHeight) {
-    Widget screen = prematchScreen(screenWidth);
+    Widget screen = prematchScreen();
 
     switch (selGroup.state) {
       case GroupState.notStarted:
         {
-          screen = prematchScreen(screenWidth);
+          screen = prematchScreen();
           print("going to prematchScreen switch statement");
         }
         break;
@@ -114,13 +114,14 @@ class _UserHomeState extends State<UserHome> {
         break;
       case GroupState.finished:
         {
-          print("Finished Screen not implemented");
+          screen = postmatchScreen();
+          print("going to finishedScreen switch statement");
         }
         break;
 
       default:
         {
-          screen = prematchScreen(screenWidth);
+          screen = prematchScreen();
           print("ERROR: defaulted switch statement in user_home.dart");
         }
         break;
@@ -166,6 +167,19 @@ class _UserHomeState extends State<UserHome> {
                           targetData, context, screenWidth, screenHeight)
                     }),
           ),
+          Padding(
+              padding: const EdgeInsetsDirectional.all(40),
+              child: LargeUserHomeButton(
+                  label: "Debug(go to finished screen)",
+                  color: Color.fromARGB(255, 43, 167, 204),
+                  buttonState: true,
+                  onPressed: () => {
+                        selectedGroup.state = GroupState.finished,
+                        setState(() {
+                          selGroup = selectedGroup;
+                          print("current state is now ${selGroup.state}");
+                        })
+                      })),
         ],
       ),
     );
@@ -208,7 +222,7 @@ class _UserHomeState extends State<UserHome> {
   }
 
 //Center prematchScreen(double screenWidth) {
-  StreamBuilder prematchScreen(double screenWidth) {
+  StreamBuilder prematchScreen() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('groups')
@@ -267,6 +281,41 @@ class _UserHomeState extends State<UserHome> {
       },
     );
   }
+
+  Center postmatchScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Text("Match Finished!", style: TextStyle(fontSize: 30)),
+          ),
+          Padding(
+            padding: EdgeInsets.all(20), 
+            child: Text("Winner: ", style: TextStyle(fontSize: 20)),
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.all(40),
+            child: LargeUserHomeButton(
+              label: "Start a new match",
+              color: const Color.fromARGB(255, 43, 167, 204),
+              buttonState: true,
+              onPressed: () => {
+                selectedGroup.state = GroupState.notStarted,
+                setState(() {
+                  selGroup = selectedGroup;
+                  print("current state is now ${selGroup.state}");
+                })
+              },
+            ),
+          ),
+        ]
+      ),
+    );
+  }
+
+// what should idoodddjojsgf
 
   Container InfoButton(
       BuildContext context, double screenWidth, double screenHeight) {
