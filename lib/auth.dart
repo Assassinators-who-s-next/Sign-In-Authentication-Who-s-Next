@@ -29,9 +29,8 @@ class AuthPage extends StatelessWidget {
               String? uid = FirebaseAuth.instance.currentUser?.uid;
 
               //login_custom(context, "whatever", "password");
-              if (!loadingUser)
-                Login(context, email, uid);
-              
+              if (!loadingUser) Login(context, email, uid);
+
               return HomePage();
               // user not logged in
             } else {
@@ -41,8 +40,7 @@ class AuthPage extends StatelessWidget {
     );
   }
 
-  void Login(BuildContext context, String? email, String? uid) async
-  {
+  void Login(BuildContext context, String? email, String? uid) async {
     loadingUser = true;
     finishedLoadingUser = false;
     finishedLoadingUserController.add(false);

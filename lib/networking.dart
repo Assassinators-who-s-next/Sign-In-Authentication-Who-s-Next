@@ -210,10 +210,21 @@ Future<bool> load_my_user_data(String userId) async {
 }
 
 Future set_default_user_data(String token) async {
+  String? firstName = globals.fireBaseUser?.displayName!.split(' ')[0];
+
+  print('name size ${firstName!.length}');
+
+  // FIXME: magic variable on name size, based on maxLines in profile.dart
+  if (firstName.length > 26) {
+    firstName = firstName.substring(0, 26);
+    print('after substring ${firstName}');
+  }
+
   UserData userData = UserData(
     uid: globals.fireBaseUser?.uid ?? 'default_uid',
     imagePath: "",
-    name: globals.fireBaseUser?.displayName! ?? 'default_name',
+    //name: globals.fireBaseUser?.displayName!.split(' ')[0] ?? 'default_name',
+    name: firstName ?? 'default_name',
     email: globals.fireBaseUser?.email! ?? 'default_email',
     pronouns: "",
     description: "",
