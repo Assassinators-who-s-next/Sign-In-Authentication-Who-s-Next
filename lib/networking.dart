@@ -278,48 +278,6 @@ Future<void> setPlayerInGroup(
   });
 
   print('finished setting player in group');
-
-  /*
-  await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
-    'players': [
-      {'user_id': userID, 'points': 0, 'state': (PlayerState.alive)}
-    ],
-    // Add any other fields you want to initialize here
-  });
-  */
-}
-
-Future<Player?> getUser({required String targetUID}) async {
-  var db = FirebaseFirestore.instance;
-
-  final docRef = db.collection("users").doc(targetUID);
-
-  docRef.get().then(
-    (DocumentSnapshot doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      print(data);
-    },
-    onError: (e) => print("Error getting document: $e"),
-  );
-
-  return null;
-}
-
-Future<void> setPlayer(String gameID, String userID, Player player) async {
-  CollectionReference groupsRef =
-      FirebaseFirestore.instance.collection('groups');
-
-  print(
-      'in setPlayer\nplayer id: ${player.userID}\nplayer points: ${player.points}\nplayer state: ${player.state.index}');
-
-  await groupsRef.doc(gameID).collection('players').doc(userID).set({
-    'user_id': player.userID,
-    'points': player.points,
-    'state': player.state.index,
-    'target': player.target,
-  });
-
-  print('finished setting player');
 }
 
 Future<Group> createGame(
