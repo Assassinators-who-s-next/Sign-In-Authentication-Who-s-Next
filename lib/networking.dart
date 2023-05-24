@@ -92,6 +92,24 @@ Future set_user_data(
   });
 }
 
+Future<void> reloadSelectedGroup() async {
+  String groupID = globals.selectedGroup.group_name;
+  Group fetchedGroup = await loadGroup(groupID);
+  globals.selectedGroup = fetchedGroup;
+
+  //replace old instance of group with new one
+  for (int i = 0; i < globals.myGroups.length; i++) {
+    if (globals.myGroups[i].group_name == groupID) {
+      globals.myGroups[i] = fetchedGroup;
+    }
+  }
+
+  // load names on this group
+  await applyName(globals.selectedGroup.players);
+
+  print("finished reloading group");
+}
+
 Future<void> applyName(List<Player> players) async {
   var userDataGetters = <Future<UserData?>>[];
   for (int i = 0; i < players.length; i++) {
