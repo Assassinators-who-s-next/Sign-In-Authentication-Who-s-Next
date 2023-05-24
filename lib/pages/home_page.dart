@@ -1,3 +1,4 @@
+import 'package:basic_auth/networking.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class _HomePageState extends State<HomePage> {
 
   void Refresh() async {
     SetFinishedLoadingState(false);
-    await reloadGroup();
+    await reloadSelectedGroup();
     SetFinishedLoadingState(true);
   }
 
@@ -61,7 +62,8 @@ class _HomePageState extends State<HomePage> {
       body: StreamBuilder(
           stream: finishedLoadingUserController.stream,
           builder: (context, snapshot) {
-            if (!finishedLoadingUser && (!snapshot.hasData || !snapshot.data)) return LoadingScreen();
+            if (!finishedLoadingUser && (!snapshot.hasData || !snapshot.data))
+              return LoadingScreen();
             return Stack(children: [
               _pages[_selectedIndex],
               if (_selectedIndex < 2)
@@ -69,7 +71,9 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.topRight,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 4, right: 4),
-                      child: InkWell(child: Icon(Icons.refresh, size: 45), onTap: () => Refresh()),
+                      child: InkWell(
+                          child: Icon(Icons.refresh, size: 45),
+                          onTap: () => Refresh()),
                     )),
             ]);
           }),

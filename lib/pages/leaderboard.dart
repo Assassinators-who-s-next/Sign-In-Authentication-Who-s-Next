@@ -16,89 +16,22 @@ class LeaderBoard extends StatefulWidget {
 
   void reload(BuildContext context) async {
     print("Testing reload 1");
-    await reloadGroup();
+    await reloadSelectedGroup();
     print("Testing reload 2: " + globals.selectedGroup.toString());
-    //_LeaderboardState.instance?.updatePlayers();
-    final state = leaderboardKey.currentState;
-    //state?.updatePlayers();
-    print("Testing reload 3, state null? " + (state == null).toString());
 
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (BuildContext context) => LeaderBoard(),
-    //   ),
-    // );
-
-    print("Testing reload 4, state null? " + (state == null).toString());
+    // TODO: figure out how to reload the state
   }
 
   @override
   _LeaderboardState createState() => _LeaderboardState();
-
-  // @override
-  // _LeaderboardState createState() {
-  //   var newState = _LeaderboardState();
-  //   myState = newState;
-  //   return newState;
-  // }
 }
 
 void sortPlayers() {
   globals.selectedGroup.players.sort((a, b) => b.points.compareTo(a.points));
 }
 
-Future<void> reloadGroup() async {
-  String groupID = globals.selectedGroup.group_name;
-  Group fetchedGroup = await loadGroup(groupID);
-  globals.selectedGroup = fetchedGroup;
-
-  //replace old instance of group with new one
-  for (int i = 0; i < globals.myGroups.length; i++) {
-    if (globals.myGroups[i].group_name == groupID) {
-      globals.myGroups[i] = fetchedGroup;
-    }
-  }
-
-  // load names on this group
-  await applyName(globals.selectedGroup.players);
-
-  print("finished reloading group");
-}
-
 class _LeaderboardState extends State<LeaderBoard> {
   final List<Widget> _players = [];
-
-  // void updatePlayers() {
-  //   setState(() {
-  //     _players.clear();
-  //     print("Updating player with : " +
-  //         globals.selectedGroup.players.length.toString() +
-  //         " players");
-  //     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-  //       Player cur_player = globals.selectedGroup.players[i];
-  //       _players.add(LeaderboardElemnt(
-  //           playerName: cur_player.get_name(),
-  //           playerPoints: cur_player.points));
-  //       print("Adding player: " + cur_player.get_name());
-  //     }
-  //   });
-  // }
-
-  @override
-  void initState() {
-    // for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-    //   Player cur_player = globals.selectedGroup.players[i];
-
-    //   String player_name = cur_player.get_name();
-    //   int player_points = cur_player.points;
-    //   var newElement = LeaderboardElemnt(
-    //       playerName: player_name ?? "unknown",
-    //       playerPoints: player_points ?? 0);
-    //   _players.add(newElement);
-    // }
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,15 +41,15 @@ class _LeaderboardState extends State<LeaderBoard> {
 
       String player_name = cur_player.get_name();
       int player_points = cur_player.points;
-      var newElement = LeaderboardElemnt(
+      var newElement = LeaderboardElement(
           playerName: player_name ?? "unknown",
           playerPoints: player_points ?? 0);
       _players.add(newElement);
     }
 
     // TODO: sort everytime read from Firebase, need to figure out where in ListView.builder
-    _players.sort((a, b) => int.parse((b as LeaderboardElemnt).getPoints())
-        .compareTo(int.parse((a as LeaderboardElemnt).getPoints())));
+    _players.sort((a, b) => int.parse((b as LeaderboardElement).getPoints())
+        .compareTo(int.parse((a as LeaderboardElement).getPoints())));
 
     return MaterialApp(
       title: 'Flutter Demo',

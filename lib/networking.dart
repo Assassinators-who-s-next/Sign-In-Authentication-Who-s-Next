@@ -223,7 +223,6 @@ Future<bool> load_my_user_data(String userId) async {
 
   globals.myUserData = myUserData;
   print("Printing User data from load_my_user_data: ${globals.myUserData}");
-  globals.myName = myUserData.name;
   globals.myGroups = myGroups;
 
   if (!myGroups.isEmpty) {
@@ -258,7 +257,6 @@ Future set_default_user_data(String token) async {
   await set_user_data(token, userData, playerGroups);
 
   globals.myUserData = userData;
-  globals.myName = userData.name;
   globals.myGroups = playerGroups;
 }
 
