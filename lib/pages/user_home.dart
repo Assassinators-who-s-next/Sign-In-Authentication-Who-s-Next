@@ -254,7 +254,7 @@ class _UserHomeState extends State<UserHome> {
               buttonState: enoughPlayers,
               onPressed: () async {
                 print("pressed start match button");
-                //await startGameOrRespawn();
+                await startGameOrRespawn();
                 selectedGroup.state = GroupState.running;
                 setState(() {
                   selGroup = selectedGroup;
