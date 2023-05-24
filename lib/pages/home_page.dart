@@ -67,14 +67,16 @@ class _HomePageState extends State<HomePage> {
             return Stack(children: [
               _pages[_selectedIndex],
               if (_selectedIndex < 2)
-                Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 4, right: 4),
-                      child: InkWell(
-                          child: Icon(Icons.refresh, size: 45),
-                          onTap: () => Refresh()),
-                    )),
+                SafeArea(
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4, right: 4),
+                        child: InkWell(
+                            child: Icon(Icons.refresh, size: 45),
+                            onTap: () => Refresh()),
+                      )),
+                ),
             ]);
           }),
       bottomNavigationBar: BottomNavigationBar(
