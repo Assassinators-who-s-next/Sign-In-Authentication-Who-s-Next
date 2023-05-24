@@ -39,14 +39,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchAndReload() async {
     await reloadSelectedGroup();
+    Refresh();
+  }
 
-    int oldIndex = _selectedIndex;
-    _navigateBottomBar(1, fetchAgain: false);
+  void Refresh() {
+    SetFinishedLoadingState(false);
     Future.delayed(Duration(milliseconds: 20), () {
-      _navigateBottomBar(oldIndex, fetchAgain: false);
-      // Navigator.push(context, MaterialPageRoute(builder: (_) => Screen2()));
+      SetFinishedLoadingState(true);
     });
-    // _navigateBottomBar(oldIndex, fetchAgain: false);
   }
 
   final List<Widget> _pages = [
