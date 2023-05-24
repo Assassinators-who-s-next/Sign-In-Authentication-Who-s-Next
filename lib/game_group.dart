@@ -17,6 +17,13 @@ class Group {
       this.timeStarted, this.timeEnding,
       {this.state = GroupState.notStarted});
 
+  Player? get(String uid) {
+    for (int i = 0; i < players.length; i++) {
+      if (players[i].userID == uid) return players[i];
+    }
+    return null;
+  }
+
   @override
   String toString() {
     String result = "Group: " + group_name + "\n";
