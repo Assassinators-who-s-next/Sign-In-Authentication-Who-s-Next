@@ -272,22 +272,6 @@ Future<void> setPlayerInGroup(
   */
 }
 
-Future<Player?> getUser({required String targetUID}) async {
-  var db = FirebaseFirestore.instance;
-
-  final docRef = db.collection("users").doc(targetUID);
-
-  docRef.get().then(
-    (DocumentSnapshot doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      print(data);
-    },
-    onError: (e) => print("Error getting document: $e"),
-  );
-
-  return null;
-}
-
 Future<Group> createGame(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
@@ -398,7 +382,7 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
-void update_group(Group selectedGroup) async {
+void update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
   GroupState groupState = selectedGroup.state;
   print(groupState.index);

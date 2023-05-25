@@ -22,21 +22,22 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   bool? isCheckedBox = false;
   late Group selGroup;
+  //late Stream<GroupState> groupStateStream; //NOT SURE if neccessary
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    selGroup = selectedGroup; //this might not get the state update as well
 
-    setState(() {
-      selGroup = selectedGroup;
-    });
+ //   groupStateStream = getGroupStateStream(selGroup.group_name); //NOT SURE if neccessary
   }
 
+  // I think you need when you click different group
   void SetSelectedGroup(Group group) {
     selectedGroup = group;
     setState(() {
-      selGroup = group;
+      selGroup = selectedGroup;
     });
   }
 
@@ -53,12 +54,52 @@ class _UserHomeState extends State<UserHome> {
 
     return myGroups.isEmpty
         ? noGroupScreenContent(context)
-        : GameListDrawer(
-            screenWidth: screenWidth,
-            screenHeight: screenHeight,
-            content: homeScreenContent(context, screenWidth, screenHeight),
-            onSelectGroup: (p0) => SetSelectedGroup(p0),
-          );
+        : StreamBuilder<GroupState>(
+            stream: getGroupStateStream(selGroup.group_name),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text("Something went wrong");
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text("Loading");
+              }
+
+              GroupState groupState = snapshot.data ?? GroupState.notStarted;
+
+              return GameListDrawer(
+                screenWidth: screenWidth,
+                screenHeight: screenHeight,
+                content: homeScreenContent(context, screenWidth, screenHeight, groupState),
+                onSelectGroup: (p0) => SetSelectedGroup(p0),
+              );
+            });
+
+    // return myGroups.isEmpty
+    //     ? noGroupScreenContent(context)
+    //     : GameListDrawer(
+    //         screenWidth: screenWidth,
+    //         screenHeight: screenHeight,
+    //         content: homeScreenContent(context, screenWidth, screenHeight),
+    //         onSelectGroup: (p0) => SetSelectedGroup(p0),
+    //       );
+  }
+
+  Stream<GroupState> getGroupStateStream(String groupId) {
+    return FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupId)
+        .snapshots()
+        .map((doc) {
+      final data = doc.data();
+      if (data != null) {
+        final state = data['state'];
+        if (state != null) {
+          return GroupState.values[state];
+        }
+      }
+      return GroupState.notStarted; // Return a default value if state or data is null
+    });
   }
 
   Widget noGroupScreenContent(BuildContext context) {
@@ -95,10 +136,10 @@ class _UserHomeState extends State<UserHome> {
   }
 
   Widget homeScreenContent(
-      BuildContext context, double screenWidth, double screenHeight) {
+      BuildContext context, double screenWidth, double screenHeight, GroupState currentState) {
     Widget screen = prematchScreen();
 
-    switch (selGroup.state) {
+    switch (currentState) {
       case GroupState.notStarted:
         {
           screen = prematchScreen();
@@ -175,11 +216,11 @@ class _UserHomeState extends State<UserHome> {
                   buttonState: true,
                   onPressed: () => {
                         selectedGroup.state = GroupState.finished,
-                        update_group(selectedGroup),
-                        setState(() {
-                          selGroup = selectedGroup;
-                          print("current state is now ${selGroup.state}");
-                        })
+                        update_group_state(selectedGroup),
+                        // setState(() {
+                        //   selGroup = selectedGroup;
+                        //   print("current state is now ${selGroup.state}");
+                        // })
                       })),
         ],
       ),
@@ -249,7 +290,6 @@ class _UserHomeState extends State<UserHome> {
         if (snapshot.data!.size >= 2) {
           enoughPlayers = true;
         }
-        ;
         return Center(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -271,11 +311,11 @@ class _UserHomeState extends State<UserHome> {
                 print("pressed start match button");
                 //await startGameOrRespawn();
                 selectedGroup.state = GroupState.running;
-                update_group(selectedGroup);
-                setState(() {
-                  selGroup = selectedGroup;
-                  print("current state is now ${selGroup.state}");
-                });
+                update_group_state(selectedGroup);
+                // setState(() {
+                //   selGroup = selectedGroup;
+                //   print("current state is now ${selGroup.state}");
+                // });
               },
             ),
           )
@@ -283,8 +323,6 @@ class _UserHomeState extends State<UserHome> {
       },
     );
   }
-
-
 
   Center postmatchScreen() {
     return Center(
@@ -305,11 +343,11 @@ class _UserHomeState extends State<UserHome> {
             buttonState: true,
             onPressed: () => {
               selectedGroup.state = GroupState.notStarted,
-              update_group(selectedGroup),
-              setState(() {
-                selGroup = selectedGroup;
-                print("current state is now ${selGroup.state}");
-              })
+              update_group_state(selectedGroup),
+              // setState(() {
+              //   selGroup = selectedGroup;
+              //   print("current state is now ${selGroup.state}");
+              // })
             },
           ),
         ),
