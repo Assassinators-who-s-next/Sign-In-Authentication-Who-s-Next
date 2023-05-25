@@ -33,8 +33,11 @@ class _UserHomeState extends State<UserHome> {
     });
   }
 
-  void SetSelectedGroup(Group group) {
+  void SetSelectedGroup(Group group) async {
     selectedGroup = group;
+    print("changing group...");
+    currentTarget = await get_user_data(await get_curr_target_uid(uid: myUserData.uid, groupCode: group.group_name));
+
     setState(() {
       selGroup = group;
     });
@@ -137,13 +140,15 @@ class _UserHomeState extends State<UserHome> {
       double screenWidth, double screenHeight, BuildContext context) {
     //UserData targetData = myUserData;
     //UserData targetData = UserPreferences.user;
+    print("");
+
     UserData targetData = UserData(
         description: currentTarget!.description,
-        email: "email here",
-        frequentedLocations: "",
+        email: "",
+        frequentedLocations: currentTarget!.frequentedLocations,
         imagePath: "",
         name: currentTarget!.name,
-        pronouns: 'he/him',
+        pronouns: currentTarget!.pronouns,
         uid: 'uid');
     return Center(
       child: Column(
@@ -156,8 +161,11 @@ class _UserHomeState extends State<UserHome> {
               //imagePath: targetData.imagePath ?? UserPreferences.placeholderImagePath,
               isNetworkPath: true,
               onClicked: () => print("clicked elimation target")),
+          Text("freq locations: ${targetData.frequentedLocations}"),
+          Text("Descrpt: ${targetData.description}"),
           Padding(
             padding: const EdgeInsetsDirectional.all(40),
+            
             child: LargeUserHomeButton(
                 label: "Eliminate",
                 color: Color.fromARGB(255, 238, 127, 119),
@@ -283,8 +291,6 @@ class _UserHomeState extends State<UserHome> {
       },
     );
   }
-
-
 
   Center postmatchScreen() {
     return Center(

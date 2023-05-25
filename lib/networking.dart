@@ -15,6 +15,7 @@ import 'models/match_options.dart';
 import 'models/user_data.dart';
 import 'models/player_with_target.dart';
 import 'auth.dart';
+import 'dart:async';
 
 // to check current platform
 // source: https://stackoverflow.com/questions/71249485/flutter-web-is-giving-error-about-unsupported-operation-platform-operatingsyst
@@ -280,6 +281,7 @@ void login_custom(
 
 Future login_google(BuildContext context, String email, String token) async {
   bool success = await load_my_user_data(token);
+  print("Current target ${globals.currentTarget!.name}");
   if (!success) {
     await set_default_user_data(token);
   }
@@ -462,6 +464,7 @@ Future<void> startGameOrRespawn() async {
 }
 
 Future<void> set_curr_target({required String targetUID}) async {
+  print("In set_curr_target");
   globals.currentTarget = await get_user_data(targetUID);
 }
 
@@ -472,11 +475,47 @@ Future<void> load_curr_target({required String uid}) async {
 
   for (int i = 0; i < groupSize; i++) {
     if (globals.selectedGroup.players[i].userID == globals.myUserData.uid) {
+      print("in if statemennt in load_curr_target");
       await set_curr_target(
           targetUID: globals.selectedGroup.players[i].target!);
       print("current target: ${globals.currentTarget!.uid}");
     }
   }
+}
+
+Future<String> get_curr_target_uid(
+    {required String uid, required String groupCode}) async {
+  var db = FirebaseFirestore.instance;
+
+  final docRef =
+      db.collection("groups").doc(groupCode).collection("players").doc(uid);
+
+  try {
+    var doc = await docRef.get();
+    var data = doc.data() as Map<String, dynamic>;
+    String targetUID = data['target'];
+    print("TARGET UID: $targetUID");
+    return targetUID;
+  } catch (e) {
+    print("Error getting document: $e");
+    return "default";
+  }
+}
+
+Future<Player?> getUser({required String targetUID}) async {
+  var db = FirebaseFirestore.instance;
+
+  final docRef = db.collection("users").doc(targetUID);
+
+  docRef.get().then(
+    (DocumentSnapshot doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      print(data);
+    },
+    onError: (e) => print("Error getting document: $e"),
+  );
+
+  return null;
 }
 
 Future logout(context) async {
