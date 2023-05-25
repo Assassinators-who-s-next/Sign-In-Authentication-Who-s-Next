@@ -22,7 +22,6 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   bool? isCheckedBox = false;
   late Group selGroup;
-  //late Stream<GroupState> groupStateStream; //NOT SURE if neccessary
 
   @override
   void initState() {
@@ -30,10 +29,9 @@ class _UserHomeState extends State<UserHome> {
     super.initState();
     selGroup = selectedGroup; //this might not get the state update as well
 
- //   groupStateStream = getGroupStateStream(selGroup.group_name); //NOT SURE if neccessary
   }
 
-  // I think you need when you click different group
+  // I think you need this when you click different group
   void SetSelectedGroup(Group group) {
     selectedGroup = group;
     setState(() {
