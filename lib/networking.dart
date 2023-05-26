@@ -129,8 +129,6 @@ Future<void> reloadSelectedGroup() async {
 
   // load names on this group
   await loadPlayerNamesFromList(globals.selectedGroup.players);
-
-  //print("finished reloading group");
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {
@@ -198,8 +196,9 @@ Future<Group> loadGroup(String groupID) async {
         int points = data['points'] ?? 0; // Use 0 if the value is null
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
         String targetUID = data['target'] ?? "";
+        String? eliminatedBy = data['eliminatedBy'];
         players.add(Player(userId, points, null,
-            state: playerState, target: targetUID));
+            state: playerState, target: targetUID, eliminatedBy: eliminatedBy));
       }
     }
 
@@ -338,9 +337,11 @@ Future<void> setPlayerInGroup(
     'points': player.points,
     'state': player.state.index,
     'target': player.target,
+    'eliminator': player.eliminator,
   });
 
   print('finished setting player in group');
+
 }
 
 StreamSubscription<DocumentSnapshot>? _subscription;
@@ -402,7 +403,7 @@ void stopListeningToGroupChanges() {
   _playersSubscription = null;
 }
 
-Future<Group> createGame(
+Future<Group> createGroup(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
@@ -450,18 +451,17 @@ Future<Group> createGame(
     print('there is a player collection');
   }
 
-  print('num plyaers in newly created group: ${newGroup.players.length}');
+  print('num players in newly created group: ${newGroup.players.length}');
 
-  bool isNotInGroup = globals.myGroups.isEmpty;
   globals.myGroups.add(newGroup);
   if (isNotInGroup) {
     globals.setSelectedGroup(newGroup);
   }
-  set_user_data(userID, globals.myUserData, globals.myGroups);
+  await set_user_data(userID, globals.myUserData, globals.myGroups);
+
+  await loadPlayerNamesFromList(globals.selectedGroup.players);
 
   return newGroup;
-
-  //join_game(context, newGroupID, userID!);
 }
 
 Future<JoinGameResults> join_game(
@@ -514,7 +514,7 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
-void update_group(Group selectedGroup) async {
+void update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
   GroupState groupState = selectedGroup.state;
   print(groupState.index);
@@ -523,8 +523,6 @@ void update_group(Group selectedGroup) async {
       .doc(groupID)
       .update({'state': groupState.index});
 }
-
-class DatabaseReference {}
 
 Future<void> startGameOrRespawn() async {
   /* things to note
