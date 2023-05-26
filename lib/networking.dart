@@ -181,8 +181,9 @@ Future<Group> loadGroup(String groupID) async {
         int points = data['points'] ?? 0; // Use 0 if the value is null
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
         String targetUID = data['target'] ?? "";
+        String? eliminatedBy = data['eliminatedBy'];
         players.add(Player(userId, points, null,
-            state: playerState, target: targetUID));
+            state: playerState, target: targetUID, eliminatedBy: eliminatedBy));
       }
     }
 
@@ -320,6 +321,7 @@ Future<void> setPlayerInGroup(
     'points': player.points,
     'state': player.state.index,
     'target': player.target,
+    'eliminator': player.eliminator,
   });
 
   print('finished setting player in group');
