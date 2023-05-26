@@ -4,6 +4,7 @@ import 'package:basic_auth/components/leaderboard_element.dart';
 import '../player.dart';
 import '../game_group.dart';
 import '../networking.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../globals.dart' as globals;
 
@@ -31,7 +32,23 @@ void sortPlayers() {
 }
 
 class _LeaderboardState extends State<LeaderBoard> {
-  final List<Widget> _players = [];
+  List<Widget> _players = [];
+
+  _LeaderboardState() {
+    addGroupUpdateListener(OnGroupUpdate);
+  }
+
+  @override
+  void dispose() {
+    removeGroupUpdateListener(OnGroupUpdate);
+    super.dispose();
+  }
+
+  void OnGroupUpdate() {
+    //print("Testing OnGroupUpdate");
+    // refresh page
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {

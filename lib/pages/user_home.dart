@@ -34,7 +34,7 @@ class _UserHomeState extends State<UserHome> {
   }
 
   void SetSelectedGroup(Group group) async {
-    selectedGroup = group;
+    setSelectedGroup(group);
     setState(() {
       selGroup = group;
     });
@@ -286,8 +286,6 @@ class _UserHomeState extends State<UserHome> {
       },
     );
   }
-
-
 
   Center postmatchScreen() {
     return Center(

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'models/user_data.dart';
 import 'models/match_options.dart';
 import 'game_group.dart';
+import 'networking.dart';
 
 UserData myUserData = UserData(
   uid: "",
@@ -63,3 +64,9 @@ TargetInfo currentTarget = TargetInfo(
 UserData? currentTarget;
 
 User? fireBaseUser;
+
+void setSelectedGroup(Group group) {
+  stopListeningToGroupChanges();
+  selectedGroup = group;
+  ListenToGroupChanges(group.group_name);
+}
