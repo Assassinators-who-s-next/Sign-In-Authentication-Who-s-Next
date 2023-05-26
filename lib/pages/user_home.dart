@@ -62,7 +62,7 @@ class _UserHomeState extends State<UserHome> {
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text("Loading");
+                return Center(child: CircularProgressIndicator());
               }
 
               GroupState groupState = snapshot.data ?? GroupState.notStarted;
