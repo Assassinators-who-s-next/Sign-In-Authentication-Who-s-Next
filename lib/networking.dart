@@ -28,7 +28,6 @@ void Refresh() async {
   globals.SetFinishedLoadingState(true);
 }
 
-
 Future<UserData?> get_user_data(String userId) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
@@ -127,17 +126,14 @@ Future<void> loadPlayerNamesFromList(List<Player> players) async {
 
   for (int i = 0; i < userDatas.length; i++) {
     UserData? userData = userDatas[i];
-    try
-    {
-     // print("loading ${userData!.name}");
+    try {
+      // print("loading ${userData!.name}");
       players[i].userData = userData;
       players[i].name = userData!.name;
-    }
-    catch(e)
-    {
+    } catch (e) {
       print("failed to load user data");
     }
-    
+
     /*
     try {
       players[i].name = userData!.name;
@@ -185,8 +181,9 @@ Future<Group> loadGroup(String groupID) async {
         int points = data['points'] ?? 0; // Use 0 if the value is null
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
         String targetUID = data['target'] ?? "";
+        String? eliminatedBy = data['eliminatedBy'];
         players.add(Player(userId, points, null,
-            state: playerState, target: targetUID));
+            state: playerState, target: targetUID, eliminatedBy: eliminatedBy));
       }
     }
 
@@ -324,6 +321,7 @@ Future<void> setPlayerInGroup(
     'points': player.points,
     'state': player.state.index,
     'target': player.target,
+    'eliminator': player.eliminator,
   });
 
   print('finished setting player in group');
