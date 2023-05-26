@@ -28,7 +28,6 @@ void Refresh() async {
   globals.SetFinishedLoadingState(true);
 }
 
-
 Future<UserData?> get_user_data(String userId) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
@@ -127,17 +126,14 @@ Future<void> loadPlayerNamesFromList(List<Player> players) async {
 
   for (int i = 0; i < userDatas.length; i++) {
     UserData? userData = userDatas[i];
-    try
-    {
-     // print("loading ${userData!.name}");
+    try {
+      // print("loading ${userData!.name}");
       players[i].userData = userData;
       players[i].name = userData!.name;
-    }
-    catch(e)
-    {
+    } catch (e) {
       print("failed to load user data");
     }
-    
+
     /*
     try {
       players[i].name = userData!.name;
@@ -462,6 +458,10 @@ Future<void> startGameOrRespawn() async {
   */
 
   globals.selectedGroup.players.shuffle();
+
+  globals.selectedGroup.timeStarted = DateTime.now();
+  globals.selectedGroup.timeEnding = DateTime.now().add(Duration(
+      hours: globals.selectedGroup.matchOptions.totalGameTimeDuration));
 
   // asign targets
   var groupSize = globals.selectedGroup.players.length;
