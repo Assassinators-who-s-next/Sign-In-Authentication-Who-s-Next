@@ -112,8 +112,6 @@ Future<void> reloadSelectedGroup() async {
 
   // load names on this group
   await loadPlayerNamesFromList(globals.selectedGroup.players);
-
-  //print("finished reloading group");
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {
@@ -328,7 +326,7 @@ Future<void> setPlayerInGroup(
 
 }
 
-Future<Group> createGame(
+Future<Group> createGroup(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
@@ -376,18 +374,16 @@ Future<Group> createGame(
     print('there is a player collection');
   }
 
-  print('num plyaers in newly created group: ${newGroup.players.length}');
+  print('num players in newly created group: ${newGroup.players.length}');
 
-  bool isNotInGroup = globals.myGroups.isEmpty;
   globals.myGroups.add(newGroup);
-  if (isNotInGroup) {
-    globals.selectedGroup = newGroup;
-  }
-  set_user_data(userID, globals.myUserData, globals.myGroups);
+  globals.selectedGroup = newGroup;
+  
+  await set_user_data(userID, globals.myUserData, globals.myGroups);
+
+  await loadPlayerNamesFromList(globals.selectedGroup.players);
 
   return newGroup;
-
-  //join_game(context, newGroupID, userID!);
 }
 
 Future<JoinGameResults> join_game(
@@ -449,8 +445,6 @@ void update_group_state(Group selectedGroup) async {
       .doc(groupID)
       .update({'state': groupState.index});
 }
-
-class DatabaseReference {}
 
 Future<void> startGameOrRespawn() async {
   /* things to note
