@@ -28,7 +28,6 @@ class _UserHomeState extends State<UserHome> {
     // TODO: implement initState
     super.initState();
     selGroup = selectedGroup; //this might not get the state update as well
-
   }
 
   // I think you need this when you click different group
@@ -68,7 +67,8 @@ class _UserHomeState extends State<UserHome> {
               return GameListDrawer(
                 screenWidth: screenWidth,
                 screenHeight: screenHeight,
-                content: homeScreenContent(context, screenWidth, screenHeight, groupState),
+                content: homeScreenContent(
+                    context, screenWidth, screenHeight, groupState),
                 onSelectGroup: (p0) => SetSelectedGroup(p0),
               );
             });
@@ -96,7 +96,8 @@ class _UserHomeState extends State<UserHome> {
           return GroupState.values[state];
         }
       }
-      return GroupState.notStarted; // Return a default value if state or data is null
+      return GroupState
+          .notStarted; // Return a default value if state or data is null
     });
   }
 
@@ -133,8 +134,8 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-  Widget homeScreenContent(
-      BuildContext context, double screenWidth, double screenHeight, GroupState currentState) {
+  Widget homeScreenContent(BuildContext context, double screenWidth,
+      double screenHeight, GroupState currentState) {
     Widget screen = prematchScreen();
 
     switch (currentState) {
@@ -155,6 +156,13 @@ class _UserHomeState extends State<UserHome> {
         {
           screen = postmatchScreen();
           print("going to finishedScreen switch statement");
+        }
+        break;
+
+      case GroupState.dead:
+        {
+          screen = deadScreen(screenWidth, screenHeight);
+          print("you are dead, please wait until it finish");
         }
         break;
 
@@ -206,21 +214,63 @@ class _UserHomeState extends State<UserHome> {
                           targetData, context, screenWidth, screenHeight)
                     }),
           ),
-          Padding(
-              padding: const EdgeInsetsDirectional.all(40),
-              child: LargeUserHomeButton(
-                  label: "Debug(go to finished screen)",
-                  color: Color.fromARGB(255, 43, 167, 204),
-                  buttonState: true,
-                  onPressed: () => {
-                        selectedGroup.state = GroupState.finished,
-                        update_group_state(selectedGroup),
-                        // setState(() {
-                        //   selGroup = selectedGroup;
-                        //   print("current state is now ${selGroup.state}");
-                        // })
-                      })),
+          // Padding(
+          //     padding: const EdgeInsetsDirectional.all(40),
+          //     child: LargeUserHomeButton(
+          //         label: "Debug(go to finished screen)",
+          //         color: Color.fromARGB(255, 43, 167, 204),
+          //         buttonState: true,
+          //         onPressed: () => {
+          //               selectedGroup.state = GroupState.finished,
+          //               update_group_state(selectedGroup),
+          //               // setState(() {
+          //               //   selGroup = selectedGroup;
+          //               //   print("current state is now ${selGroup.state}");
+          //               // })
+          //             })
+          // ),
         ],
+      ),
+    );
+  }
+
+  /* Create a function deadScreen() where it returns the widget that has the component of a big header text with red color
+   that generates "you're dead, wait for winner comes up" with the gray background */
+  Center deadScreen(double screenWidth, double screenHeight) {
+    return Center(
+      child: SizedBox(
+        width: screenWidth,
+        height: screenHeight / 2,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                'You are eliminated.\n Please wait until winner announce.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 30,
+                ),
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.all(20),
+                child: LargeUserHomeButton(
+                    label: "Debug(go to finished screen)",
+                    color: Color.fromARGB(255, 43, 167, 204),
+                    buttonState: true,
+                    onPressed: () => {
+                          selectedGroup.state = GroupState.finished,
+                          update_group_state(selectedGroup),
+                          // setState(() {
+                          //   selGroup = selectedGroup;
+                          //   print("current state is now ${selGroup.state}");
+                          // })
+                        }))
+          ],
+        ),
       ),
     );
   }
@@ -241,7 +291,11 @@ class _UserHomeState extends State<UserHome> {
                 minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                 textStyle: TextStyle(fontSize: 25),
               ),
-              onPressed: () => print("eliminated"),
+              onPressed: () => {
+                Navigator.pop(context),
+                selectedGroup.state = GroupState.dead,
+                update_group_state(selectedGroup),
+              },
               child: Text("Yes"),
             ),
             ElevatedButton(
@@ -250,7 +304,7 @@ class _UserHomeState extends State<UserHome> {
                 minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                 textStyle: TextStyle(fontSize: 25),
               ),
-              onPressed: () => print("eliminated failed"),
+              onPressed: () => {Navigator.pop(context)},
               child: Text("No"),
             ),
           ],
