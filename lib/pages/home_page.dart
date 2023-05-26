@@ -1,3 +1,4 @@
+import 'package:basic_auth/networking.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +27,6 @@ class _HomePageState extends State<HomePage> {
   void _navigateBottomBar(int index) {
     setState(() {
       _selectedIndex = index;
-      if (_pages[_selectedIndex] is LeaderBoard) {
-        (_pages[_selectedIndex] as LeaderBoard).reload(context);
-      }
     });
   }
 
@@ -57,7 +55,20 @@ class _HomePageState extends State<HomePage> {
           builder: (context, snapshot) {
             if (!finishedLoadingUser && (!snapshot.hasData || !snapshot.data))
               return LoadingScreen();
-            return _pages[_selectedIndex];
+            return Stack(children: [
+              _pages[_selectedIndex],
+              if (_selectedIndex < 2)
+                SafeArea(
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4, right: 4),
+                        child: InkWell(
+                            child: Icon(Icons.refresh, size: 45),
+                            onTap: () => Refresh()),
+                      )),
+                ),
+            ]);
           }),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

@@ -31,11 +31,14 @@ class _UserHomeState extends State<UserHome> {
   }
 
   // I think you need this when you click different group
-  void SetSelectedGroup(Group group) {
+  void SetSelectedGroup(Group group) async {
     selectedGroup = group;
     setState(() {
       selGroup = selectedGroup;
     });
+    SetFinishedLoadingState(false);
+    await reloadSelectedGroup();
+    SetFinishedLoadingState(true);
   }
 
   @override
@@ -336,7 +339,7 @@ class _UserHomeState extends State<UserHome> {
               buttonState: enoughPlayers,
               onPressed: () async {
                 print("pressed start match button");
-                //await startGameOrRespawn();
+                await startGameOrRespawn();
                 selectedGroup.state = GroupState.running;
                 update_group_state(selectedGroup);
 
@@ -375,8 +378,6 @@ class _UserHomeState extends State<UserHome> {
       ]),
     );
   }
-
-// what should idoodddjojsgf
 
   Container InfoButton(
       BuildContext context, double screenWidth, double screenHeight) {

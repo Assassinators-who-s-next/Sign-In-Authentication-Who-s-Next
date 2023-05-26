@@ -22,6 +22,13 @@ import 'package:flutter/foundation.dart';
 
 final storage = FirebaseStorage.instance;
 
+void Refresh() async {
+  globals.SetFinishedLoadingState(false);
+  await reloadSelectedGroup();
+  globals.SetFinishedLoadingState(true);
+}
+
+
 Future<UserData?> get_user_data(String userId) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
@@ -92,11 +99,47 @@ Future set_user_data(
   });
 }
 
-Future<void> applyName(List<Player> players) async {
+Future<void> reloadSelectedGroup() async {
+  String groupID = globals.selectedGroup.group_name;
+  Group fetchedGroup = await loadGroup(groupID);
+  globals.selectedGroup = fetchedGroup;
+
+  //replace old instance of group with new one
+  for (int i = 0; i < globals.myGroups.length; i++) {
+    if (globals.myGroups[i].group_name == groupID) {
+      globals.myGroups[i] = fetchedGroup;
+    }
+  }
+
+  // load names on this group
+  await loadPlayerNamesFromList(globals.selectedGroup.players);
+
+  //print("finished reloading group");
+}
+
+Future<void> loadPlayerNamesFromList(List<Player> players) async {
+  var userDataGetters = <Future<UserData?>>[];
   for (int i = 0; i < players.length; i++) {
-    String element = players[i].userID;
+    Future<UserData?> userDataGetter = get_user_data(players[i].userID);
+    userDataGetters.add(userDataGetter);
+  }
+  List<UserData?> userDatas = await Future.wait(userDataGetters);
+
+  for (int i = 0; i < userDatas.length; i++) {
+    UserData? userData = userDatas[i];
+    try
+    {
+     // print("loading ${userData!.name}");
+      players[i].userData = userData;
+      players[i].name = userData!.name;
+    }
+    catch(e)
+    {
+      print("failed to load user data");
+    }
+    
+    /*
     try {
-      UserData? userData = await get_user_data(element);
       players[i].name = userData!.name;
       print("Player " +
           i.toString() +
@@ -110,6 +153,7 @@ Future<void> applyName(List<Player> players) async {
           "\n" +
           stacktrace.toString());
     }
+    */
   }
 }
 
@@ -168,10 +212,22 @@ Future<Group> loadGroup(String groupID) async {
 
     String groupHost = "";
     try {
-      groupDocument.get('host');
+      groupHost = groupDocument.get('host');
     } catch (e) {}
 
-    return Group(groupID, players, matchOptions, groupHost, state: state);
+    DateTime timeStarted = DateTime.utc(1989, 11, 9);
+    try {
+      timeStarted = groupDocument.get('timeStarted');
+    } catch (e) {}
+
+    DateTime timeEnding = DateTime.utc(1989, 11, 9);
+    try {
+      timeEnding = groupDocument.get('timeEnding');
+    } catch (e) {}
+
+    return Group(
+        groupID, players, matchOptions, groupHost, timeStarted, timeEnding,
+        state: state);
   } else {
     throw Exception('Group does not exist');
   }
@@ -199,21 +255,32 @@ Future<bool> load_my_user_data(String userId) async {
 
   globals.myUserData = myUserData;
   print("Printing User data from load_my_user_data: ${globals.myUserData}");
-  globals.myName = myUserData.name;
   globals.myGroups = myGroups;
 
   if (!myGroups.isEmpty) {
     // this should instead remember locally what the last group was
     globals.selectedGroup = myGroups[0];
+    await reloadSelectedGroup();
   }
   return true;
 }
 
 Future set_default_user_data(String token) async {
+  String? firstName = globals.fireBaseUser?.displayName!.split(' ')[0];
+
+  print('name size ${firstName!.length}');
+
+  // FIXME: magic variable on name size, based on maxLines in profile.dart
+  if (firstName.length > 26) {
+    firstName = firstName.substring(0, 26);
+    print('after substring ${firstName}');
+  }
+
   UserData userData = UserData(
     uid: globals.fireBaseUser?.uid ?? 'default_uid',
     imagePath: "",
-    name: globals.fireBaseUser?.displayName! ?? 'default_name',
+    //name: globals.fireBaseUser?.displayName!.split(' ')[0] ?? 'default_name',
+    name: firstName ?? 'default_name',
     email: globals.fireBaseUser?.email! ?? 'default_email',
     pronouns: "",
     description: "",
@@ -223,7 +290,6 @@ Future set_default_user_data(String token) async {
   await set_user_data(token, userData, playerGroups);
 
   globals.myUserData = userData;
-  globals.myName = userData.name;
   globals.myGroups = playerGroups;
 }
 
@@ -262,14 +328,6 @@ Future<void> setPlayerInGroup(
 
   print('finished setting player in group');
 
-  /*
-  await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
-    'players': [
-      {'user_id': userID, 'points': 0, 'state': (PlayerState.alive)}
-    ],
-    // Add any other fields you want to initialize here
-  });
-  */
 }
 
 Future<Group> createGame(
@@ -297,6 +355,8 @@ Future<Group> createGame(
     'safetyMethods': matchOptions.safetyMethods,
     'host': userID!,
     'state': GroupState.notStarted.index,
+    'timeStarted': DateTime.utc(1989, 11, 9),
+    'timeEnding': DateTime.utc(1989, 11, 9),
   });
 
   //Map<String, dynamic> usersData = {"user_id": userID!, "points": 0};
@@ -304,8 +364,8 @@ Future<Group> createGame(
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup =
-      Group(newGroupID, [Player(userID, 0, null)], matchOptions, userID);
+  Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions,
+      userID, DateTime.utc(1989, 11, 9), DateTime.utc(1989, 11, 9));
 
   final snapshot = await FirebaseFirestore.instance
       .collection('group')

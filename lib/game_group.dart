@@ -8,10 +8,21 @@ class Group {
   List<Player> players;
   MatchOptions matchOptions;
 
+  DateTime timeStarted;
+  DateTime timeEnding;
+
   String groupHost;
   GroupState state = GroupState.notStarted;
   Group(this.group_name, this.players, this.matchOptions, this.groupHost,
+      this.timeStarted, this.timeEnding,
       {this.state = GroupState.notStarted});
+
+  Player? get(String uid) {
+    for (int i = 0; i < players.length; i++) {
+      if (players[i].userID == uid) return players[i];
+    }
+    return null;
+  }
 
   @override
   String toString() {

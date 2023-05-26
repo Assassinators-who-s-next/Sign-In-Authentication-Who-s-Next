@@ -111,7 +111,6 @@ class AuthService {
             await _auth.signInWithPopup(authProvider);
 
         user = userCredential.user;
-        print(userCredential.user);
         fireBaseUser = user;
       } catch (e) {
         print(e);
