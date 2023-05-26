@@ -22,6 +22,13 @@ import 'package:flutter/foundation.dart';
 
 final storage = FirebaseStorage.instance;
 
+void Refresh() async {
+  globals.SetFinishedLoadingState(false);
+  await reloadSelectedGroup();
+  globals.SetFinishedLoadingState(true);
+}
+
+
 Future<UserData?> get_user_data(String userId) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
@@ -105,12 +112,12 @@ Future<void> reloadSelectedGroup() async {
   }
 
   // load names on this group
-  await applyName(globals.selectedGroup.players);
+  await loadPlayerNamesFromList(globals.selectedGroup.players);
 
-  print("finished reloading group");
+  //print("finished reloading group");
 }
 
-Future<void> applyName(List<Player> players) async {
+Future<void> loadPlayerNamesFromList(List<Player> players) async {
   var userDataGetters = <Future<UserData?>>[];
   for (int i = 0; i < players.length; i++) {
     Future<UserData?> userDataGetter = get_user_data(players[i].userID);
@@ -120,6 +127,18 @@ Future<void> applyName(List<Player> players) async {
 
   for (int i = 0; i < userDatas.length; i++) {
     UserData? userData = userDatas[i];
+    try
+    {
+     // print("loading ${userData!.name}");
+      players[i].userData = userData;
+      players[i].name = userData!.name;
+    }
+    catch(e)
+    {
+      print("failed to load user data");
+    }
+    
+    /*
     try {
       players[i].name = userData!.name;
       print("Player " +
@@ -134,6 +153,7 @@ Future<void> applyName(List<Player> players) async {
           "\n" +
           stacktrace.toString());
     }
+    */
   }
 }
 
@@ -240,6 +260,7 @@ Future<bool> load_my_user_data(String userId) async {
   if (!myGroups.isEmpty) {
     // this should instead remember locally what the last group was
     globals.selectedGroup = myGroups[0];
+    await reloadSelectedGroup();
   }
   return true;
 }
