@@ -8,6 +8,7 @@ import '../utils/popup_modal.dart';
 import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
+import '../image_upload.dart';
 
 import 'package:basic_auth/models/match_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +22,12 @@ class JoinCreatePage extends StatelessWidget {
   TextEditingController gameCodeController = TextEditingController();
 
   void JoinGame(BuildContext context) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfilePage()),
+    );
+    return;
+
     String gameCode = gameCodeController.text.trim();
     print("Join Game button pressed with code $gameCode");
     if (gameCode == "") {

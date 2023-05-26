@@ -44,6 +44,7 @@ dependencies:
   cloud_firestore: ^4.6.0
   flutter_profile_picture: ^2.0.0
   loader_overlay: ^2.2.0
+  image_picker: ^0.8.3
 
 dev_dependencies:
   flutter_test:
