@@ -73,14 +73,6 @@ class _UserHomeState extends State<UserHome> {
               );
             });
 
-    // return myGroups.isEmpty
-    //     ? noGroupScreenContent(context)
-    //     : GameListDrawer(
-    //         screenWidth: screenWidth,
-    //         screenHeight: screenHeight,
-    //         content: homeScreenContent(context, screenWidth, screenHeight),
-    //         onSelectGroup: (p0) => SetSelectedGroup(p0),
-    //       );
   }
 
   Stream<GroupState> getGroupStateStream(String groupId) {
@@ -214,21 +206,7 @@ class _UserHomeState extends State<UserHome> {
                           targetData, context, screenWidth, screenHeight)
                     }),
           ),
-          // Padding(
-          //     padding: const EdgeInsetsDirectional.all(40),
-          //     child: LargeUserHomeButton(
-          //         label: "Debug(go to finished screen)",
-          //         color: Color.fromARGB(255, 43, 167, 204),
-          //         buttonState: true,
-          //         onPressed: () => {
-          //               selectedGroup.state = GroupState.finished,
-          //               update_group_state(selectedGroup),
-          //               // setState(() {
-          //               //   selGroup = selectedGroup;
-          //               //   print("current state is now ${selGroup.state}");
-          //               // })
-          //             })
-          // ),
+
         ],
       ),
     );
@@ -264,10 +242,7 @@ class _UserHomeState extends State<UserHome> {
                     onPressed: () => {
                           selectedGroup.state = GroupState.finished,
                           update_group_state(selectedGroup),
-                          // setState(() {
-                          //   selGroup = selectedGroup;
-                          //   print("current state is now ${selGroup.state}");
-                          // })
+
                         }))
           ],
         ),
@@ -364,10 +339,7 @@ class _UserHomeState extends State<UserHome> {
                 //await startGameOrRespawn();
                 selectedGroup.state = GroupState.running;
                 update_group_state(selectedGroup);
-                // setState(() {
-                //   selGroup = selectedGroup;
-                //   print("current state is now ${selGroup.state}");
-                // });
+
               },
             ),
           )
@@ -396,10 +368,7 @@ class _UserHomeState extends State<UserHome> {
             onPressed: () => {
               selectedGroup.state = GroupState.notStarted,
               update_group_state(selectedGroup),
-              // setState(() {
-              //   selGroup = selectedGroup;
-              //   print("current state is now ${selGroup.state}");
-              // })
+
             },
           ),
         ),
