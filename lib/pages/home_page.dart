@@ -27,9 +27,6 @@ class _HomePageState extends State<HomePage> {
   void _navigateBottomBar(int index) {
     setState(() {
       _selectedIndex = index;
-      if (_pages[_selectedIndex] is LeaderBoard) {
-        (_pages[_selectedIndex] as LeaderBoard).reload(context);
-      }
     });
   }
 
@@ -48,12 +45,6 @@ class _HomePageState extends State<HomePage> {
       ),*/
       Center(child: const CircularProgressIndicator()),
     ]);
-  }
-
-  void Refresh() async {
-    SetFinishedLoadingState(false);
-    await reloadSelectedGroup();
-    SetFinishedLoadingState(true);
   }
 
   @override

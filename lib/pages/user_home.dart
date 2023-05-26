@@ -33,11 +33,14 @@ class _UserHomeState extends State<UserHome> {
     });
   }
 
-  void SetSelectedGroup(Group group) {
+  void SetSelectedGroup(Group group) async {
     selectedGroup = group;
     setState(() {
       selGroup = group;
     });
+    SetFinishedLoadingState(false);
+    await reloadSelectedGroup();
+    SetFinishedLoadingState(true);
   }
 
   @override
@@ -316,8 +319,6 @@ class _UserHomeState extends State<UserHome> {
       ]),
     );
   }
-
-// what should idoodddjojsgf
 
   Container InfoButton(
       BuildContext context, double screenWidth, double screenHeight) {
