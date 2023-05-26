@@ -327,6 +327,7 @@ Future<void> setPlayerInGroup(
   });
 
   print('finished setting player in group');
+
 }
 
 Future<Group> createGame(
@@ -441,7 +442,7 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
-void update_group(Group selectedGroup) async {
+void update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
   GroupState groupState = selectedGroup.state;
   print(groupState.index);
