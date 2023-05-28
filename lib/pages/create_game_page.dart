@@ -137,6 +137,7 @@ class _CreateGamePage extends State<CreateGamePage> {
           child: ListView(
             padding: EdgeInsets.only(left: 20, top: 20, right: 20),
             children: [
+              /*
               const Text(
                 'Game Time',
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -152,6 +153,7 @@ class _CreateGamePage extends State<CreateGamePage> {
               // total game info
               totalGameType(),
               const Padding(padding: EdgeInsetsDirectional.only(bottom: 20)),
+              */
 
               const Text(
                 'Rules',
@@ -199,6 +201,7 @@ class _CreateGamePage extends State<CreateGamePage> {
 
   void OnPressCreateGameButton(BuildContext context) async {
     // test if fields were inputted correctly
+    /*
     if (respawn_choice == null || respawn_duration_choice == null) {
       //popUp(context, 'Fill out Respawn Information');
       showPopup(context,
@@ -223,7 +226,8 @@ class _CreateGamePage extends State<CreateGamePage> {
               'Total game time must be greater or equal to the respawn time'),
           bottomWidgets: [closeButton(context)]);
       // otherwise go to home page
-    } else if (max_player_controller.text == '') {
+    } else */
+    if (max_player_controller.text == '') {
       //popUp(context, 'Fill in the max number of players');
       showPopup(context,
           content: const Text('Fill in the max number of players'),
@@ -235,6 +239,7 @@ class _CreateGamePage extends State<CreateGamePage> {
           content: const Text('Number of players must be 2 - 100 players'),
           bottomWidgets: [closeButton(context)]);
     } else {
+      /*
       // save plural or singular form depending on length of game time
       var tot_game_time_plural;
       if (total_game_duration_choice! == 1) {
@@ -252,53 +257,31 @@ class _CreateGamePage extends State<CreateGamePage> {
       } else {
         respawn_time_plural = respawn_choice!.name;
       }
+      */
 
       User? user = FirebaseAuth.instance.currentUser;
-      MatchOptions placeholderMatchOptions = MatchOptions(
+      MatchOptions matchOptions = MatchOptions(
           int.parse(max_player_controller.text),
           elim_choice!,
           //respawn_choice!.name,
-          respawn_time_plural,
-          respawn_duration_choice!,
+          "",//respawn_time_plural,
+          0,//respawn_duration_choice!,
           //total_game_choice!.name,
-          tot_game_time_plural,
-          total_game_duration_choice!,
+          "",//tot_game_time_plural,
+          0,//total_game_duration_choice,
           off_limit_controller.text,
           stay_safe_controller.text
-//        100,
-//        'Single',
-//        'Fixed',
-//        5,
-//        'Limited',
-//        60,
-//        'Area A',
-//        'Helmet',
           );
 
       context.loaderOverlay.show();
       // creates game with game info and creates game code
-      await createGroup(context, user?.uid, placeholderMatchOptions)
+      await createGroup(context, user?.uid, matchOptions)
           .then((value) => setSelectedGroup(value));
 
       context.loaderOverlay.hide();
       guidetoUserHome(context);
     }
   }
-
-  //Future<dynamic> popUp(BuildContext context, String textInfo) {
-  //  return showDialog(
-  //    context: context,
-  //    builder: (_) => AlertDialog(
-  //      title: null,
-  //      content: Text(textInfo, textAlign: TextAlign.center),
-  //      actions: [
-  //        TextButton(
-  //            onPressed: () => Navigator.pop(context),
-  //            child: const Text('Close'))
-  //      ],
-  //    ),
-  //  );
-  //}
 
   bool checkRespawnToTotalGameTime(String respawn_choice, int respawn_duration,
       String total_game_type, int total_game_time) {
@@ -361,7 +344,7 @@ class _CreateGamePage extends State<CreateGamePage> {
           width: screenWidth / 2,
           child: MyTextField(
             controller: off_limit_controller,
-            hintText: 'eg. School, Mall...',
+            hintText: 'eg. school, mall...',
             obscureText: false,
           ),
         ),
@@ -378,7 +361,7 @@ class _CreateGamePage extends State<CreateGamePage> {
           width: screenWidth / 2,
           child: NumberTextField(
             controller: max_player_controller,
-            hintText: 'range of 2 - 100 players',
+            hintText: '2 - 100 players',
             obscureText: false,
           ),
         ),

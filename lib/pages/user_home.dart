@@ -414,10 +414,10 @@ class _UserHomeState extends State<UserHome> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MatchInfoText("Game Period",
-            "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
-        MatchInfoText("Respawn Time",
-            "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
+        //MatchInfoText("Game Period",
+        //    "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
+        //MatchInfoText("Respawn Time",
+        //    "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
         MatchInfoText("Permitted Elimation Type",
             selectedGroup.matchOptions.eliminationType),
         MatchInfoText(
