@@ -6,8 +6,9 @@ import 'profile_picture.dart';
 class LeaderboardElement extends StatelessWidget {
   final String playerName;
   final int playerPoints;
+  final bool eliminated;
 
-  const LeaderboardElement({super.key, required this.playerName, required this.playerPoints});
+  const LeaderboardElement({super.key, required this.playerName, required this.playerPoints, required this.eliminated});
 
   String getName() {
     return this.playerName;
