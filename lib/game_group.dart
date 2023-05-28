@@ -5,7 +5,7 @@ enum GroupState { notStarted, running, dead, finished }
 
 class Group {
   String group_name;
-  List<Player> players;
+  Map<String, Player> players;
   MatchOptions matchOptions;
 
   DateTime timeStarted;
@@ -17,12 +17,7 @@ class Group {
       this.timeStarted, this.timeEnding,
       {this.state = GroupState.notStarted});
 
-  Player? get(String uid) {
-    for (int i = 0; i < players.length; i++) {
-      if (players[i].userID == uid) return players[i];
-    }
-    return null;
-  }
+  Player? get(String uid) => players[uid];
 
   @override
   String toString() {
