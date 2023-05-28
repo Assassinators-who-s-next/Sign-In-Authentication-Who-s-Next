@@ -454,6 +454,8 @@ Future<Group> createGroup(
   print('num players in newly created group: ${newGroup.players.length}');
 
   globals.myGroups.add(newGroup);
+  bool isNotInGroup = globals.myGroups.isEmpty;
+
   if (isNotInGroup) {
     globals.setSelectedGroup(newGroup);
   }
