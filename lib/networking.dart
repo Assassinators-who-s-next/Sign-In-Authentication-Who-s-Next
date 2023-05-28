@@ -128,7 +128,7 @@ Future<void> reloadSelectedGroup() async {
   }
 
   // load names on this group
-  await loadPlayerNamesFromList(globals.selectedGroup.players.values.toList());
+  await loadPlayerNamesFromList(globals.selectedGroup.players);
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {
@@ -176,7 +176,7 @@ Future<Group> loadGroup(String groupID) async {
 
   print("Loading group: " + groupID);
   if (groupDocument.exists) {
-    Map<String, Player> players = {};
+    List<Player> players = [];
     //List<dynamic> playerDataList = await groupDocument.get('players');
     //List<dynamic> playerDataList = await groupsRef.collection(groupID).get('players');
     //await groupsRef.doc(groupID).collection('players').get();
@@ -197,7 +197,7 @@ Future<Group> loadGroup(String groupID) async {
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
         String targetUID = data['target'] ?? "";
         String? eliminatedBy = data['eliminatedBy'];
-        players[userId] = (Player(userId, points, null,
+        players.add(Player(userId, points, null,
             state: playerState, target: targetUID, eliminatedBy: eliminatedBy));
       }
     }
@@ -437,7 +437,7 @@ Future<Group> createGroup(
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup = Group(newGroupID, {userID:Player(userID, 0, null)}, matchOptions,
+  Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions,
       userID, DateTime.utc(1989, 11, 9), DateTime.utc(1989, 11, 9));
 
   final snapshot = await FirebaseFirestore.instance
@@ -459,7 +459,7 @@ Future<Group> createGroup(
   }
   await set_user_data(userID, globals.myUserData, globals.myGroups);
 
-  await loadPlayerNamesFromList(globals.selectedGroup.players.values.toList());
+  await loadPlayerNamesFromList(globals.selectedGroup.players);
 
   return newGroup;
 }
@@ -531,8 +531,8 @@ Future<void> startGameOrRespawn() async {
     - previous game information shows if you log out and log back in with another account that isn't in that previous game 
     - need to store target_uid for each player in groups on db (CHECK)
   */
-  List<Player> playerList = globals.selectedGroup.players.values.toList();
-  playerList.shuffle();
+
+  globals.selectedGroup.players.shuffle();
 
   globals.selectedGroup.timeStarted = DateTime.now();
   globals.selectedGroup.timeEnding = DateTime.now().add(Duration(
@@ -542,15 +542,14 @@ Future<void> startGameOrRespawn() async {
   var groupSize = globals.selectedGroup.players.length;
 
   for (int i = 0; i < groupSize; i++) {
-    Player player = playerList[i];
-    player.target =
-        playerList[(i + 1) % groupSize].userID;
-    setPlayerInGroup(player.userID,
-        globals.selectedGroup.group_name, player);
+    globals.selectedGroup.players[i].target =
+        globals.selectedGroup.players[(i + 1) % groupSize].userID;
+    setPlayerInGroup(globals.selectedGroup.players[i].userID,
+        globals.selectedGroup.group_name, globals.selectedGroup.players[i]);
 
-    if (player.userID == globals.myUserData.uid) {
+    if (globals.selectedGroup.players[i].userID == globals.myUserData.uid) {
       await set_curr_target(
-          targetUID: player.target!);
+          targetUID: globals.selectedGroup.players[i].target!);
       print("current target: ${globals.currentTarget!.uid}");
     }
   }
