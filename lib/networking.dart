@@ -362,6 +362,7 @@ Future<Group> createGame(
 
   bool isNotInGroup = globals.myGroups.isEmpty;
   globals.myGroups.add(newGroup);
+
   if (isNotInGroup) {
     globals.selectedGroup = newGroup;
   }
@@ -435,32 +436,35 @@ void update_group(Group selectedGroup) async {
 class DatabaseReference {}
 
 Future<void> startGameOrRespawn() async {
-  /* things to note
+  void start_game_or_respawn() {
+    /* things to note
 
     - game state is only initialized for player who created game
-    - previous game information shows if you log out and log back in with another account that isn't in that previous game 
-    - need to store target_uid for each player in groups on db (CHECK)
+    - previous game information shows if you log out and log back in with another account that isn't in that previous game
+    - need to store target_uid for each player in groups on db
   */
+    globals.selectedGroup.players.shuffle();
+    print("Group len: ${globals.selectedGroup.players.length}");
+    for (int i = 0; i < globals.selectedGroup.players.length; i++) {
+      print(globals.selectedGroup.players[i].userID);
+    }
 
-  globals.selectedGroup.players.shuffle();
+    // asign targets
+    var groupSize = globals.selectedGroup.players.length;
 
-  // asign targets
-  var groupSize = globals.selectedGroup.players.length;
-
-  for (int i = 0; i < groupSize; i++) {
-    globals.selectedGroup.players[i].target =
-        globals.selectedGroup.players[(i + 1) % groupSize].userID;
-    setPlayerInGroup(globals.selectedGroup.players[i].userID,
-        globals.selectedGroup.group_name, globals.selectedGroup.players[i]);
-
-    if (globals.selectedGroup.players[i].userID == globals.myUserData.uid) {
-      await set_curr_target(
-          targetUID: globals.selectedGroup.players[i].target!);
-      print("current target: ${globals.currentTarget!.uid}");
+    for (int i = 0; i < groupSize; i++) {
+      print((i + 1) % groupSize);
+      globals.selectedGroup.players[i].target =
+          globals.selectedGroup.players[(i + 1) % groupSize].userID;
+      print("target uid: ${globals.selectedGroup.players[i].target}");
     }
   }
+}
 
-  print("CURRENT TARGET NAME: ${globals.currentTarget!.name}");
+Future<void> eliminate_and_update_target({required UserData target, required Group group}) async {
+
+
+
 }
 
 Future<void> set_curr_target({required String targetUID}) async {

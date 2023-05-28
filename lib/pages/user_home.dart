@@ -170,25 +170,28 @@ class _UserHomeState extends State<UserHome> {
                 label: "Eliminate",
                 color: Color.fromARGB(255, 238, 127, 119),
                 buttonState: true,
-                onPressed: () => {
-                      eliminateNoti(
-                          targetData, context, screenWidth, screenHeight)
+                onPressed: () async => {
+                      //eliminateNoti(targetData, context, screenWidth, screenHeight)
+                      await eliminate_and_update_target(target: currentTarget!, group: selectedGroup),
+
                     }),
           ),
           Padding(
-              padding: const EdgeInsetsDirectional.all(40),
-              child: LargeUserHomeButton(
-                  label: "Debug(go to finished screen)",
-                  color: Color.fromARGB(255, 43, 167, 204),
-                  buttonState: true,
-                  onPressed: () => {
-                        selectedGroup.state = GroupState.finished,
-                        update_group(selectedGroup),
-                        setState(() {
-                          selGroup = selectedGroup;
-                          print("current state is now ${selGroup.state}");
-                        })
-                      })),
+            padding: const EdgeInsetsDirectional.all(40),
+            child: LargeUserHomeButton(
+              label: "Debug(go to finished screen)",
+              color: Color.fromARGB(255, 43, 167, 204),
+              buttonState: true,
+              onPressed: () => {
+                selectedGroup.state = GroupState.finished,
+                update_group(selectedGroup),
+                setState(() {
+                  selGroup = selectedGroup;
+                  print("current state is now ${selGroup.state}");
+                })
+              }
+            )
+          ),
         ],
       ),
     );
