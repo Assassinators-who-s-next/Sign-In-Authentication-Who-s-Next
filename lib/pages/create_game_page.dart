@@ -278,7 +278,7 @@ class _CreateGamePage extends State<CreateGamePage> {
       context.loaderOverlay.show();
       // creates game with game info and creates game code
       await createGroup(context, user?.uid, placeholderMatchOptions)
-          .then((value) => selectedGroup = value);
+          .then((value) => setSelectedGroup(value));
 
       context.loaderOverlay.hide();
       guidetoUserHome(context);

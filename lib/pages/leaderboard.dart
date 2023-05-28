@@ -4,6 +4,7 @@ import 'package:basic_auth/components/leaderboard_element.dart';
 import '../player.dart';
 import '../game_group.dart';
 import '../networking.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../globals.dart' as globals;
 
@@ -27,18 +28,33 @@ class LeaderBoard extends StatefulWidget {
 }
 
 void sortPlayers() {
-  //globals.selectedGroup.players.sort((a, b) => b.points.compareTo(a.points));
+  globals.selectedGroup.players.sort((a, b) => b.points.compareTo(a.points));
 }
 
 class _LeaderboardState extends State<LeaderBoard> {
-  final List<Widget> _players = [];
+  List<Widget> _players = [];
+
+  _LeaderboardState() {
+    addGroupUpdateListener(OnGroupUpdate);
+  }
+
+  @override
+  void dispose() {
+    removeGroupUpdateListener(OnGroupUpdate);
+    super.dispose();
+  }
+
+  void OnGroupUpdate() {
+    //print("Testing OnGroupUpdate");
+    // refresh page
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     _players.clear();
-    List<Player> playerList = globals.selectedGroup.players.values.toList();
-    for (int i = 0; i < playerList.length; i++) {
-      Player cur_player = playerList[i];
+    for (int i = 0; i < globals.selectedGroup.players.length; i++) {
+      Player cur_player = globals.selectedGroup.players[i];
 
       String player_name = cur_player.get_name();
       int player_points = cur_player.points;

@@ -32,7 +32,7 @@ class _UserHomeState extends State<UserHome> {
 
   // I think you need this when you click different group
   void SetSelectedGroup(Group group) async {
-    selectedGroup = group;
+    setSelectedGroup(group);
     setState(() {
       selGroup = selectedGroup;
     });
