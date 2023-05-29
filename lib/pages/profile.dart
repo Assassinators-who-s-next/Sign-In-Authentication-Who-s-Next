@@ -1,5 +1,6 @@
 import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/components/profile_text_field.dart';
+import 'package:basic_auth/image_upload.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class Profile extends StatelessWidget {
                   child: Center(
                       child: Text('Profile Page',
                           style: TextStyle(
-                            fontSize: 50,
+                            fontSize: 40,
                           ),
                           textAlign: TextAlign.center)),
                 ),
@@ -56,15 +57,6 @@ class Profile extends StatelessWidget {
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
-          /*ProfilePicture(
-            name: myUserData.name,
-            role: '',
-            radius: 31,
-            fontsize: 21,
-            tooltip: true,
-            img: Image.network(myUserData.imagePath),
-          ),*/
-
           ProfilePicture(
               radius: 250,
               //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
@@ -73,7 +65,14 @@ class Profile extends StatelessWidget {
                   : user.imagePath!,
               //isNetworkPath: user.imagePath != null,
               isNetworkPath: user.imagePath != null && user.imagePath != "",
-              onClicked: () {
+              onClicked: () async {
+                await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(),
+                  ),
+                );
+
                 print("Profile picture clicked");
               }),
           Padding(
