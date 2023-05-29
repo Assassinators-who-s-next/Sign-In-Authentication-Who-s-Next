@@ -19,7 +19,7 @@ class Player {
     if (userData != null) {
       return userData!.name;
     } else {
-      return userID ?? "Unknown";
+      return "";
     }
   }
 

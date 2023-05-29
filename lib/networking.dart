@@ -8,6 +8,7 @@ import 'pages/home_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
 
 import 'utils/random_string_generator.dart';
 import 'game_group.dart';
@@ -22,6 +23,22 @@ import 'auth.dart';
 import 'package:flutter/foundation.dart';
 
 final storage = FirebaseStorage.instance;
+
+final List<Function> _groupUpdateListeners = [];
+
+void addGroupUpdateListener(Function listener) {
+  _groupUpdateListeners.add(listener);
+}
+
+void removeGroupUpdateListener(Function listener) {
+  _groupUpdateListeners.remove(listener);
+}
+
+void triggerGroupUpdateEvent() {
+  for (var listener in _groupUpdateListeners) {
+    listener();
+  }
+}
 
 void Refresh() async {
   globals.SetFinishedLoadingState(false);
@@ -108,7 +125,7 @@ Future set_user_data(
 Future<void> reloadSelectedGroup() async {
   String groupID = globals.selectedGroup.group_name;
   Group fetchedGroup = await loadGroup(groupID);
-  globals.selectedGroup = fetchedGroup;
+  globals.selectedGroup = (fetchedGroup);
 
   //replace old instance of group with new one
   for (int i = 0; i < globals.myGroups.length; i++) {
@@ -119,8 +136,6 @@ Future<void> reloadSelectedGroup() async {
 
   // load names on this group
   await loadPlayerNamesFromList(globals.selectedGroup.players);
-
-  //print("finished reloading group");
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {
@@ -263,7 +278,8 @@ Future<bool> load_my_user_data(String userId) async {
 
   if (!myGroups.isEmpty) {
     // this should instead remember locally what the last group was
-    globals.selectedGroup = myGroups[0];
+    globals.setSelectedGroup(myGroups[0]);
+    ListenToGroupChanges(globals.selectedGroup.group_name);
     await reloadSelectedGroup();
   }
   return true;
@@ -332,9 +348,69 @@ Future<void> setPlayerInGroup(
   });
 
   print('finished setting player in group');
+
 }
 
-Future<Group> createGame(
+StreamSubscription<DocumentSnapshot>? _subscription;
+StreamSubscription<QuerySnapshot>? _playersSubscription;
+
+void ListenToGroupChanges(String groupID) {
+  print("Listening to group changes");
+
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
+
+  DocumentReference groupDocRef = groupsRef.doc(groupID);
+
+  // Listen to changes in the specified group document
+  _subscription = groupDocRef.snapshots().listen((event) async {
+    print('Group changed <-------');
+    // Handle group document changes
+    await reloadSelectedGroup();
+    triggerGroupUpdateEvent();
+  });
+
+  // Listen to changes in the "players" subcollection within the group document
+  CollectionReference playersRef = groupDocRef.collection('players');
+  _playersSubscription = playersRef.snapshots().listen((snapshot) async {
+    snapshot.docChanges.forEach((change) {
+      if (change.type == DocumentChangeType.added) {
+        // Handle added player document
+        print('Player added: ${change.doc.data()}');
+      } else if (change.type == DocumentChangeType.modified) {
+        // Handle modified player document
+        print('Player modified: ${change.doc.data()}');
+      } else if (change.type == DocumentChangeType.removed) {
+        // Handle removed player document
+        print('Player removed: ${change.doc.data()}');
+      }
+    });
+    await reloadSelectedGroup();
+    triggerGroupUpdateEvent();
+  });
+
+  // Listen to changes in any player document within the "players" subcollection
+  playersRef.snapshots().listen((snapshot) async {
+    snapshot.docChanges.forEach((change) {
+      if (change.type == DocumentChangeType.modified) {
+        // Handle modified player document
+        print('Any player modified: ${change.doc.data()}');
+      }
+    });
+
+    await reloadSelectedGroup();
+    triggerGroupUpdateEvent();
+  });
+}
+
+void stopListeningToGroupChanges() {
+  _subscription?.cancel();
+  _subscription = null;
+  _playersSubscription?.cancel();
+  _playersSubscription = null;
+}
+
+Future<Group> createGroup(
     BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
@@ -382,18 +458,19 @@ Future<Group> createGame(
     print('there is a player collection');
   }
 
-  print('num plyaers in newly created group: ${newGroup.players.length}');
+  print('num players in newly created group: ${newGroup.players.length}');
 
-  bool isNotInGroup = globals.myGroups.isEmpty;
   globals.myGroups.add(newGroup);
+  bool isNotInGroup = globals.myGroups.isEmpty;
+
   if (isNotInGroup) {
-    globals.selectedGroup = newGroup;
+    globals.setSelectedGroup(newGroup);
   }
-  set_user_data(userID, globals.myUserData, globals.myGroups);
+  await set_user_data(userID, globals.myUserData, globals.myGroups);
+
+  await loadPlayerNamesFromList(globals.selectedGroup.players);
 
   return newGroup;
-
-  //join_game(context, newGroupID, userID!);
 }
 
 Future<JoinGameResults> join_game(
@@ -425,7 +502,7 @@ Future<JoinGameResults> join_game(
       bool isNotInGroup = globals.myGroups.isEmpty;
       globals.myGroups.add(joinedGame);
       if (isNotInGroup) {
-        globals.selectedGroup = joinedGame;
+        globals.setSelectedGroup(joinedGame);
       }
       set_user_data(userID!, globals.myUserData, globals.myGroups);
       return JoinGameResults(true);
@@ -446,7 +523,7 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
-void update_group(Group selectedGroup) async {
+void update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
   GroupState groupState = selectedGroup.state;
   print(groupState.index);
@@ -455,8 +532,6 @@ void update_group(Group selectedGroup) async {
       .doc(groupID)
       .update({'state': groupState.index});
 }
-
-class DatabaseReference {}
 
 Future<void> startGameOrRespawn() async {
   /* things to note
@@ -467,6 +542,10 @@ Future<void> startGameOrRespawn() async {
   */
 
   globals.selectedGroup.players.shuffle();
+
+  globals.selectedGroup.timeStarted = DateTime.now();
+  globals.selectedGroup.timeEnding = DateTime.now().add(Duration(
+      hours: globals.selectedGroup.matchOptions.totalGameTimeDuration));
 
   // asign targets
   var groupSize = globals.selectedGroup.players.length;

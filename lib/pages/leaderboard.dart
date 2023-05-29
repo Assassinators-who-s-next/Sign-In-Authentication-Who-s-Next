@@ -4,6 +4,7 @@ import 'package:basic_auth/components/leaderboard_element.dart';
 import '../player.dart';
 import '../game_group.dart';
 import '../networking.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../globals.dart' as globals;
 
@@ -31,7 +32,23 @@ void sortPlayers() {
 }
 
 class _LeaderboardState extends State<LeaderBoard> {
-  final List<Widget> _players = [];
+  List<LeaderboardElement> _players = [];
+
+  _LeaderboardState() {
+    addGroupUpdateListener(OnGroupUpdate);
+  }
+
+  @override
+  void dispose() {
+    removeGroupUpdateListener(OnGroupUpdate);
+    super.dispose();
+  }
+
+  void OnGroupUpdate() {
+    //print("Testing OnGroupUpdate");
+    // refresh page
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +60,8 @@ class _LeaderboardState extends State<LeaderBoard> {
       int player_points = cur_player.points;
       var newElement = LeaderboardElement(
           playerName: player_name ?? "unknown",
-          playerPoints: player_points ?? 0);
+          playerPoints: player_points ?? 0,
+          eliminated: cur_player.state == PlayerState.dead);
       _players.add(newElement);
     }
 
@@ -76,10 +94,12 @@ class _LeaderboardState extends State<LeaderBoard> {
         itemCount: _players.length,
         itemBuilder: (context, index) {
           return Container(
-            decoration: const BoxDecoration(
-              border: Border(
+            decoration: BoxDecoration(
+              color: _players[index].eliminated ? Color.fromARGB(255, 209, 209, 209) : Color.fromARGB(255, 255, 255, 255),
+              border: const Border(
                   bottom:
-                      BorderSide(color: Color.fromARGB(255, 204, 204, 204))),
+                      BorderSide(color: Color.fromARGB(255, 204, 204, 204),
+                      width: 1)),
             ),
             child: ListTile(
               title: _players[index],
@@ -98,13 +118,13 @@ class _LeaderboardState extends State<LeaderBoard> {
         const Text('Leaderboard',
             style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
         const Padding(padding: EdgeInsets.only(bottom: 10)),
-        const Text('Respawn in: xx:xx:xx'),
+        //const Text('Respawn in: xx:xx:xx'),
         const Padding(padding: EdgeInsets.only(bottom: 15)),
         Padding(
           padding: const EdgeInsets.only(bottom: 5, left: 20, right: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('Players'), Text('Score')],
+            children: [Text('Players'), Text('Eliminations')],
           ),
         ),
       ],

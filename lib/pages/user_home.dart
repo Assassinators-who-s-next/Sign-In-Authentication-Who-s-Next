@@ -28,16 +28,14 @@ class _UserHomeState extends State<UserHome> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    setState(() {
-      selGroup = selectedGroup;
-    });
+    selGroup = selectedGroup; //this might not get the state update as well
   }
 
+  // I think you need this when you click different group
   void SetSelectedGroup(Group group) async {
-    selectedGroup = group;
+    setSelectedGroup(group);
     setState(() {
-      selGroup = group;
+      selGroup = selectedGroup;
     });
     SetFinishedLoadingState(false);
     await reloadSelectedGroup();
@@ -57,12 +55,45 @@ class _UserHomeState extends State<UserHome> {
 
     return myGroups.isEmpty
         ? noGroupScreenContent(context)
-        : GameListDrawer(
-            screenWidth: screenWidth,
-            screenHeight: screenHeight,
-            content: homeScreenContent(context, screenWidth, screenHeight),
-            onSelectGroup: (p0) => SetSelectedGroup(p0),
-          );
+        : StreamBuilder<GroupState>(
+            stream: getGroupStateStream(selGroup.group_name),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text("Something went wrong");
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              GroupState groupState = snapshot.data ?? GroupState.notStarted;
+
+              return GameListDrawer(
+                screenWidth: screenWidth,
+                screenHeight: screenHeight,
+                content: homeScreenContent(
+                    context, screenWidth, screenHeight, groupState),
+                onSelectGroup: (p0) => SetSelectedGroup(p0),
+              );
+            });
+  }
+
+  Stream<GroupState> getGroupStateStream(String groupId) {
+    return FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupId)
+        .snapshots()
+        .map((doc) {
+      final data = doc.data();
+      if (data != null) {
+        final state = data['state'];
+        if (state != null) {
+          return GroupState.values[state];
+        }
+      }
+      return GroupState
+          .notStarted; // Return a default value if state or data is null
+    });
   }
 
   Widget noGroupScreenContent(BuildContext context) {
@@ -98,11 +129,11 @@ class _UserHomeState extends State<UserHome> {
     );
   }
 
-  Widget homeScreenContent(
-      BuildContext context, double screenWidth, double screenHeight) {
+  Widget homeScreenContent(BuildContext context, double screenWidth,
+      double screenHeight, GroupState currentState) {
     Widget screen = prematchScreen();
 
-    switch (selGroup.state) {
+    switch (currentState) {
       case GroupState.notStarted:
         {
           screen = prematchScreen();
@@ -120,6 +151,13 @@ class _UserHomeState extends State<UserHome> {
         {
           screen = postmatchScreen();
           print("going to finishedScreen switch statement");
+        }
+        break;
+
+      case GroupState.dead:
+        {
+          screen = deadScreen(screenWidth, screenHeight);
+          print("you are dead, please wait until it finish");
         }
         break;
 
@@ -175,25 +213,44 @@ class _UserHomeState extends State<UserHome> {
                           targetData, context, screenWidth, screenHeight)
                     }),
           ),
-          Padding(
-              padding: const EdgeInsetsDirectional.all(40),
-              child: LargeUserHomeButton(
-                  label: "Debug(go to finished screen)",
-                  color: Color.fromARGB(255, 43, 167, 204),
-                  buttonState: true,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfilePage()),
-                    );
-                    selectedGroup.state = GroupState.finished;
-                    update_group(selectedGroup);
-                    setState(() {
-                      selGroup = selectedGroup;
-                      print("current state is now ${selGroup.state}");
-                    });
-                  })),
         ],
+      ),
+    );
+  }
+
+  /* Create a function deadScreen() where it returns the widget that has the component of a big header text with red color
+   that generates "you're dead, wait for winner comes up" with the gray background */
+  Center deadScreen(double screenWidth, double screenHeight) {
+    return Center(
+      child: SizedBox(
+        width: screenWidth,
+        height: screenHeight / 2,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                'You are eliminated.\n Please wait until winner announce.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 30,
+                ),
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.all(20),
+                child: LargeUserHomeButton(
+                    label: "Debug(go to finished screen)",
+                    color: Color.fromARGB(255, 43, 167, 204),
+                    buttonState: true,
+                    onPressed: () => {
+                          selectedGroup.state = GroupState.finished,
+                          update_group_state(selectedGroup),
+                        }))
+          ],
+        ),
       ),
     );
   }
@@ -214,7 +271,11 @@ class _UserHomeState extends State<UserHome> {
                 minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                 textStyle: TextStyle(fontSize: 25),
               ),
-              onPressed: () => print("eliminated"),
+              onPressed: () => {
+                Navigator.pop(context),
+                selectedGroup.state = GroupState.dead,
+                update_group_state(selectedGroup),
+              },
               child: Text("Yes"),
             ),
             ElevatedButton(
@@ -223,7 +284,7 @@ class _UserHomeState extends State<UserHome> {
                 minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                 textStyle: TextStyle(fontSize: 25),
               ),
-              onPressed: () => print("eliminated failed"),
+              onPressed: () => {Navigator.pop(context)},
               child: Text("No"),
             ),
           ],
@@ -261,7 +322,6 @@ class _UserHomeState extends State<UserHome> {
         if (snapshot.data!.size >= 2) {
           enoughPlayers = true;
         }
-        ;
         return Center(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -283,11 +343,7 @@ class _UserHomeState extends State<UserHome> {
                 print("pressed start match button");
                 await startGameOrRespawn();
                 selectedGroup.state = GroupState.running;
-                update_group(selectedGroup);
-                setState(() {
-                  selGroup = selectedGroup;
-                  print("current state is now ${selGroup.state}");
-                });
+                update_group_state(selectedGroup);
               },
             ),
           )
@@ -315,11 +371,7 @@ class _UserHomeState extends State<UserHome> {
             buttonState: true,
             onPressed: () => {
               selectedGroup.state = GroupState.notStarted,
-              update_group(selectedGroup),
-              setState(() {
-                selGroup = selectedGroup;
-                print("current state is now ${selGroup.state}");
-              })
+              update_group_state(selectedGroup),
             },
           ),
         ),
@@ -362,10 +414,10 @@ class _UserHomeState extends State<UserHome> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MatchInfoText("Game Period",
-            "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
-        MatchInfoText("Respawn Time",
-            "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
+        //MatchInfoText("Game Period",
+        //    "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
+        //MatchInfoText("Respawn Time",
+        //    "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
         MatchInfoText("Permitted Elimation Type",
             selectedGroup.matchOptions.eliminationType),
         MatchInfoText(
