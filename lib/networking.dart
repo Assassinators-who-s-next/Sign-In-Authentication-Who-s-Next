@@ -131,7 +131,7 @@ Future<void> reloadSelectedGroup() async {
   }
 
   // load names on this group
-  await loadPlayerNamesFromList(globals.selectedGroup.players);
+  await loadPlayerNamesFromList(globals.selectedGroup.players.values.toList());
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {
@@ -179,7 +179,7 @@ Future<Group> loadGroup(String groupID) async {
 
   print("Loading group: " + groupID);
   if (groupDocument.exists) {
-    List<Player> players = [];
+    Map<String, Player> players = {};
     //List<dynamic> playerDataList = await groupDocument.get('players');
     //List<dynamic> playerDataList = await groupsRef.collection(groupID).get('players');
     //await groupsRef.doc(groupID).collection('players').get();
@@ -200,7 +200,7 @@ Future<Group> loadGroup(String groupID) async {
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
         String targetUID = data['target'] ?? "";
         String? eliminatedBy = data['eliminatedBy'];
-        players.add(Player(userId, points, null,
+        players[userId] = (Player(userId, points, null,
             state: playerState, target: targetUID, eliminatedBy: eliminatedBy));
       }
     }
@@ -405,8 +405,7 @@ void stopListeningToGroupChanges() {
   _playersSubscription = null;
 }
 
-Future<Group> createGroup(
-    BuildContext context, String? userID, MatchOptions matchOptions) async {
+Future<Group> createGroup(BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
   CollectionReference groupsRef =
@@ -439,7 +438,7 @@ Future<Group> createGroup(
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup = Group(newGroupID, [Player(userID, 0, null)], matchOptions,
+  Group newGroup = Group(newGroupID, {userID:Player(userID, 0, null)}, matchOptions,
       userID, DateTime.utc(1989, 11, 9), DateTime.utc(1989, 11, 9));
 
   final snapshot = await FirebaseFirestore.instance
@@ -463,7 +462,7 @@ Future<Group> createGroup(
   }
   await set_user_data(userID, globals.myUserData, globals.myGroups);
 
-  await loadPlayerNamesFromList(globals.selectedGroup.players);
+  await loadPlayerNamesFromList(globals.selectedGroup.players.values.toList());
 
   return newGroup;
 }
@@ -536,7 +535,8 @@ Future<void> startGameOrRespawn() async {
     - need to store target_uid for each player in groups on db (CHECK)
   */
 
-  globals.selectedGroup.players.shuffle();
+  List<Player> playerList = globals.selectedGroup.players.values.toList();
+  playerList.shuffle();
 
   globals.selectedGroup.timeStarted = DateTime.now();
   globals.selectedGroup.timeEnding = DateTime.now().add(Duration(
@@ -546,19 +546,21 @@ Future<void> startGameOrRespawn() async {
   var groupSize = globals.selectedGroup.players.length;
 
   for (int i = 0; i < groupSize; i++) {
-    globals.selectedGroup.players[i].target =
-        globals.selectedGroup.players[(i + 1) % groupSize].userID;
-    setPlayerInGroup(globals.selectedGroup.players[i].userID,
-        globals.selectedGroup.group_name, globals.selectedGroup.players[i]);
+    Player player = playerList[i];
+    player.target =
+        playerList[(i + 1) % groupSize].userID;
+    setPlayerInGroup(player.userID,
+        globals.selectedGroup.group_name, player);
 
-    if (globals.selectedGroup.players[i].userID == globals.myUserData.uid) {
+    if (player.userID == globals.myUserData.uid) { {
       await set_curr_target(
-          targetUID: globals.selectedGroup.players[i].target!);
+        targetUID: player.target!);
       print("current target: ${globals.currentTarget!.uid}");
     }
   }
 
-  print("CURRENT TARGET NAME: ${globals.currentTarget!.name}");
+    print("CURRENT TARGET NAME: ${globals.currentTarget!.name}");
+  }
 }
 
 Future<void> set_curr_target({required String targetUID}) async {
