@@ -57,7 +57,8 @@ class _HomePageState extends State<HomePage> {
               return LoadingScreen();
             return Stack(children: [
               _pages[_selectedIndex],
-              if (_selectedIndex < 2)
+              //if (_selectedIndex < 2)
+              if (_selectedIndex < 3)
                 SafeArea(
                   child: Align(
                       alignment: Alignment.topRight,

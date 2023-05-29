@@ -145,7 +145,10 @@ class _UserHomeState extends State<UserHome> {
         description: "it's a me",
         email: "email here",
         frequentedLocations: "joe's crab shack",
-        imagePath: myUserData.imagePath,
+        //imagePath: myUserData.imagePath,
+        imagePath: myUserData.imagePath == null || myUserData.imagePath == ""
+            ? "lib/images/placeHolderProfileImage.jpg"
+            : myUserData.imagePath!,
         name: "whatever",
         pronouns: 'he/him',
         uid: 'uid');
@@ -158,7 +161,8 @@ class _UserHomeState extends State<UserHome> {
               radius: screenWidth * .40,
               imagePath: targetData.imagePath!,
               //imagePath: targetData.imagePath ?? UserPreferences.placeholderImagePath,
-              isNetworkPath: true,
+              isNetworkPath:
+                  myUserData.imagePath != null && myUserData.imagePath != "",
               onClicked: () => print("clicked elimation target")),
           Padding(
             padding: const EdgeInsetsDirectional.all(40),

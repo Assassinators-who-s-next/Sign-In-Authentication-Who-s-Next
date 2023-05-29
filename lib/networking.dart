@@ -1,3 +1,4 @@
+import 'package:basic_auth/image_upload.dart';
 import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/player.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,12 @@ void Refresh() async {
   globals.SetFinishedLoadingState(false);
   await reloadSelectedGroup();
   globals.SetFinishedLoadingState(true);
+  globals.myUserData.imagePath =
+      await ProfilePage.retrieveImage(globals.myUserData);
+}
+
+void RefreshUserImage(UserData user) async {
+  user.imagePath = await ProfilePage.retrieveImage(user);
 }
 
 Future<UserData?> get_user_data(String userId) async {
