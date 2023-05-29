@@ -48,10 +48,6 @@ void Refresh() async {
   globals.SetFinishedLoadingState(true);
 }
 
-//void RefreshUserImage(UserData user) async {
-//  user.imagePath = await ProfilePage.retrieveImage(user);
-//}
-
 Future<UserData?> get_user_data(String userId) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
