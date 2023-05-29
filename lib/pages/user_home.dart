@@ -11,6 +11,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/pages/join_create_game_page.dart';
+import 'package:basic_auth/image_upload.dart';
 
 import '../game_group.dart';
 
@@ -176,14 +177,18 @@ class _UserHomeState extends State<UserHome> {
                   label: "Debug(go to finished screen)",
                   color: Color.fromARGB(255, 43, 167, 204),
                   buttonState: true,
-                  onPressed: () => {
-                        selectedGroup.state = GroupState.finished,
-                        update_group(selectedGroup),
-                        setState(() {
-                          selGroup = selectedGroup;
-                          print("current state is now ${selGroup.state}");
-                        })
-                      })),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()),
+                    );
+                    selectedGroup.state = GroupState.finished;
+                    update_group(selectedGroup);
+                    setState(() {
+                      selGroup = selectedGroup;
+                      print("current state is now ${selGroup.state}");
+                    });
+                  })),
         ],
       ),
     );
@@ -286,8 +291,6 @@ class _UserHomeState extends State<UserHome> {
       },
     );
   }
-
-
 
   Center postmatchScreen() {
     return Center(

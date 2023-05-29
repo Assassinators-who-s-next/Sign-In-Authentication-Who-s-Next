@@ -14,58 +14,64 @@ class _ProfilePageState extends State<ProfilePage> {
   late File _imageFile;
   String _imageUrl = '';
 
-  Future<void> uploadImage() async {
-    final pickedFile =
-        await _imagePicker.pickImage(source: ImageSource.gallery);
+  final String testUserID = "user16";
+
+  Future<void> pickAndUploadImage(String storageName) async {
+    final pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
-
-      try {
-        // Create a unique filename for the image
-        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-
-        // Get a reference to the storage bucket
-        final Reference storageReference =
-            FirebaseStorage.instance.ref().child('profilePictures/$fileName');
-
-        // Upload the file to the storage bucket
-        final UploadTask uploadTask = storageReference.putFile(_imageFile);
-
-        // Await the completion of the upload task
-        final TaskSnapshot taskSnapshot =
-            await uploadTask.whenComplete(() => null);
-
-        // Get the uploaded image URL
-        final imageUrl = await taskSnapshot.ref.getDownloadURL();
-
-        setState(() {
-          _imageUrl = imageUrl;
-        });
-
-        // Print the uploaded image URL
-        print('Image uploaded. URL: $_imageUrl');
-      } catch (e) {
-        print('Error uploading image: $e');
-      }
+      uploadImage(_imageFile, storageName);
     }
   }
 
-  Future<void> retrieveImage() async {
+  Future<void> uploadImage(File photoFile, String storageName) async {
+    try {
+      // Create a unique filename for the image
+      //String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+      // Get a reference to the storage bucket
+      final Reference storageReference =
+          FirebaseStorage.instance.ref().child('profilePictures/$storageName');
+
+      // Upload the file to the storage bucket
+      final UploadTask uploadTask = storageReference.putFile(photoFile);
+
+      // Await the completion of the upload task
+      final TaskSnapshot taskSnapshot =
+          await uploadTask.whenComplete(() => null);
+
+      // Get the uploaded image URL
+      final imageUrl = await taskSnapshot.ref.getDownloadURL();
+
+      setState(() {
+        _imageUrl = imageUrl;
+      });
+
+      // Print the uploaded image URL
+      print('Image uploaded. URL: $_imageUrl');
+    } catch (e) {
+      print('Error uploading image: $e');
+    }
+  }
+
+  Future<String?> retrieveImage(String storageName) async {
     try {
       // Get a reference to the stored image
       final Reference storageReference =
-          FirebaseStorage.instance.ref().child('profilePictures/example.jpg');
+          FirebaseStorage.instance.ref().child('profilePictures/$storageName');
 
       // Retrieve the download URL for the stored image
       final String downloadURL = await storageReference.getDownloadURL();
 
       // Print the retrieved image URL
       print('Retrieved image URL: $downloadURL');
+      return downloadURL;
     } catch (e) {
       print('Error retrieving image: $e');
     }
+    return null;
   }
 
   @override
@@ -79,11 +85,15 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: uploadImage,
+              onPressed: () {
+                pickAndUploadImage(testUserID);
+              },
               child: Text('Upload Image'),
             ),
             ElevatedButton(
-              onPressed: retrieveImage,
+              onPressed: () {
+                retrieveImage(testUserID);
+              },
               child: Text('Retrieve Image'),
             ),
             SizedBox(height: 20),
