@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ImageUploader {
+  // Upload an image to firebase storage, storage name is the name of the document, can be anything unique, like a user id.
   Future<String?> uploadImage(File photoFile, String storageName) async {
     try {
       // Create a unique filename for the image
@@ -32,7 +33,7 @@ class ImageUploader {
     return null;
   }
 
-  Future<String?> retrieveImage(String storageName) async {
+  Future<String?> getURL(String storageName) async {
     try {
       // Get a reference to the stored image
       final Reference storageReference =
