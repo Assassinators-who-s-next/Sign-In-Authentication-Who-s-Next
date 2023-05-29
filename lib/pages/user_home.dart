@@ -11,6 +11,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/pages/join_create_game_page.dart';
+import 'package:basic_auth/image_upload.dart';
 
 import '../game_group.dart';
 
@@ -75,7 +76,6 @@ class _UserHomeState extends State<UserHome> {
                 onSelectGroup: (p0) => SetSelectedGroup(p0),
               );
             });
-
   }
 
   Stream<GroupState> getGroupStateStream(String groupId) {
@@ -183,7 +183,10 @@ class _UserHomeState extends State<UserHome> {
         description: "it's a me",
         email: "email here",
         frequentedLocations: "joe's crab shack",
-        imagePath: myUserData.imagePath,
+        //imagePath: myUserData.imagePath,
+        imagePath: myUserData.imagePath == null || myUserData.imagePath == ""
+            ? "lib/images/placeHolderProfileImage.jpg"
+            : myUserData.imagePath!,
         name: "whatever",
         pronouns: 'he/him',
         uid: 'uid');
@@ -196,7 +199,8 @@ class _UserHomeState extends State<UserHome> {
               radius: screenWidth * .40,
               imagePath: targetData.imagePath!,
               //imagePath: targetData.imagePath ?? UserPreferences.placeholderImagePath,
-              isNetworkPath: true,
+              isNetworkPath:
+                  myUserData.imagePath != null && myUserData.imagePath != "",
               onClicked: () => print("clicked elimation target")),
           Padding(
             padding: const EdgeInsetsDirectional.all(40),
@@ -209,7 +213,6 @@ class _UserHomeState extends State<UserHome> {
                           targetData, context, screenWidth, screenHeight)
                     }),
           ),
-
         ],
       ),
     );
@@ -245,7 +248,6 @@ class _UserHomeState extends State<UserHome> {
                     onPressed: () => {
                           selectedGroup.state = GroupState.finished,
                           update_group_state(selectedGroup),
-
                         }))
           ],
         ),
@@ -342,7 +344,6 @@ class _UserHomeState extends State<UserHome> {
                 await startGameOrRespawn();
                 selectedGroup.state = GroupState.running;
                 update_group_state(selectedGroup);
-
               },
             ),
           )
@@ -371,7 +372,6 @@ class _UserHomeState extends State<UserHome> {
             onPressed: () => {
               selectedGroup.state = GroupState.notStarted,
               update_group_state(selectedGroup),
-
             },
           ),
         ),

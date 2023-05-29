@@ -1,3 +1,4 @@
+import 'package:basic_auth/image_upload.dart';
 import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/player.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,8 @@ void triggerGroupUpdateEvent() {
 void Refresh() async {
   globals.SetFinishedLoadingState(false);
   await reloadSelectedGroup();
+  globals.myUserData.imagePath =
+      await ProfilePage.retrieveImage(globals.myUserData);
   globals.SetFinishedLoadingState(true);
 }
 
@@ -341,7 +344,6 @@ Future<void> setPlayerInGroup(
   });
 
   print('finished setting player in group');
-
 }
 
 StreamSubscription<DocumentSnapshot>? _subscription;

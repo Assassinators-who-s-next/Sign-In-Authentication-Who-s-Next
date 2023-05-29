@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
 import '../models/match_options.dart';
-import '../networking.dart';
+import 'package:basic_auth/networking.dart';
 
 import 'home_page.dart';
 
