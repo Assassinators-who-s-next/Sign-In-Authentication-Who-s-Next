@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:basic_auth/models/player_with_target.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:basic_auth/player.dart';
 import 'models/user_data.dart';
 import 'models/match_options.dart';
 import 'game_group.dart';
@@ -26,12 +26,14 @@ void SetFinishedLoadingState(bool state) {
   finishedLoadingUserController.add(state);
 }
 
+Player? getSelf() => selectedGroup.players[myUserData.uid];
+
 bool finishedLoadingUser = false;
 StreamController finishedLoadingUserController =
     StreamController<bool>.broadcast();
 Group selectedGroup = Group(
   "join or create a game to play",
-  [],
+  {},
   MatchOptions(
     -1,
     '',
