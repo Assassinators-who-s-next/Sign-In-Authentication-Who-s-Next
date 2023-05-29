@@ -43,14 +43,14 @@ void triggerGroupUpdateEvent() {
 void Refresh() async {
   globals.SetFinishedLoadingState(false);
   await reloadSelectedGroup();
-  globals.SetFinishedLoadingState(true);
   globals.myUserData.imagePath =
       await ProfilePage.retrieveImage(globals.myUserData);
+  globals.SetFinishedLoadingState(true);
 }
 
-void RefreshUserImage(UserData user) async {
-  user.imagePath = await ProfilePage.retrieveImage(user);
-}
+//void RefreshUserImage(UserData user) async {
+//  user.imagePath = await ProfilePage.retrieveImage(user);
+//}
 
 Future<UserData?> get_user_data(String userId) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
@@ -348,7 +348,6 @@ Future<void> setPlayerInGroup(
   });
 
   print('finished setting player in group');
-
 }
 
 StreamSubscription<DocumentSnapshot>? _subscription;

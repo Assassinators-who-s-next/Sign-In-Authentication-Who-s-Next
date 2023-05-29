@@ -43,8 +43,8 @@ class _ProfilePageState extends State<ProfilePage> {
   //Future<void> pickAndUploadImage(String storageName) async {
   Future<void> pickAndUploadImage(UserData user) async {
     //final pickedFile = await _imagePicker.getImage(source: ImageSource.gallery);
-    final XFile? pickedFile =
-        await _imagePicker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 15);
 
     if (pickedFile != null) {
       setState(() {
