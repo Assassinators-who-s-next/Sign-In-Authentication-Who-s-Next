@@ -7,7 +7,8 @@ class LeaderboardElement extends StatelessWidget {
   final String playerName;
   final int playerPoints;
 
-  const LeaderboardElement({super.key, required this.playerName, required this.playerPoints});
+  const LeaderboardElement(
+      {super.key, required this.playerName, required this.playerPoints});
 
   String getName() {
     return this.playerName;

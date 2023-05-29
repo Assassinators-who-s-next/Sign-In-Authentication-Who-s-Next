@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/components/profile_text_field.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/user_data.dart';
 import 'join_create_game_page.dart';
 import 'login_page.dart';
@@ -11,7 +16,12 @@ import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 //import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     final user = myUserData;
@@ -64,7 +74,6 @@ class Profile extends StatelessWidget {
             tooltip: true,
             img: Image.network(myUserData.imagePath),
           ),*/
-
           ProfilePicture(
               radius: 250,
               //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
@@ -74,7 +83,9 @@ class Profile extends StatelessWidget {
               //isNetworkPath: user.imagePath != null,
               isNetworkPath: user.imagePath != null && user.imagePath != "",
               onClicked: () {
+                // TODO: change picture when clicked
                 print("Profile picture clicked");
+                _pickImage(ImageSource.gallery, context: context, user: user);
               }),
           Padding(
             padding: EdgeInsets.only(top: 10),
@@ -88,6 +99,36 @@ class Profile extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _pickImage(ImageSource source,
+      {required BuildContext context, required UserData user}) async {
+    final ImagePicker _picker = ImagePicker();
+    if (context.mounted) {
+      try {
+        final XFile? chosenFile =
+            await _picker.pickImage(source: source, imageQuality: 20);
+
+        if (chosenFile == null) {
+          return;
+        }
+
+        print('chosenfile size: ${await chosenFile.length()}');
+
+        print('chosen file: ${chosenFile.path}');
+
+        String newImage = base64UrlEncode(await chosenFile.readAsBytes());
+
+        print('newIMage length: ${newImage.length}');
+
+        setState(() {
+          update_user(context, 'imagePath', newImage);
+          user.imagePath = newImage;
+        });
+      } catch (e) {
+        print('Error! ${e}');
+      }
+    }
   }
 
   Widget buildDisplayedInfo(UserData userData, BuildContext context) {

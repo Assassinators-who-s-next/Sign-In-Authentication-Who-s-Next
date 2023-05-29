@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePicture extends StatelessWidget {
@@ -27,7 +29,8 @@ class ProfilePicture extends StatelessWidget {
         color: Colors.transparent,
         child: Ink.image(
           image: isNetworkPath
-              ? NetworkImage(imagePath)
+              //? NetworkImage(imagePath)
+              ? Image.memory(base64Decode(imagePath)).image
               : Image.asset(imagePath).image,
           fit: BoxFit.cover,
           width: radius,

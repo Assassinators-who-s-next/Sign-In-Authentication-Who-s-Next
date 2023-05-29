@@ -323,7 +323,6 @@ Future<void> setPlayerInGroup(
   });
 
   print('finished setting player in group');
-
 }
 
 Future<Group> createGroup(
@@ -378,7 +377,7 @@ Future<Group> createGroup(
 
   globals.myGroups.add(newGroup);
   globals.selectedGroup = newGroup;
-  
+
   await set_user_data(userID, globals.myUserData, globals.myGroups);
 
   await loadPlayerNamesFromList(globals.selectedGroup.players);
