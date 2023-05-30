@@ -595,10 +595,11 @@ Future<String> get_curr_target_uid(
     print("TARGET UID: $targetUID");
     return targetUID;
   } catch (e) {
-    print("Error getting document: $e");
+    print("Error getting target: $e");
     return "default";
   }
 }
+
 
 Future logout(context) async {
   if (defaultTargetPlatform == TargetPlatform.android ||
