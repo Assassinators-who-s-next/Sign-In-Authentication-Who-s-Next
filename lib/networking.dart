@@ -284,11 +284,12 @@ Future<bool> load_my_user_data(String userId) async {
 Future set_default_user_data(String token) async {
   String? firstName = globals.fireBaseUser?.displayName!.split(' ')[0];
 
-  print('name size ${firstName!.length}');
+  var firstNameLength = firstName?.length ?? 0;
+  print('name size ${firstNameLength}');
 
   // FIXME: magic variable on name size, based on maxLines in profile.dart
-  if (firstName.length > 26) {
-    firstName = firstName.substring(0, 26);
+  if (firstNameLength > 26) {
+    firstName = firstName!.substring(0, 26);
     print('after substring ${firstName}');
   }
 
@@ -577,16 +578,17 @@ Future<void> load_curr_target({required String uid}) async {
   print("group size: ${groupSize}");
 
   await set_curr_target(globals.selectedGroup.players[uid]!.target);
-
-  
 }
 
 Future<String> get_curr_target_uid(
     {required String playerUID, required String groupCode}) async {
   var db = FirebaseFirestore.instance;
 
-  final docRef =
-      db.collection("groups").doc(groupCode).collection("players").doc(playerUID);
+  final docRef = db
+      .collection("groups")
+      .doc(groupCode)
+      .collection("players")
+      .doc(playerUID);
 
   try {
     var doc = await docRef.get();
