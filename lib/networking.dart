@@ -493,10 +493,12 @@ Future<JoinGameResults> join_game(
     try {
       var joinedGame = await loadGroup(gameCode);
 
-      await gameRef
-          .collection('players')
-          .doc(userID)
-          .set({'user_id': userID, 'points': points});
+      // await gameRef
+      //     .collection('players')
+      //     .doc(userID)
+      //     .set({'user_id': userID, 'points': points});
+      Player player = Player(userID!, points, null);
+      await setPlayerInGroup(userID, gameCode, player);
       print('User $userID added to game $gameCode');
 
       bool isNotInGroup = globals.myGroups.isEmpty;
@@ -577,16 +579,17 @@ Future<void> load_curr_target({required String uid}) async {
   print("group size: ${groupSize}");
 
   await set_curr_target(globals.selectedGroup.players[uid]!.target);
-
-  
 }
 
 Future<String> get_curr_target_uid(
     {required String playerUID, required String groupCode}) async {
   var db = FirebaseFirestore.instance;
 
-  final docRef =
-      db.collection("groups").doc(groupCode).collection("players").doc(playerUID);
+  final docRef = db
+      .collection("groups")
+      .doc(groupCode)
+      .collection("players")
+      .doc(playerUID);
 
   try {
     var doc = await docRef.get();
