@@ -515,6 +515,14 @@ Future<JoinGameResults> join_game(
   }
 }
 
+void update_user_image(String whatToChange, String changeTo) {
+  var db = FirebaseFirestore.instance;
+  final nameRef = db.collection("users").doc(globals.myUserData.uid);
+  nameRef.update({whatToChange: changeTo}).then(
+      (value) => print("DocumentSnapshot successfully updated!"),
+      onError: (e) => print("Error updating document $e"));
+}
+
 void update_user(BuildContext context, String whatToChange, String changeTo) {
   var db = FirebaseFirestore.instance;
   final nameRef = db.collection("users").doc(globals.myUserData.uid);
@@ -577,16 +585,17 @@ Future<void> load_curr_target({required String uid}) async {
   print("group size: ${groupSize}");
 
   await set_curr_target(globals.selectedGroup.players[uid]!.target);
-
-  
 }
 
 Future<String> get_curr_target_uid(
     {required String playerUID, required String groupCode}) async {
   var db = FirebaseFirestore.instance;
 
-  final docRef =
-      db.collection("groups").doc(groupCode).collection("players").doc(playerUID);
+  final docRef = db
+      .collection("groups")
+      .doc(groupCode)
+      .collection("players")
+      .doc(playerUID);
 
   try {
     var doc = await docRef.get();

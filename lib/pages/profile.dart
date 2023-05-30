@@ -65,14 +65,14 @@ class Profile extends StatelessWidget {
                   : user.imagePath!,
               //isNetworkPath: user.imagePath != null,
               isNetworkPath: user.imagePath != null && user.imagePath != "",
-              onClicked: () async {
-                await Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilePage(),
-                  ),
-                );
-
+              onClicked: () {
+                //await Navigator.pushReplacement(
+                //  context,
+                //  MaterialPageRoute(
+                //    builder: (context) => ProfilePage(),
+                //  ),
+                //);
+                ProfilePage.pickAndUploadImage(user);
                 print("Profile picture clicked");
               }),
           Padding(
