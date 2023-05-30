@@ -31,6 +31,7 @@ class AuthPage extends StatelessWidget {
               //login_custom(context, "whatever", "password");
               if (!loadingUser) Login(context, email, uid);
 
+              
               return HomePage();
               // user not logged in
             } else {
@@ -44,6 +45,13 @@ class AuthPage extends StatelessWidget {
     loadingUser = true;
     SetFinishedLoadingState(false);
     await login_google(context, email!, uid!);
+
+    try { 
+          currentTarget = await get_user_data(await get_curr_target_uid(uid: uid, groupCode: selectedGroup.group_name));
+    } catch (E) {
+      print("ERROR!!!!: ${E}");
+    }
+
     SetFinishedLoadingState(true);
     loadingUser = false;
   }

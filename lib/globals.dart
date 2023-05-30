@@ -63,7 +63,16 @@ TargetInfo currentTarget = TargetInfo(
 );
 */
 
-UserData? currentTarget;
+UserData? currentTarget = UserData(
+  uid: "",
+  imagePath: "",
+  name: "",
+  email: "",
+  pronouns: "",
+  description: "",
+  frequentedLocations: "",
+);
+
 
 User? fireBaseUser;
 
