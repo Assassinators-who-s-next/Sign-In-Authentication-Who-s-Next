@@ -2,6 +2,7 @@ import 'package:basic_auth/components/game_list_drawer.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
+import 'package:basic_auth/player.dart';
 import 'package:basic_auth/utils/popup_modal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -180,20 +181,21 @@ class _UserHomeState extends State<UserHome> {
     //UserData targetData = myUserData;
     //UserData targetData = UserPreferences.user;
     UserData targetData = UserData(
-
-      description: currentTarget!.description,
-      email: "",
-      frequentedLocations: currentTarget!.frequentedLocations,
-      imagePath: currentTarget!.imagePath == null || currentTarget!.imagePath == "" ? "lib/images/placeHolderProfileImage.jpg": currentTarget!.imagePath, 
-      name: currentTarget!.name,
-      pronouns: currentTarget!.pronouns,
-      uid: 'uid');
+        description: currentTarget!.description,
+        email: "",
+        frequentedLocations: currentTarget!.frequentedLocations,
+        imagePath:
+            currentTarget!.imagePath == null || currentTarget!.imagePath == ""
+                ? "lib/images/placeHolderProfileImage.jpg"
+                : currentTarget!.imagePath,
+        name: currentTarget!.name,
+        pronouns: currentTarget!.pronouns,
+        uid: 'uid');
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TargetName(username: targetData.name),
-          
           ProfilePicture(
               radius: screenWidth * .40,
               imagePath: targetData.imagePath!,
@@ -209,10 +211,15 @@ class _UserHomeState extends State<UserHome> {
                 label: "Eliminate",
                 color: Color.fromARGB(255, 238, 127, 119),
                 buttonState: true,
-                onPressed: () => {
-                      eliminateNoti(
-                          targetData, context, screenWidth, screenHeight)
-                    }),
+                onPressed: () {
+                  eliminateNoti(targetData, context, screenWidth, screenHeight);
+
+                  // eliminate target
+
+                  //selectedGroup.players[currentTarget]!.state = PlayerState.dead;
+
+                  // set their state to currently dead and waiting next game
+                }),
           ),
         ],
       ),
