@@ -2,6 +2,7 @@ import 'package:basic_auth/components/game_list_drawer.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/models/match_options.dart';
+import 'package:basic_auth/player.dart';
 import 'package:basic_auth/utils/popup_modal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -180,15 +181,15 @@ class _UserHomeState extends State<UserHome> {
     //UserData targetData = myUserData;
     //UserData targetData = UserPreferences.user;
     UserData targetData = UserData(
-        description: "it's a me",
-        email: "email here",
-        frequentedLocations: "joe's crab shack",
-        //imagePath: myUserData.imagePath,
-        imagePath: myUserData.imagePath == null || myUserData.imagePath == ""
-            ? "lib/images/placeHolderProfileImage.jpg"
-            : myUserData.imagePath!,
-        name: "whatever",
-        pronouns: 'he/him',
+        description: currentTarget!.description,
+        email: "",
+        frequentedLocations: currentTarget!.frequentedLocations,
+        imagePath:
+            currentTarget!.imagePath == null || currentTarget!.imagePath == ""
+                ? "lib/images/placeHolderProfileImage.jpg"
+                : currentTarget!.imagePath,
+        name: currentTarget!.name,
+        pronouns: currentTarget!.pronouns,
         uid: 'uid');
     return Center(
       child: Column(
@@ -202,16 +203,23 @@ class _UserHomeState extends State<UserHome> {
               isNetworkPath:
                   myUserData.imagePath != null && myUserData.imagePath != "",
               onClicked: () => print("clicked elimation target")),
+          Text("freq locations: ${targetData.frequentedLocations}"),
+          Text("Descrpt: ${targetData.description}"),
           Padding(
             padding: const EdgeInsetsDirectional.all(40),
             child: LargeUserHomeButton(
                 label: "Eliminate",
                 color: Color.fromARGB(255, 238, 127, 119),
                 buttonState: true,
-                onPressed: () => {
-                      eliminateNoti(
-                          targetData, context, screenWidth, screenHeight)
-                    }),
+                onPressed: () {
+                  eliminateNoti(targetData, context, screenWidth, screenHeight);
+
+                  // eliminate target
+
+                  //selectedGroup.players[currentTarget]!.state = PlayerState.dead;
+
+                  // set their state to currently dead and waiting next game
+                }),
           ),
         ],
       ),

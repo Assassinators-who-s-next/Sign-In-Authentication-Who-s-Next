@@ -405,7 +405,8 @@ void stopListeningToGroupChanges() {
   _playersSubscription = null;
 }
 
-Future<Group> createGroup(BuildContext context, String? userID, MatchOptions matchOptions) async {
+Future<Group> createGroup(
+    BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
   CollectionReference groupsRef =
@@ -438,8 +439,13 @@ Future<Group> createGroup(BuildContext context, String? userID, MatchOptions mat
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup = Group(newGroupID, {userID:Player(userID, 0, null)}, matchOptions,
-      userID, DateTime.utc(1989, 11, 9), DateTime.utc(1989, 11, 9));
+  Group newGroup = Group(
+      newGroupID,
+      {userID: Player(userID, 0, null)},
+      matchOptions,
+      userID,
+      DateTime.utc(1989, 11, 9),
+      DateTime.utc(1989, 11, 9));
 
   final snapshot = await FirebaseFirestore.instance
       .collection('group')
@@ -547,24 +553,51 @@ Future<void> startGameOrRespawn() async {
 
   for (int i = 0; i < groupSize; i++) {
     Player player = playerList[i];
-    player.target =
-        playerList[(i + 1) % groupSize].userID;
-    setPlayerInGroup(player.userID,
-        globals.selectedGroup.group_name, player);
+    player.target = playerList[(i + 1) % groupSize].userID;
+    setPlayerInGroup(player.userID, globals.selectedGroup.group_name, player);
 
-    if (player.userID == globals.myUserData.uid) { {
-      await set_curr_target(
-        targetUID: player.target!);
-      print("current target: ${globals.currentTarget!.uid}");
+    if (player.userID == globals.myUserData.uid) {
+      {
+        await set_curr_target(player.target);
+        print("current target: ${globals.currentTarget!.uid}");
+      }
     }
-  }
 
     print("CURRENT TARGET NAME: ${globals.currentTarget!.name}");
   }
 }
 
-Future<void> set_curr_target({required String targetUID}) async {
+Future<void> set_curr_target(String targetUID) async {
   globals.currentTarget = await get_user_data(targetUID);
+}
+
+Future<void> load_curr_target({required String uid}) async {
+  print("In load curr target in networking");
+  var groupSize = globals.selectedGroup.players.length;
+  print("group size: ${groupSize}");
+
+  await set_curr_target(globals.selectedGroup.players[uid]!.target);
+
+  
+}
+
+Future<String> get_curr_target_uid(
+    {required String playerUID, required String groupCode}) async {
+  var db = FirebaseFirestore.instance;
+
+  final docRef =
+      db.collection("groups").doc(groupCode).collection("players").doc(playerUID);
+
+  try {
+    var doc = await docRef.get();
+    var data = doc.data() as Map<String, dynamic>;
+    String targetUID = data['target'];
+    print("TARGET UID: $targetUID");
+    return targetUID;
+  } catch (e) {
+    print("Error getting document: $e");
+    return "default";
+  }
 }
 
 Future logout(context) async {
