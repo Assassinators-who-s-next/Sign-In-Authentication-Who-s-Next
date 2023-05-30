@@ -494,10 +494,12 @@ Future<JoinGameResults> join_game(
     try {
       var joinedGame = await loadGroup(gameCode);
 
-      await gameRef
-          .collection('players')
-          .doc(userID)
-          .set({'user_id': userID, 'points': points});
+      // await gameRef
+      //     .collection('players')
+      //     .doc(userID)
+      //     .set({'user_id': userID, 'points': points});
+      Player player = Player(userID!, points, null);
+      await setPlayerInGroup(userID, gameCode, player);
       print('User $userID added to game $gameCode');
 
       bool isNotInGroup = globals.myGroups.isEmpty;

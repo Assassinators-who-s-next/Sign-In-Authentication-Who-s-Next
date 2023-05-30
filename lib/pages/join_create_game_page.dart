@@ -22,14 +22,6 @@ class JoinCreatePage extends StatelessWidget {
   TextEditingController gameCodeController = TextEditingController();
 
   void JoinGame(BuildContext context) async {
-    /*
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ProfilePage()),
-    );
-    return;
-    */
-
     String gameCode = gameCodeController.text.trim();
     print("Join Game button pressed with code $gameCode");
     if (gameCode == "") {
