@@ -582,11 +582,11 @@ Future<void> load_curr_target({required String uid}) async {
 }
 
 Future<String> get_curr_target_uid(
-    {required String uid, required String groupCode}) async {
+    {required String playerUID, required String groupCode}) async {
   var db = FirebaseFirestore.instance;
 
   final docRef =
-      db.collection("groups").doc(groupCode).collection("players").doc(uid);
+      db.collection("groups").doc(groupCode).collection("players").doc(playerUID);
 
   try {
     var doc = await docRef.get();
