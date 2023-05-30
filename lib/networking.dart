@@ -284,11 +284,12 @@ Future<bool> load_my_user_data(String userId) async {
 Future set_default_user_data(String token) async {
   String? firstName = globals.fireBaseUser?.displayName!.split(' ')[0];
 
-  print('name size ${firstName!.length}');
+  var firstNameLength = firstName?.length ?? 0;
+  print('name size ${firstNameLength}');
 
   // FIXME: magic variable on name size, based on maxLines in profile.dart
-  if (firstName.length > 26) {
-    firstName = firstName.substring(0, 26);
+  if (firstNameLength > 26) {
+    firstName = firstName!.substring(0, 26);
     print('after substring ${firstName}');
   }
 
@@ -598,10 +599,11 @@ Future<String> get_curr_target_uid(
     print("TARGET UID: $targetUID");
     return targetUID;
   } catch (e) {
-    print("Error getting document: $e");
+    print("Error getting target: $e");
     return "default";
   }
 }
+
 
 Future logout(context) async {
   if (defaultTargetPlatform == TargetPlatform.android ||

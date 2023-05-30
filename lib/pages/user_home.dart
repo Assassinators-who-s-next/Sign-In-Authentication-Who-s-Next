@@ -203,8 +203,10 @@ class _UserHomeState extends State<UserHome> {
               isNetworkPath:
                   myUserData.imagePath != null && myUserData.imagePath != "",
               onClicked: () => print("clicked elimation target")),
+
           Text("freq locations: ${targetData.frequentedLocations}"),
           Text("Descrpt: ${targetData.description}"),
+          
           Padding(
             padding: const EdgeInsetsDirectional.all(40),
             child: LargeUserHomeButton(
