@@ -604,6 +604,26 @@ Future<String> get_curr_target_uid(
   }
 }
 
+Future<void> eliminatePlayer(
+    BuildContext context, Player player, Player? target, Group group) async {
+  // increment current user's points
+  globals.selectedGroup.players[player]!.points += 1;
+
+  // set players state to dead
+  target!.state = PlayerState.dead;
+
+  player.target = target.target;
+  target.target = "";
+
+  await setPlayerInGroup(globals.myUserData.uid, group.group_name, player);
+  await setPlayerInGroup(target.userID, group.group_name, target);
+
+  // check if there are no more targets
+  if (player.target == player) {
+    print("you're your own target");
+    globals.selectedGroup.state = GroupState.finished;
+  }
+}
 
 Future logout(context) async {
   if (defaultTargetPlatform == TargetPlatform.android ||
