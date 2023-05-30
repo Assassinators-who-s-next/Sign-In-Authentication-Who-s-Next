@@ -203,10 +203,8 @@ class _UserHomeState extends State<UserHome> {
               isNetworkPath:
                   myUserData.imagePath != null && myUserData.imagePath != "",
               onClicked: () => print("clicked elimation target")),
-
           Text("freq locations: ${targetData.frequentedLocations}"),
           Text("Descrpt: ${targetData.description}"),
-          
           Padding(
             padding: const EdgeInsetsDirectional.all(40),
             child: LargeUserHomeButton(
@@ -215,7 +213,7 @@ class _UserHomeState extends State<UserHome> {
                 buttonState: true,
                 onPressed: () {
                   eliminateNoti(targetData, context, screenWidth, screenHeight);
-
+                  //eliminatePlayer(context, getSelf()!,selectedGroup.get(currentTarget!.uid), selectedGroup);
                   // eliminate target
 
                   //selectedGroup.players[currentTarget]!.state = PlayerState.dead;
