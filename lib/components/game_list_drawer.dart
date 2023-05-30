@@ -57,8 +57,12 @@ class GameListDrawer extends StatelessWidget {
 
   void OnClickGameListItem(BuildContext context, Group group) async {
     Navigator.pop(context);
-    if (currentTarget!.uid != "") {
-      await set_curr_target(await get_curr_target_uid(playerUID: myUserData.uid, groupCode: group.group_name));
+    
+    if (currentTarget!.uid != "" && currentTarget!.uid != null) {
+      print("current target: ${currentTarget!.uid}");
+      print("bruh");
+      await set_curr_target(await get_curr_target_uid(
+          playerUID: myUserData.uid, groupCode: group.group_name));
     }
 
     onSelectGroup.call(group);
