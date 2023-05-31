@@ -357,7 +357,7 @@ Future<Player> getPlayerInGroup(Group group, String playerUID) async {
   print("getplayeringroup B");
   print("playerUID in getPlayerInGroup: $playerUID");
 
-  DocumentSnapshot userDocument = await groupsRef
+  DocumentSnapshot playerDocument = await groupsRef
       .doc(group.group_name)
       .collection('players')
       .doc(playerUID)
@@ -367,11 +367,11 @@ Future<Player> getPlayerInGroup(Group group, String playerUID) async {
 
   print(
       "Print getPlayerInGroup: ${groupsRef.doc(group.group_name).collection('players').doc(playerUID).get()}");
-  if (userDocument.exists) {
+  if (playerDocument.exists) {
     // Extract field values from the document snapshot
 
     // get player state
-    int state = await userDocument.get('state');
+    int state = await playerDocument.get('state');
     PlayerState ps = PlayerState.alive;
     switch (state) {
       case 0:
@@ -391,15 +391,19 @@ Future<Player> getPlayerInGroup(Group group, String playerUID) async {
         }
     }
 
-    UserData? targetUser = await get_user_data(playerUID);
+    UserData? playerUser = await get_user_data(playerUID);
+
+    String targetUID = await getTargetUID(group, playerUID);
+    print("targetUID for player: ${playerUID} $targetUID");
 
     Player playerToReturn = Player(
-      targetUser!.uid,
-      userDocument.get('points'),
-      targetUser,
-      target: userDocument.get('target'),
+      playerUser!.uid,
+      playerDocument.get('points'),
+      playerUser,
+      target: targetUID,
       state: ps,
     );
+    playerToReturn.name = playerUser.name;
 
     print("\n\n\nPlayer to return: ${playerToReturn}\n\n\n");
     return playerToReturn;

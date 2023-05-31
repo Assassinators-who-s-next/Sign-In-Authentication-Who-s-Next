@@ -1,3 +1,5 @@
+import 'package:basic_auth/globals.dart';
+
 import 'models/user_data.dart';
 
 enum PlayerState { alive, preparingToDie, dead }
@@ -10,7 +12,7 @@ class Player {
   String target = "";
   String? eliminator;
   PlayerState state = PlayerState.alive;
-  
+
   Player(this.userID, this.points, this.userData,
       {this.state = PlayerState.alive, target = "", eliminatedBy = null});
 

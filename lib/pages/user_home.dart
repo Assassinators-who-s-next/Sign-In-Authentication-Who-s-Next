@@ -212,6 +212,25 @@ class _UserHomeState extends State<UserHome> {
                 color: Color.fromARGB(255, 238, 127, 119),
                 buttonState: true,
                 onPressed: () async {
+                  Player playerSelf = getSelf()!;
+                  Player playerTarget =
+                      await getPlayerInGroup(selectedGroup, currentTarget!.uid);
+
+                  playerSelf.target =
+                      await getTargetUID(selectedGroup, myUserData.uid);
+                  playerTarget.target =
+                      await getTargetUID(selectedGroup, currentTarget!.uid);
+
+                  print("\n\n playerSelf: $playerSelf");
+                  print("\n\n playerTarget: $playerTarget");
+
+                  // eliminate target
+
+                  await eliminatePlayer(context, playerSelf, playerTarget, selectedGroup);
+                  
+
+                  //await eliminatePlayer(context, playerSelf, , selectedGroup);
+
                   //eliminateNoti(targetData, context, screenWidth, screenHeight);
                   /*
                   print(
@@ -237,8 +256,6 @@ class _UserHomeState extends State<UserHome> {
                   //await eliminatePlayer(context, getSelf()!, );
 
                   // delete later for testing
-                  selectedGroup.state = GroupState.dead;
-                  update_group_state(selectedGroup);
                   // delete later for testing
 
                   // eliminate target
