@@ -211,9 +211,36 @@ class _UserHomeState extends State<UserHome> {
                 label: "Eliminate",
                 color: Color.fromARGB(255, 238, 127, 119),
                 buttonState: true,
-                onPressed: () {
-                  eliminateNoti(targetData, context, screenWidth, screenHeight);
-                  //eliminatePlayer(context, getSelf()!,selectedGroup.get(currentTarget!.uid), selectedGroup);
+                onPressed: () async {
+                  //eliminateNoti(targetData, context, screenWidth, screenHeight);
+                  /*
+                  print(
+                      "In user_home eliminationScreen onPressed, getting target uid: ${selectedGroup.get(currentTarget!.uid)}");
+                  Player playerForTesting =
+                      await getPlayerInGroup(selectedGroup, currentTarget!.uid);
+                  print(
+                      "\n\n\nIn user_home eliminationScreen onPressed, getSelf()!.name: ${getSelf()!.name}");
+                  print(
+                      "In user_home eliminationScreen onPressed, getPlayerInGroup: ${playerForTesting}");
+                  print(
+                      "In user_home eliminationScreen onPressed, selectedGroup.groupName: ${selectedGroup.group_name}\n\n\n");
+
+                  await eliminatePlayer(
+                      context,
+                      getSelf()!,
+                      await getPlayerInGroup(selectedGroup, getSelf()!.target),
+                      selectedGroup);
+                  print(
+                      "\n\ngetTargetUID: ${await getTargetUID(selectedGroup, currentTarget!.uid)}\n\n");
+                  */
+                  //Player targetPlayer = await getPlayerInGroup(selectedGroup, );
+                  //await eliminatePlayer(context, getSelf()!, );
+
+                  // delete later for testing
+                  selectedGroup.state = GroupState.dead;
+                  update_group_state(selectedGroup);
+                  // delete later for testing
+
                   // eliminate target
 
                   //selectedGroup.players[currentTarget]!.state = PlayerState.dead;

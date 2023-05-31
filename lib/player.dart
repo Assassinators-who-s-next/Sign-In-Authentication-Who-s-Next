@@ -10,6 +10,7 @@ class Player {
   String target = "";
   String? eliminator;
   PlayerState state = PlayerState.alive;
+  
   Player(this.userID, this.points, this.userData,
       {this.state = PlayerState.alive, target = "", eliminatedBy = null});
 
@@ -35,6 +36,9 @@ class Player {
         "\n" +
         "State: " +
         state.toString() +
+        "\n" +
+        "Target: " +
+        target +
         "]";
   }
 }
