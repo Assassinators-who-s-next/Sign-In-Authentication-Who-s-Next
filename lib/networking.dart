@@ -523,6 +523,14 @@ Future<JoinGameResults> join_game(
   }
 }
 
+void update_user_image(String whatToChange, String changeTo) {
+  var db = FirebaseFirestore.instance;
+  final nameRef = db.collection("users").doc(globals.myUserData.uid);
+  nameRef.update({whatToChange: changeTo}).then(
+      (value) => print("DocumentSnapshot successfully updated!"),
+      onError: (e) => print("Error updating document $e"));
+}
+
 void update_user(BuildContext context, String whatToChange, String changeTo) {
   var db = FirebaseFirestore.instance;
   final nameRef = db.collection("users").doc(globals.myUserData.uid);
@@ -608,7 +616,6 @@ Future<String> get_curr_target_uid(
     return "default";
   }
 }
-
 
 Future logout(context) async {
   if (defaultTargetPlatform == TargetPlatform.android ||

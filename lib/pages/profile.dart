@@ -62,7 +62,7 @@ class Profile extends StatelessWidget {
         children: [
           InkWell(
             borderRadius: BorderRadius.circular(pictureRadius),
-            onTap: () => onPressProfilePicture(context),
+            onTap: () => ProfilePage.pickAndUploadImage(user),
             child: Stack(
               alignment: AlignmentDirectional.center,
               children:
@@ -75,11 +75,16 @@ class Profile extends StatelessWidget {
                         : user.imagePath!,
                     //isNetworkPath: user.imagePath != null,
                     isNetworkPath: user.imagePath != null && user.imagePath != "",
-                    onClicked: () => onPressProfilePicture(context)
+                    onClicked: () => {}
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: plusIconDistance, top: plusIconDistance),
-                      child: Icon(Icons.add_box, size: plusIconSize, color: Theme.of(context).colorScheme.primary)),
+                      child: Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: [
+                          Icon(Icons.circle, size: plusIconSize * .7, color: Colors.white),
+                          Icon(Icons.add_circle, size: plusIconSize, color: Theme.of(context).colorScheme.primary)
+                        ])),
                 ]
             ),
           ),
@@ -93,16 +98,6 @@ class Profile extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void onPressProfilePicture(BuildContext context) async 
-  {
-    await Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProfilePage(),
       ),
     );
   }
