@@ -213,7 +213,7 @@ class _UserHomeState extends State<UserHome> {
                 buttonState: true,
                 onPressed: () {
                   eliminateNoti(targetData, context, screenWidth, screenHeight);
-
+                  //eliminatePlayer(context, getSelf()!,selectedGroup.get(currentTarget!.uid), selectedGroup);
                   // eliminate target
 
                   //selectedGroup.players[currentTarget]!.state = PlayerState.dead;
