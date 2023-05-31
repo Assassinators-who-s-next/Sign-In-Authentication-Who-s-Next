@@ -739,7 +739,7 @@ Future<void> eliminatePlayer(
   print("In eliminate player B");
 
   // set players state to dead
-  target!.state = PlayerState.dead;
+  target.state = PlayerState.dead;
 
   player.target = target.target;
   target.target = "";
@@ -747,7 +747,13 @@ Future<void> eliminatePlayer(
   await setPlayerInGroup(globals.myUserData.uid, group.group_name, player);
   await setPlayerInGroup(target.userID, group.group_name, target);
 
+  globals.currentTarget = await get_user_data(player.target);
+
   print("In eliminate player C");
+
+  String tempTargetUID =
+      await getTargetUID(globals.selectedGroup, globals.myUserData.uid);
+  load_curr_target(uid: tempTargetUID);
 
   // check if there are no more targets
   if (player.target == player.userID) {
@@ -756,11 +762,8 @@ Future<void> eliminatePlayer(
   }
 }
 
-Future<void> setPlayerStateCurrentGroup(String playerUID, PlayerState state) async {
-
-  
-
-}
+Future<void> setPlayerStateCurrentGroup(
+    String playerUID, PlayerState state) async {}
 
 Future logout(context) async {
   if (defaultTargetPlatform == TargetPlatform.android ||

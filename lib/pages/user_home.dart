@@ -165,6 +165,7 @@ class _UserHomeState extends State<UserHome> {
       double screenWidth, double screenHeight, BuildContext context) {
     //UserData targetData = myUserData;
     //UserData targetData = UserPreferences.user;
+
     UserData targetData = UserData(
         description: currentTarget!.description,
         email: "",
@@ -175,7 +176,10 @@ class _UserHomeState extends State<UserHome> {
                 : currentTarget!.imagePath,
         name: currentTarget!.name,
         pronouns: currentTarget!.pronouns,
-        uid: 'uid');
+        uid: currentTarget!.uid);
+
+    print("\n\n\n TARGET DATA ALIVE SCREEN: ${targetData.uid}\n\n\n");
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -208,18 +212,17 @@ class _UserHomeState extends State<UserHome> {
 
                   SetSelectedGroup(selectedGroup);
 
-
                   print("\n\n playerSelf: $playerSelf");
                   print("\n\n playerTarget: $playerTarget");
 
                   // eliminate target
-                  await eliminatePlayer(context, playerSelf, playerTarget, selectedGroup);
+                  await eliminatePlayer(
+                      context, playerSelf, playerTarget, selectedGroup);
 
-                  String tempTargetUID = await getTargetUID(selectedGroup, myUserData.uid);
+                  setSelectedGroup(selectedGroup);
 
-                  load_curr_target(uid: tempTargetUID);
-                  
-                  update_group_state(selectedGroup);
+                  //selectedGroup.state = GroupState.finished;
+                  //update_group_state(selectedGroup);
 
                   //await eliminatePlayer(context, playerSelf, , selectedGroup);
 
