@@ -610,7 +610,6 @@ Future<String> get_curr_target_uid(
   }
 }
 
-
 Future logout(context) async {
   if (defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS) {
