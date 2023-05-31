@@ -748,11 +748,18 @@ Future<void> eliminatePlayer(
   await setPlayerInGroup(target.userID, group.group_name, target);
 
   print("In eliminate player C");
+
   // check if there are no more targets
-  if (player.target == player) {
+  if (player.target == player.userID) {
     print("you're your own target");
     globals.selectedGroup.state = GroupState.finished;
   }
+}
+
+Future<void> setPlayerStateCurrentGroup(String playerUID, PlayerState state) async {
+
+  
+
 }
 
 Future logout(context) async {

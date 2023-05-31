@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:basic_auth/components/game_list_drawer.dart';
 import 'package:basic_auth/components/profile_picture.dart';
 import 'package:basic_auth/globals.dart';
@@ -204,13 +206,20 @@ class _UserHomeState extends State<UserHome> {
                   playerTarget.target =
                       await getTargetUID(selectedGroup, currentTarget!.uid);
 
+                  SetSelectedGroup(selectedGroup);
+
+
                   print("\n\n playerSelf: $playerSelf");
                   print("\n\n playerTarget: $playerTarget");
 
                   // eliminate target
-
                   await eliminatePlayer(context, playerSelf, playerTarget, selectedGroup);
+
+                  String tempTargetUID = await getTargetUID(selectedGroup, myUserData.uid);
+
+                  load_curr_target(uid: tempTargetUID);
                   
+                  update_group_state(selectedGroup);
 
                   //await eliminatePlayer(context, playerSelf, , selectedGroup);
 
