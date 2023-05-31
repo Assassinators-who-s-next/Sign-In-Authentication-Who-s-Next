@@ -92,7 +92,7 @@ class _UserHomeState extends State<UserHome> {
   //Although,
   Stream<Group> getGroupStream(String groupId) {
     print("stream happend!");
-    Future<Group> group = loadGroup(groupId);
+    Future<Group> group = Future.delayed((Duration(seconds: 2)), () => loadGroup(groupId));
     return Stream.fromFuture(group);
   }
 
@@ -178,7 +178,7 @@ class _UserHomeState extends State<UserHome> {
         pronouns: currentTarget!.pronouns,
         uid: currentTarget!.uid);
 
-    print("\n\n\n TARGET DATA ALIVE SCREEN: ${targetData.uid}\n\n\n");
+    print("\n\n\n TARGET DATA ALIVE SCREEN: ${targetData.name}\n\n\n");
 
     return Center(
       child: Column(
@@ -220,6 +220,8 @@ class _UserHomeState extends State<UserHome> {
                       context, playerSelf, playerTarget, selectedGroup);
 
                   setSelectedGroup(selectedGroup);
+
+                  beginElimination();
 
                   //selectedGroup.state = GroupState.finished;
                   //update_group_state(selectedGroup);
@@ -271,6 +273,7 @@ class _UserHomeState extends State<UserHome> {
     Player player =
         selectedGroup.players[currentTarget!.uid]!; //HOPE IT IS DEEP COPY
     player.state = PlayerState.preparingToDie;
+    print("eliminator state now changed to " + player.state.index.toString());
     setPlayerInGroup(myUserData.uid, selectedGroup.group_name, player);
   }
 

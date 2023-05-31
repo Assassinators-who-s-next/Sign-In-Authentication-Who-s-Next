@@ -177,7 +177,7 @@ Future<Group> loadGroup(String groupID) async {
 
   DocumentSnapshot groupDocument = await groupsRef.doc(groupID).get();
 
-  print("Loading group: " + groupID);
+  // print("Loading group: " + groupID);
   if (groupDocument.exists) {
     Map<String, Player> players = {};
     //List<dynamic> playerDataList = await groupDocument.get('players');
