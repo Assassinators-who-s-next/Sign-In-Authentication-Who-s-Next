@@ -53,28 +53,36 @@ class Profile extends StatelessWidget {
   }
 
   Padding buildPicture(UserData user, BuildContext context) {
+    const double pictureRadius = 250;
+    const double plusIconSize = 65;
+    const double plusIconDistance = pictureRadius * (.707);
     return Padding(
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
-          ProfilePicture(
-              radius: 250,
-              //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
-              imagePath: user.imagePath == null || user.imagePath == ""
-                  ? "lib/images/placeHolderProfileImage.jpg"
-                  : user.imagePath!,
-              //isNetworkPath: user.imagePath != null,
-              isNetworkPath: user.imagePath != null && user.imagePath != "",
-              onClicked: () async {
-                await Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilePage(),
-                  ),
-                );
-
-                print("Profile picture clicked");
-              }),
+          InkWell(
+            borderRadius: BorderRadius.circular(pictureRadius),
+            onTap: () => onPressProfilePicture(context),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children:
+                [
+                ProfilePicture(
+                    radius: pictureRadius,
+                    //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
+                    imagePath: user.imagePath == null || user.imagePath == ""
+                        ? "lib/images/placeHolderProfileImage.jpg"
+                        : user.imagePath!,
+                    //isNetworkPath: user.imagePath != null,
+                    isNetworkPath: user.imagePath != null && user.imagePath != "",
+                    onClicked: () => onPressProfilePicture(context)
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: plusIconDistance, top: plusIconDistance),
+                      child: Icon(Icons.add_box, size: plusIconSize, color: Theme.of(context).colorScheme.primary)),
+                ]
+            ),
+          ),
           Padding(
             padding: EdgeInsets.only(top: 10),
             child: ElevatedButton(
@@ -85,6 +93,16 @@ class Profile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void onPressProfilePicture(BuildContext context) async 
+  {
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfilePage(),
       ),
     );
   }

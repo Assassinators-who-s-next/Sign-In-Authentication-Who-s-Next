@@ -46,7 +46,8 @@ class AuthPage extends StatelessWidget {
     SetFinishedLoadingState(false);
     await login_google(context, email!, uid!);
 
-    try { 
+    try {
+      if (hasSelectedGroup) 
           currentTarget = await get_user_data(await get_curr_target_uid(playerUID: uid, groupCode: selectedGroup.group_name));
     } catch (E) {
       print("ERROR!!!!: ${E}");

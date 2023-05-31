@@ -119,6 +119,8 @@ Future set_user_data(
 }
 
 Future<void> reloadSelectedGroup() async {
+  if (!globals.hasSelectedGroup) return;
+  
   String groupID = globals.selectedGroup.group_name;
   Group fetchedGroup = await loadGroup(groupID);
   globals.selectedGroup = (fetchedGroup);
@@ -271,6 +273,9 @@ Future<bool> load_my_user_data(String userId) async {
   globals.myUserData = myUserData;
   print("Printing User data from load_my_user_data: ${globals.myUserData}");
   globals.myGroups = myGroups;
+
+  globals.myUserData.imagePath =
+      await ProfilePage.retrieveImage(globals.myUserData);
 
   if (!myGroups.isEmpty) {
     // this should instead remember locally what the last group was
