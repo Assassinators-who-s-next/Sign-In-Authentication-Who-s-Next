@@ -28,9 +28,11 @@ class LeaderboardElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String playerImagePath = UserPreferences.placeholderImagePath;
+    bool isNetworkPath = false;
     if (player.userData?.imagePath != null &&
         player.userData!.imagePath != "") {
       playerImagePath = player.userData!.imagePath!;
+      isNetworkPath = true;
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -39,7 +41,7 @@ class LeaderboardElement extends StatelessWidget {
           radius: 50,
           imagePath: playerImagePath,
           //imagePath: myUserData.imagePath!,
-          isNetworkPath: false,
+          isNetworkPath: isNetworkPath,
           onClicked: () {},
         ),
         const SizedBox(width: 10),

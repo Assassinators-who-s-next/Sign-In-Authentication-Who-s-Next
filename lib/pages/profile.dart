@@ -53,28 +53,41 @@ class Profile extends StatelessWidget {
   }
 
   Padding buildPicture(UserData user, BuildContext context) {
+    const double pictureRadius = 250;
+    const double plusIconSize = 65;
+    const double plusIconDistance = pictureRadius * (.707);
     return Padding(
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
-          ProfilePicture(
-              radius: 250,
-              //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
-              imagePath: user.imagePath == null || user.imagePath == ""
-                  ? "lib/images/placeHolderProfileImage.jpg"
-                  : user.imagePath!,
-              //isNetworkPath: user.imagePath != null,
-              isNetworkPath: user.imagePath != null && user.imagePath != "",
-              onClicked: () async {
-                await Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilePage(),
-                  ),
-                );
-
-                print("Profile picture clicked");
-              }),
+          InkWell(
+            borderRadius: BorderRadius.circular(pictureRadius),
+            onTap: () => ProfilePage.pickAndUploadImage(user),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children:
+                [
+                ProfilePicture(
+                    radius: pictureRadius,
+                    //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
+                    imagePath: user.imagePath == null || user.imagePath == ""
+                        ? "lib/images/placeHolderProfileImage.jpg"
+                        : user.imagePath!,
+                    //isNetworkPath: user.imagePath != null,
+                    isNetworkPath: user.imagePath != null && user.imagePath != "",
+                    onClicked: () => {}
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: plusIconDistance, top: plusIconDistance),
+                      child: Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: [
+                          Icon(Icons.circle, size: plusIconSize * .7, color: Colors.white),
+                          Icon(Icons.add_circle, size: plusIconSize, color: Theme.of(context).colorScheme.primary)
+                        ])),
+                ]
+            ),
+          ),
           Padding(
             padding: EdgeInsets.only(top: 10),
             child: ElevatedButton(

@@ -31,7 +31,7 @@ class ProfilePicture extends StatelessWidget {
           fit: BoxFit.cover,
           width: radius,
           height: radius,
-          child: InkWell(onTap: onClicked),
+          //child: InkWell(onTap: onClicked),
         ),
       ),
     );

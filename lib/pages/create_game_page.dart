@@ -264,14 +264,13 @@ class _CreateGamePage extends State<CreateGamePage> {
           int.parse(max_player_controller.text),
           elim_choice!,
           //respawn_choice!.name,
-          "",//respawn_time_plural,
-          0,//respawn_duration_choice!,
+          "", //respawn_time_plural,
+          0, //respawn_duration_choice!,
           //total_game_choice!.name,
-          "",//tot_game_time_plural,
-          0,//total_game_duration_choice,
+          "", //tot_game_time_plural,
+          0, //total_game_duration_choice,
           off_limit_controller.text,
-          stay_safe_controller.text
-          );
+          stay_safe_controller.text);
 
       context.loaderOverlay.show();
       // creates game with game info and creates game code
