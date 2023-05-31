@@ -667,6 +667,17 @@ Future<void> startGameOrRespawn() async {
     - need to store target_uid for each player in groups on db (CHECK)
   */
 
+  // reset all player states to zero
+  await resetState(globals.selectedGroup);
+
+  // reset all player points to zero
+  await resetPoints(globals.selectedGroup);
+
+  // reset all targets
+  await resetTarget(globals.selectedGroup);
+
+  globals.selectedGroup = await loadGroup(globals.selectedGroup.group_name);
+
   List<Player> playerList = globals.selectedGroup.players.values.toList();
   playerList.shuffle();
 
@@ -693,9 +704,63 @@ Future<void> startGameOrRespawn() async {
   }
 }
 
+Future<void> resetPoints(Group group) async {
+  // Get the reference to the 'players' collection
+  CollectionReference playersRef = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(group.group_name)
+      .collection('players');
+
+  // Get all the player documents from the 'players' collection
+  QuerySnapshot playerSnapshot = await playersRef.get();
+
+  // Iterate through each player document and reset the 'points' field to zero
+  playerSnapshot.docs.forEach((playerDoc) {
+    playersRef.doc(playerDoc.id).update({'points': 0});
+  });
+}
+
+Future<void> resetState(Group group) async {
+  // Get the reference to the 'players' collection
+  CollectionReference playersRef = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(group.group_name)
+      .collection('players');
+
+  // Get all the player documents from the 'players' collection
+  QuerySnapshot playerSnapshot = await playersRef.get();
+
+  PlayerState ps = PlayerState.alive;
+  // Iterate through each player document and reset the 'points' field to zero
+
+  playerSnapshot.docs.forEach((playerDoc) {
+    playersRef.doc(playerDoc.id).update({'state': 0});
+  });
+}
+
+Future<void> resetTarget(Group group) async {
+  // Get the reference to the 'players' collection
+  CollectionReference playersRef = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(group.group_name)
+      .collection('players');
+
+  // Get all the player documents from the 'players' collection
+  QuerySnapshot playerSnapshot = await playersRef.get();
+
+  // Iterate through each player document and reset the 'points' field to zero
+  playerSnapshot.docs.forEach((playerDoc) {
+    playersRef.doc(playerDoc.id).update({'target': ""});
+  });
+}
+
 Future<void> set_curr_target(String targetUID) async {
   globals.currentTarget = await get_user_data(targetUID);
 }
+
+
+
+
 
 Future<void> load_curr_target({required String uid}) async {
   print("In load curr target in networking");
@@ -747,6 +812,7 @@ Future<void> eliminatePlayer(
   await setPlayerInGroup(globals.myUserData.uid, group.group_name, player);
   await setPlayerInGroup(target.userID, group.group_name, target);
 
+  print("\n\n\nplayer.target = target.target: ${player.target}");
   globals.currentTarget = await get_user_data(player.target);
 
   print("In eliminate player C");
