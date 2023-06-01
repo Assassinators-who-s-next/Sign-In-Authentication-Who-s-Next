@@ -1,7 +1,7 @@
 import 'player.dart';
 import '../models/match_options.dart';
 
-enum GroupState { notStarted, running, finished, dead }
+enum GroupState { notStarted, running, finished }
 
 class Group {
   String group_name;

@@ -1,15 +1,18 @@
+import 'package:basic_auth/globals.dart';
+
 import 'models/user_data.dart';
 
 enum PlayerState { alive, preparingToDie, dead }
 
 class Player {
   String? name;
-  String userID;
-  int points;
+  String userID; // exist on the database 
+  int points; // exist on the database
   UserData? userData;
-  String target = "";
-  String? eliminator;
-  PlayerState state = PlayerState.alive;
+
+  String target = ""; // exist on the database
+  String? eliminator; // exist on the database
+  PlayerState state = PlayerState.alive; // exist on the database
   Player(this.userID, this.points, this.userData,
       {this.state = PlayerState.alive, target = "", eliminatedBy = null});
 
@@ -35,6 +38,9 @@ class Player {
         "\n" +
         "State: " +
         state.toString() +
+        "\n" +
+        "Target: " +
+        target +
         "]";
   }
 }
