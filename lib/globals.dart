@@ -31,6 +31,7 @@ Player? getSelf() => selectedGroup.players[myUserData.uid];
 bool finishedLoadingUser = false;
 StreamController finishedLoadingUserController =
     StreamController<bool>.broadcast();
+bool hasSelectedGroup = false;
 Group selectedGroup = Group(
   "join or create a game to play",
   {},
@@ -78,6 +79,7 @@ User? fireBaseUser;
 
 void setSelectedGroup(Group group) {
   stopListeningToGroupChanges();
+  hasSelectedGroup = true;
   selectedGroup = group;
   ListenToGroupChanges(group.group_name);
 }

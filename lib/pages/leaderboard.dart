@@ -60,6 +60,7 @@ class _LeaderboardState extends State<LeaderBoard> {
       String player_name = cur_player.get_name();
       int player_points = cur_player.points;
       var newElement = LeaderboardElement(
+          player: cur_player,
           playerName: player_name ?? "unknown",
           playerPoints: player_points ?? 0,
           eliminated: cur_player.state == PlayerState.dead);
@@ -96,11 +97,12 @@ class _LeaderboardState extends State<LeaderBoard> {
         itemBuilder: (context, index) {
           return Container(
             decoration: BoxDecoration(
-              color: _players[index].eliminated ? Color.fromARGB(255, 209, 209, 209) : Color.fromARGB(255, 255, 255, 255),
+              color: _players[index].eliminated
+                  ? Color.fromARGB(255, 209, 209, 209)
+                  : Color.fromARGB(255, 255, 255, 255),
               border: const Border(
-                  bottom:
-                      BorderSide(color: Color.fromARGB(255, 204, 204, 204),
-                      width: 1)),
+                  bottom: BorderSide(
+                      color: Color.fromARGB(255, 204, 204, 204), width: 1)),
             ),
             child: ListTile(
               title: _players[index],

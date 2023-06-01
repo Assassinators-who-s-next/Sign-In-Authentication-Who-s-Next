@@ -119,6 +119,8 @@ Future set_user_data(
 }
 
 Future<void> reloadSelectedGroup() async {
+  if (!globals.hasSelectedGroup) return;
+  
   String groupID = globals.selectedGroup.group_name;
   Group fetchedGroup = await loadGroup(groupID);
   globals.selectedGroup = (fetchedGroup);
@@ -271,6 +273,9 @@ Future<bool> load_my_user_data(String userId) async {
   globals.myUserData = myUserData;
   print("Printing User data from load_my_user_data: ${globals.myUserData}");
   globals.myGroups = myGroups;
+
+  globals.myUserData.imagePath =
+      await ProfilePage.retrieveImage(globals.myUserData);
 
   if (!myGroups.isEmpty) {
     // this should instead remember locally what the last group was
@@ -599,6 +604,14 @@ Future<JoinGameResults> join_game(
   }
 }
 
+void update_user_image(String whatToChange, String changeTo) {
+  var db = FirebaseFirestore.instance;
+  final nameRef = db.collection("users").doc(globals.myUserData.uid);
+  nameRef.update({whatToChange: changeTo}).then(
+      (value) => print("DocumentSnapshot successfully updated!"),
+      onError: (e) => print("Error updating document $e"));
+}
+
 void update_user(BuildContext context, String whatToChange, String changeTo) {
   var db = FirebaseFirestore.instance;
   final nameRef = db.collection("users").doc(globals.myUserData.uid);
@@ -792,6 +805,7 @@ Future<String> get_curr_target_uid(
   }
 }
 
+
 Future<void> eliminatePlayer(
     BuildContext context, Player player, Player target, Group group) async {
   print("In eliminate player A");
@@ -827,9 +841,6 @@ Future<void> eliminatePlayer(
     globals.selectedGroup.state = GroupState.finished;
   }
 }
-
-Future<void> setPlayerStateCurrentGroup(
-    String playerUID, PlayerState state) async {}
 
 Future logout(context) async {
   if (defaultTargetPlatform == TargetPlatform.android ||
