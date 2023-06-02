@@ -211,9 +211,13 @@ Future<Group> loadGroup(String groupID) async {
 
 
         // cash and josh modified this
-        if (data['user_id'] == globals.myUserData.uid) {
-          globals.currentTarget = data['target'];
+        if(targetUID != "")
+        {
+          if (data['user_id'] == globals.myUserData.uid) {
+           globals.currentTarget = data['target'];
+          }
         }
+        
       }
     }
 
