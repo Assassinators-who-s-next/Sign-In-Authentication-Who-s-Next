@@ -129,7 +129,6 @@ Future<void> reloadSelectedGroup() async {
   await loadPlayerNamesFromList(globals.selectedGroup.players.values.toList());
 
   if (globals.selectedGroup.state == GroupState.running) await set_curr_target(globals.getSelf()!.target);
-  print("reloaded target into: ${globals.currentTarget!.name}");
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {

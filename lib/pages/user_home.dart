@@ -238,7 +238,6 @@ class _UserHomeState extends State<UserHome> {
 
   StreamBuilder<PlayerState> runningScreen(
       double screenWidth, double screenHeight, BuildContext context) {
-        print("entered running screen");
     return StreamBuilder<PlayerState>(
         stream: getPlayerStateStream(selectedGroup.group_name, myUserData.uid),
         builder: (context, snapshot) {
@@ -271,7 +270,6 @@ class _UserHomeState extends State<UserHome> {
               name: currentTarget!.name,
               pronouns: currentTarget!.pronouns,
               uid: currentTarget!.uid);
-          print("selected group: ${selectedGroup.group_name}, current target: ${currentTarget!.name}");
 
           return Center(
             child: Column(
