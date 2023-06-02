@@ -151,6 +151,8 @@ Future<void> loadPlayerNamesFromList(List<Player> players) async {
       players[i].userData = userData;
       players[i].name = userData!.name;
 
+      updatePlayer(players[i].userID, players[i]);
+
       userData.uid;
     } catch (e) {
       print("failed to load user data");
@@ -613,6 +615,18 @@ Future<JoinGameResults> join_game(
     print('Error adding user to game: $e');
     return JoinGameResults(false, "Unexpected Error");
   }
+}
+
+Future<void> updatePlayer(String playerID, String name) async {
+  var db = FirebaseFirestore.instance;
+  final nameRef = db
+      .collection("groups")
+      .doc(globals.selectedGroup.group_name)
+      .collection("players")
+      .doc(playerID);
+  nameRef.update({'name': }).then(
+      (value) => print("DocumentSnapshot successfully updated!"),
+      onError: (e) => print("Error updating document $e"));
 }
 
 void update_user_image(String whatToChange, String changeTo) {
