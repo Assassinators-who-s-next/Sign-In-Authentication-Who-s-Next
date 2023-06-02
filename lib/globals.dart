@@ -29,11 +29,8 @@ void SetFinishedLoadingState(bool state) {
 Player? getSelf() => selectedGroup.players[myUserData.uid];
 Player? getTarget() => selectedGroup.players[currentTarget!.uid];
 
-
-
 bool finishedLoadingUser = false;
-StreamController finishedLoadingUserController =
-    StreamController<bool>.broadcast();
+StreamController finishedLoadingUserController = StreamController<bool>.broadcast();
 bool hasSelectedGroup = false;
 //current group
 Group selectedGroup = Group(
@@ -78,7 +75,6 @@ UserData? currentTarget = UserData(
   frequentedLocations: "",
 );
 
-
 User? fireBaseUser;
 
 Future<void> setSelectedGroup(Group group) async {
@@ -88,6 +84,6 @@ Future<void> setSelectedGroup(Group group) async {
 
   //hard to
   await ListenToGroupChanges(group.group_name);
-
-  currentTarget = await get_user_data(await get_curr_target_uid(playerUID: myUserData.uid, groupCode: selectedGroup.group_name));
+  if (group.state == GroupState.running)
+    currentTarget = await get_user_data(await get_curr_target_uid(playerUID: myUserData.uid, groupCode: selectedGroup.group_name));
 }
