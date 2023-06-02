@@ -241,7 +241,7 @@ class _UserHomeState extends State<UserHome> {
 
           if (playerState == PlayerState.preparingToDie) {
             print("going to prepareToDieScreen modal");
-            return prepareToDieScreen(screenWidth, screenHeight);
+            return prepareToDieScreen(screenWidth, screenHeight, context);
           } else if (playerState == PlayerState.dead) {
             print("going to deadScreen modal");
             return deadScreen(screenWidth, screenHeight);
@@ -281,22 +281,16 @@ class _UserHomeState extends State<UserHome> {
                       buttonState: true,
                       onPressed: () async {
                         print("pressed eliminate button");
+
+                        // set the target's eliminator as currentPlayer
+                        await setEliminator(
+                          eliminatorUID: getSelf()!.userID,
+                          userID: getTarget()!.userID,
+                          groupID: selectedGroup.group_name,
+                        );
+
+                        // send target a request to be eliminated
                         beginElimination();
-                        // Player playerSelf = getSelf()!;
-                        // Player playerTarget =
-                        //     await getPlayerInGroup(selectedGroup, currentTarget!.uid);
-                        // playerSelf.target =
-                        //     await getTargetUID(selectedGroup, myUserData.uid);
-                        // playerTarget.target =
-                        //     await getTargetUID(selectedGroup, currentTarget!.uid);
-                        // SetSelectedGroup(selectedGroup);
-                        // print("\n\n playerSelf: $playerSelf");
-                        // print("\n\n playerTarget: $playerTarget");
-                        // // eliminate target
-                        // await eliminatePlayer(
-                        //     context, playerSelf, playerTarget, selectedGroup);
-                        // setSelectedGroup(selectedGroup);
-                        // beginElimination();
                       }),
                 ),
               ],
@@ -308,20 +302,21 @@ class _UserHomeState extends State<UserHome> {
 
 //basically update the state of the playerstate
 //and upload it to the database
-void beginElimination() {
+Future<void> beginElimination() async {
   Player player =
       selectedGroup.players[currentTarget!.uid]!; //HOPE IT IS DEEP COPY
   player.state = PlayerState.preparingToDie;
   setPlayerInGroup(currentTarget!.uid, selectedGroup.group_name, player);
 }
 
-void endElimination() {
+// could be removed
+Future<void> endElimination() async {
   Player player = selectedGroup.players[myUserData.uid]!; //HOPE IT IS DEEP COPY
   player.state = PlayerState.dead;
   setPlayerInGroup(myUserData.uid, selectedGroup.group_name, player);
 }
 
-void backToAlive() {
+Future<void> backToAlive() async {
   Player player = selectedGroup.players[myUserData.uid]!; //HOPE IT IS DEEP COPY
   player.state = PlayerState.alive;
   setPlayerInGroup(myUserData.uid, selectedGroup.group_name, player);
@@ -364,7 +359,8 @@ Center deadScreen(double screenWidth, double screenHeight) {
   );
 }
 
-Center prepareToDieScreen(double screenWidth, double screenHeight) {
+Center prepareToDieScreen(
+    double screenWidth, double screenHeight, BuildContext context) {
   return Center(
     child: SizedBox(
       width: screenWidth,
@@ -392,11 +388,35 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () => {
+                onPressed: () async {
+                  // Player playerSelf = getSelf()!;
+                  // Player playerTarget =
+                  //     await getPlayerInGroup(selectedGroup, currentTarget!.uid);
+                  // playerSelf.target =
+                  //     await getTargetUID(selectedGroup, myUserData.uid);
+                  // playerTarget.target =
+                  //     await getTargetUID(selectedGroup, currentTarget!.uid);
+
+                  Player eliminator = await getPlayerInGroup(
+                      selectedGroup,
+                      await getEliminatorUID(
+                          playerUID: myUserData.uid,
+                          groupID: selectedGroup.group_name));
+                  Player playerSelf = getSelf()!;
+                  // Player targeter = await getPlayerInGroup(selectedGroup, await getTargetUID(selectedGroup, myUserData.uid));
+
+                  eliminator.target = await getTargetUID(selectedGroup, eliminator.userID);
+                  playerSelf.target = await getTargetUID(selectedGroup, playerSelf.userID);
+
+                  await eliminatePlayer(context, eliminator, playerSelf, selectedGroup);
+
+                  // eliminate player
+                  // await eliminatePlayer(context, playerTarget, playerSelf, selectedGroup);
+
                   //put target have eliminate notification page appear on their hand
-                  endElimination(),
+                  //endElimination(); // could probably be removed we shall see
                   // eliminatePlayer(context, player, target, group)
-                  print("eliminated done")
+                  print("eliminated done");
                 },
                 child: Text("Yes"),
               ),
@@ -406,9 +426,10 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () => {print("eliminated canceled"),
-                  backToAlive(), 
-                  },
+                onPressed: () => {
+                  print("eliminated canceled"),
+                  backToAlive(),
+                },
                 child: Text("No"),
               ),
             ],
@@ -465,7 +486,7 @@ StreamBuilder prematchScreen() {
               print("pressed start match button");
               await startGameOrRespawn();
               selectedGroup.state = GroupState.running;
-              update_group_state(selectedGroup);
+              await update_group_state(selectedGroup);
               print("end press start match button");
             },
           ),

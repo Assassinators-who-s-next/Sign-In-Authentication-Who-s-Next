@@ -284,7 +284,7 @@ Future<bool> load_my_user_data(String userId) async {
   if (!myGroups.isEmpty) {
     // this should instead remember locally what the last group was
     globals.setSelectedGroup(myGroups[0]);
-    ListenToGroupChanges(globals.selectedGroup.group_name);
+    await ListenToGroupChanges(globals.selectedGroup.group_name);
     await reloadSelectedGroup();
   }
   return true;
@@ -437,7 +437,7 @@ Future<Player> getPlayerInGroup(Group group, String playerUID) async {
 StreamSubscription<DocumentSnapshot>? _subscription;
 StreamSubscription<QuerySnapshot>? _playersSubscription;
 
-void ListenToGroupChanges(String groupID) {
+Future<void> ListenToGroupChanges(String groupID) async {
   print("Listening to group changes");
 
   CollectionReference groupsRef =
@@ -624,7 +624,7 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
-void update_group_state(Group selectedGroup) async {
+Future<void> update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
   GroupState groupState = selectedGroup.state;
   print(groupState.index);
@@ -660,7 +660,6 @@ Future<void> setTargetUID(Group group, String playerUID) async {
   });
   */
 }
-
 
 // takes in a playerUID and a group and returns that player's target uid as a string
 Future<String> getTargetUID(Group group, String playerUID) async {
@@ -717,10 +716,14 @@ Future<void> startGameOrRespawn() async {
     player.target = playerList[(i + 1) % groupSize].userID;
     setPlayerInGroup(player.userID, globals.selectedGroup.group_name, player);
 
+    print("\n\nDEBUGGING startGameOrResapwn()");
+    print("current player: ${player.userID} current target: ${player.target}");
+
     // if current player is the player being asigned a target
     if (player.userID == globals.myUserData.uid) {
       {
         await set_curr_target(player.target); //set the global current target
+        print("MY current target: ${globals.currentTarget}"); //debugging
       }
     }
   }
@@ -808,11 +811,10 @@ Future<String> get_curr_target_uid(
   }
 }
 
-//elimination happen, reassign target, update points, update those data to db, reassign current target 
+//elimination happen, reassign target, update points, update those data to db, reassign current target
 // back to global currentTarget
-Future<void> eliminatePlayer(
-    BuildContext context, Player player, Player playerTarget, Group group) async {
-
+Future<void> eliminatePlayer(BuildContext context, Player player,
+    Player playerTarget, Group group) async {
   // increment current user's points
   player.points += 1;
 
@@ -841,6 +843,40 @@ Future<void> eliminatePlayer(
   if (player.target == player.userID) {
     print("you're your own target");
     globals.selectedGroup.state = GroupState.finished;
+  }
+}
+
+// sets the eliminator for a target on the db
+Future<void> setEliminator({required String eliminatorUID, required String userID, required String groupID}) async {
+
+  CollectionReference playersRef = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(groupID)
+      .collection('players');
+
+  // Get all the player documents from the 'players' collection
+  await playersRef.doc(userID).set({'eliminator': eliminatorUID});
+}
+
+Future<String> getEliminatorUID({required String playerUID, required String groupID}) async {
+
+  var db = FirebaseFirestore.instance;
+
+  final docRef = db
+      .collection("groups")
+      .doc(groupID)
+      .collection("players")
+      .doc(playerUID);
+
+  try {
+    var doc = await docRef.get();
+    var data = doc.data() as Map<String, dynamic>;
+    String eliminatorUID = data['eliminator'];
+    print("ELIMINATOR UID: $eliminatorUID");
+    return eliminatorUID;
+  } catch (e) {
+    print("Error getting target: $e");
+    return "default";
   }
 }
 

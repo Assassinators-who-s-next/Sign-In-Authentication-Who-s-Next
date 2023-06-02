@@ -27,6 +27,9 @@ void SetFinishedLoadingState(bool state) {
 }
 
 Player? getSelf() => selectedGroup.players[myUserData.uid];
+Player? getTarget() => selectedGroup.players[currentTarget!.uid];
+
+
 
 bool finishedLoadingUser = false;
 StreamController finishedLoadingUserController =
@@ -84,7 +87,7 @@ Future<void> setSelectedGroup(Group group) async {
   selectedGroup = group; //assign new group to our global group
 
   //hard to
-  ListenToGroupChanges(group.group_name);
+  await ListenToGroupChanges(group.group_name);
 
   currentTarget = await get_user_data(await get_curr_target_uid(playerUID: myUserData.uid, groupCode: selectedGroup.group_name));
 }
