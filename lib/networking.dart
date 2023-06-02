@@ -579,6 +579,13 @@ Future<JoinGameResults> join_game(
     try {
       var joinedGame = await loadGroup(gameCode);
 
+    if (joinedGame.state != GroupState.notStarted) {
+      return JoinGameResults(false, "This Game is ongoing. Only games that have not been started may be joined.");
+    }
+
+    if (joinedGame.players.values.length == joinedGame.matchOptions.maxPlayers) {
+      return JoinGameResults(false, "Game is full.");
+    }
       // await gameRef
       //     .collection('players')
       //     .doc(userID)
@@ -590,9 +597,9 @@ Future<JoinGameResults> join_game(
 
       bool isNotInGroup = globals.myGroups.isEmpty;
       globals.myGroups.add(joinedGame);
-      if (isNotInGroup) {
-        globals.setSelectedGroup(joinedGame);
-      }
+      
+      globals.setSelectedGroup(joinedGame);
+      
       set_user_data(userID!, globals.myUserData, globals.myGroups);
       return JoinGameResults(true);
     } catch (e) {
