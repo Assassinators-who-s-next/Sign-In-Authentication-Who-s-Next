@@ -631,6 +631,18 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
+Future<void> updatePlayer() async {
+  var db = FirebaseFirestore.instance;
+  final nameRef = db
+      .collection("groups")
+      .doc(globals.selectedGroup.group_name)
+      .collection("players")
+      .doc(globals.myUserData.uid);
+  nameRef.update({'name': globals.myUserData.name}).then(
+      (value) => print("DocumentSnapshot successfully updated!"),
+      onError: (e) => print("Error updating document $e"));
+}
+
 void update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
   GroupState groupState = selectedGroup.state;
