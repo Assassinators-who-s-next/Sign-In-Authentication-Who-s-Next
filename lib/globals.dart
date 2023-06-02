@@ -32,6 +32,7 @@ bool finishedLoadingUser = false;
 StreamController finishedLoadingUserController =
     StreamController<bool>.broadcast();
 bool hasSelectedGroup = false;
+//current group
 Group selectedGroup = Group(
   "join or create a game to play",
   {},
@@ -77,9 +78,13 @@ UserData? currentTarget = UserData(
 
 User? fireBaseUser;
 
-void setSelectedGroup(Group group) {
+Future<void> setSelectedGroup(Group group) async {
   stopListeningToGroupChanges();
   hasSelectedGroup = true;
-  selectedGroup = group;
+  selectedGroup = group; //assign new group to our global group
+
+  //hard to
   ListenToGroupChanges(group.group_name);
+
+  currentTarget = await get_user_data(await get_curr_target_uid(playerUID: myUserData.uid, groupCode: selectedGroup.group_name));
 }

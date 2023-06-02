@@ -120,7 +120,7 @@ Future set_user_data(
 
 Future<void> reloadSelectedGroup() async {
   if (!globals.hasSelectedGroup) return;
-  
+
   String groupID = globals.selectedGroup.group_name;
   Group fetchedGroup = await loadGroup(groupID);
   globals.selectedGroup = (fetchedGroup);
@@ -173,6 +173,10 @@ Future<void> loadPlayerNamesFromList(List<Player> players) async {
   }
 }
 
+//receive the groupID and then fetch that actual group from the database
+//and then synchronize player list, and other attribute and make sur it
+//returns the group
+//(fetch the group from db using the groupID parameter)
 Future<Group> loadGroup(String groupID) async {
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
@@ -657,6 +661,8 @@ Future<void> setTargetUID(Group group, String playerUID) async {
   */
 }
 
+
+// takes in a playerUID and a group and returns that player's target uid as a string
 Future<String> getTargetUID(Group group, String playerUID) async {
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
@@ -672,6 +678,8 @@ Future<String> getTargetUID(Group group, String playerUID) async {
   return targetUID;
 }
 
+// sets a game up in the starting state (resets all points/state/targets and assigns inital targets)
+// updates the global variables(selectedGroup, currentTarget)
 Future<void> startGameOrRespawn() async {
   /* things to note
 
@@ -689,31 +697,32 @@ Future<void> startGameOrRespawn() async {
   // reset all targets
   await resetTarget(globals.selectedGroup);
 
+  // reload the selected group from db
   globals.selectedGroup = await loadGroup(globals.selectedGroup.group_name);
 
-  List<Player> playerList = globals.selectedGroup.players.values.toList();
-  playerList.shuffle();
-
+  // sets the time a game has started (backlogged feature for respawn timer)
   globals.selectedGroup.timeStarted = DateTime.now();
   globals.selectedGroup.timeEnding = DateTime.now().add(Duration(
       hours: globals.selectedGroup.matchOptions.totalGameTimeDuration));
 
-  // asign targets
-  var groupSize = globals.selectedGroup.players.length;
+  // change player list map into a list to shuffle and asign targets
+  List<Player> playerList = globals.selectedGroup.players.values.toList();
+  playerList.shuffle();
 
+  var groupSize =
+      globals.selectedGroup.players.length; // number of players in group
+  // loop through every player and assign targets and update that player info to db
   for (int i = 0; i < groupSize; i++) {
     Player player = playerList[i];
     player.target = playerList[(i + 1) % groupSize].userID;
     setPlayerInGroup(player.userID, globals.selectedGroup.group_name, player);
 
+    // if current player is the player being asigned a target
     if (player.userID == globals.myUserData.uid) {
       {
-        await set_curr_target(player.target);
-        print("current target: ${globals.currentTarget!.uid}");
+        await set_curr_target(player.target); //set the global current target
       }
     }
-
-    print("CURRENT TARGET NAME: ${globals.currentTarget!.name}");
   }
 }
 
@@ -767,19 +776,13 @@ Future<void> resetTarget(Group group) async {
   });
 }
 
+//important function especially when we try to display target image
+//on our screen
 Future<void> set_curr_target(String targetUID) async {
   globals.currentTarget = await get_user_data(targetUID);
 }
 
-
-
-
-
 Future<void> load_curr_target({required String uid}) async {
-  print("In load curr target in networking");
-  var groupSize = globals.selectedGroup.players.length;
-  print("group size: ${groupSize}");
-
   await set_curr_target(globals.selectedGroup.players[uid]!.target);
 }
 
@@ -805,37 +808,36 @@ Future<String> get_curr_target_uid(
   }
 }
 
-
+//elimination happen, reassign target, update points, update those data to db, reassign current target 
+// back to global currentTarget
 Future<void> eliminatePlayer(
-    BuildContext context, Player player, Player target, Group group) async {
-  print("In eliminate player A");
-  print("target: $target");
-  print("target's target: ${target.target}");
+    BuildContext context, Player player, Player playerTarget, Group group) async {
 
   // increment current user's points
   player.points += 1;
 
-  print("In eliminate player B");
-
   // set players state to dead
-  target.state = PlayerState.dead;
+  playerTarget.state = PlayerState.dead;
 
-  player.target = target.target;
-  target.target = "";
+  // set player's target to target's target
+  player.target = playerTarget.target;
 
+  // set target's target to empty string (technically unecessary but good for debugging)
+  playerTarget.target = "no target";
+
+  // synchronize our local updates to db for both current user and target
   await setPlayerInGroup(globals.myUserData.uid, group.group_name, player);
-  await setPlayerInGroup(target.userID, group.group_name, target);
+  await setPlayerInGroup(playerTarget.userID, group.group_name, playerTarget);
 
-  print("\n\n\nplayer.target = target.target: ${player.target}");
-  globals.currentTarget = await get_user_data(player.target);
+  // updates new target locally (updates globals.currentTarget)
+  await set_curr_target(player.target);
 
-  print("In eliminate player C");
+  // ???????
+  // String tempTargetUID = await getTargetUID(globals.selectedGroup, globals.myUserData.uid);
+  // load_curr_target(uid: tempTargetUID);
 
-  String tempTargetUID =
-      await getTargetUID(globals.selectedGroup, globals.myUserData.uid);
-  load_curr_target(uid: tempTargetUID);
-
-  // check if there are no more targets
+  // check if there are no more targets (if you are now your own target)
+  // if no more, finish the game by changing selectedgroup state to finished state.
   if (player.target == player.userID) {
     print("you're your own target");
     globals.selectedGroup.state = GroupState.finished;

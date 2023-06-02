@@ -38,9 +38,13 @@ class _UserHomeState extends State<UserHome> {
   // I think you need this when you click different group
   void SetSelectedGroup(Group group) async {
     setSelectedGroup(group);
+
+    //potential unnecessary code
     setState(() {
       selGroup = selectedGroup;
     });
+
+    //hard to follow
     SetFinishedLoadingState(false);
     await reloadSelectedGroup();
     SetFinishedLoadingState(true);
@@ -391,6 +395,7 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                 onPressed: () => {
                   //put target have eliminate notification page appear on their hand
                   endElimination(),
+                  // eliminatePlayer(context, player, target, group)
                   print("eliminated done")
                 },
                 child: Text("Yes"),
