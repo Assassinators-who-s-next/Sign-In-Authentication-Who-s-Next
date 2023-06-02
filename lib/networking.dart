@@ -128,10 +128,12 @@ Future<void> reloadSelectedGroup() async {
     }
   }
 
-  if (globals.selectedGroup.state == GroupState.running) await set_curr_target(globals.getSelf()!.target);
 
   // load names on this group
   await loadPlayerNamesFromList(globals.selectedGroup.players.values.toList());
+
+  if (globals.selectedGroup.state == GroupState.running) await set_curr_target(globals.getSelf()!.target);
+
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {
