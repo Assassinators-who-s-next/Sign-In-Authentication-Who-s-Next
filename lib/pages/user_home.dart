@@ -225,7 +225,10 @@ class _UserHomeState extends State<UserHome> {
   }
 
   StreamBuilder<PlayerState> runningScreen(
-      double screenWidth, double screenHeight, BuildContext context) {
+      double screenWidth, double screenHeight, BuildContext context)  {
+    // update global currentTarget here
+    // await load_curr_target(uid: myUserData.uid);
+
     return StreamBuilder<PlayerState>(
         stream: getPlayerStateStream(selectedGroup.group_name, myUserData.uid),
         builder: (context, snapshot) {
@@ -405,10 +408,13 @@ Center prepareToDieScreen(
                   Player playerSelf = getSelf()!;
                   // Player targeter = await getPlayerInGroup(selectedGroup, await getTargetUID(selectedGroup, myUserData.uid));
 
-                  eliminator.target = await getTargetUID(selectedGroup, eliminator.userID);
-                  playerSelf.target = await getTargetUID(selectedGroup, playerSelf.userID);
+                  eliminator.target =
+                      await getTargetUID(selectedGroup, eliminator.userID);
+                  playerSelf.target =
+                      await getTargetUID(selectedGroup, playerSelf.userID);
 
-                  await eliminatePlayer(context, eliminator, playerSelf, selectedGroup);
+                  await eliminatePlayer(
+                      context, eliminator, playerSelf, selectedGroup);
 
                   // eliminate player
                   // await eliminatePlayer(context, playerTarget, playerSelf, selectedGroup);
@@ -487,6 +493,7 @@ StreamBuilder prematchScreen() {
               await startGameOrRespawn();
               selectedGroup.state = GroupState.running;
               await update_group_state(selectedGroup);
+
               print("end press start match button");
             },
           ),

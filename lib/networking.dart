@@ -208,6 +208,12 @@ Future<Group> loadGroup(String groupID) async {
         String? eliminatedBy = data['eliminatedBy'];
         players[userId] = (Player(userId, points, null,
             state: playerState, target: targetUID, eliminatedBy: eliminatedBy));
+
+
+        // cash and josh modified this
+        if (data['user_id'] == globals.myUserData.uid) {
+          globals.currentTarget = data['target'];
+        }
       }
     }
 
