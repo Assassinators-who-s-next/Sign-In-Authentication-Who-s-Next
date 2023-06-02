@@ -475,26 +475,64 @@ StreamBuilder prematchScreen() {
   );
 }
 
-Future<void> getWinningPlayers() async {
+//Future<void> getWinningPlayers() async {
+Future<String> getLastPlayer() async {
   CollectionReference playerList = FirebaseFirestore.instance
       .collection('groups')
       .doc(selectedGroup.group_name)
       .collection('players');
 
-  QuerySnapshot querySnapshot = await playerList.get();
+  print('got collection');
 
-  querySnapshot.docs.forEach((element) {
-    if (element['points'] != 2) {
-//      element
-    }
-    //print(playerList.doc(element.id));
-    print(element['state']);
+  QuerySnapshot stateSnapshot =
+      await playerList.where('state', isLessThan: 2).limit(1).get();
+
+  print('got querysnapshot');
+
+  stateSnapshot.docs.forEach((element) {
+    print(element.get('name'));
   });
+
+  String lastPlayerNameSnapshot = stateSnapshot.docs.first.get('name');
+
+  print('state lsit');
+  print(lastPlayerNameSnapshot);
+
+  return lastPlayerNameSnapshot;
+}
+
+Future<String> getMaxPointsPlayer() async {
+  CollectionReference playerList = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(selectedGroup.group_name)
+      .collection('players');
+
+  print('got collection');
+
+  QuerySnapshot maxPointsSnapshot =
+      await playerList.orderBy('points', descending: true).limit(1).get();
+
+  maxPointsSnapshot.docs.forEach((element) {
+    print(element.get('name'));
+  });
+
+  print('got querysnapshot');
+
+  String maxPointsNameSnapshot = maxPointsSnapshot.docs.first.get('name');
+
+  print('points lsit');
+  print(maxPointsNameSnapshot);
+
+  return maxPointsNameSnapshot;
 }
 
 Center postmatchScreen() {
+  // future string to string????
+  Future<String> maxPlayer = getMaxPointsPlayer();
+  Future<String> lastPlayer = getLastPlayer();
   // call async function (Future type) to get information on last person alive and person with most points
-  getWinningPlayers();
+//  print('maxpoints player: ${maxPlayer.toString()}');
+//  print('last player: ${lastPlayer.toString()}');
 
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -502,10 +540,15 @@ Center postmatchScreen() {
         padding: EdgeInsets.all(20),
         child: Text("Match Finished!", style: TextStyle(fontSize: 30)),
       ),
-      const Padding(
+      Padding(
         padding: EdgeInsets.all(20),
         //child: Text("Winner: ", style: TextStyle(fontSize: 20)),
-        child: Text("Winner: ", style: TextStyle(fontSize: 20)),
+        child: Column(
+          children: [
+            Text("Last Standing: ", style: TextStyle(fontSize: 20)),
+            Text("Most Points: ", style: TextStyle(fontSize: 20)),
+          ],
+        ),
       ),
       Padding(
         padding: const EdgeInsetsDirectional.all(40),
