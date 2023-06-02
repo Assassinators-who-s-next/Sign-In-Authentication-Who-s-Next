@@ -50,7 +50,6 @@ void Refresh() async {
 Future<UserData?> get_user_data(String userId) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
 
-  print("calling get_user_data on ${userId}");
   DocumentSnapshot userDocument = await usersRef.doc(userId).get();
 
   if (userDocument.exists) {
@@ -99,9 +98,6 @@ Future<List<String>> get_user_groups(String userId) async {
 
 Future set_user_data(String userID, UserData userData, List<Group> playerGroups) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
-
-  print("set_user_data(" + userID + ", " + userData.name + ")");
-
   await usersRef.doc(userID).set({
     'user_id': userID,
     'points': 0,
@@ -122,11 +118,6 @@ Future<void> reloadSelectedGroup() async {
   Group fetchedGroup = await loadGroup(groupID);
   globals.selectedGroup = fetchedGroup;
 
-  List<Player> players = globals.selectedGroup.players.values.toList();
-  for (int i = 0; i < players.length; i++) {
-    print("userID: ${players[i].userID}, target: ${players[i].target}");
-  }
-
   //replace old instance of group with new one
   for (int i = 0; i < globals.myGroups.length; i++) {
     if (globals.myGroups[i].group_name == groupID) {
@@ -138,6 +129,7 @@ Future<void> reloadSelectedGroup() async {
   await loadPlayerNamesFromList(globals.selectedGroup.players.values.toList());
 
   if (globals.selectedGroup.state == GroupState.running) await set_curr_target(globals.getSelf()!.target);
+  print("reloaded target into: ${globals.currentTarget!.name}");
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {
@@ -547,7 +539,7 @@ Future<JoinGameResults> join_game(BuildContext context, String gameCode, String?
       var joinedGame = await loadGroup(gameCode);
 
       if (joinedGame.state != GroupState.notStarted) {
-        return JoinGameResults(false, "This Game is ongoing. Only games that have not been started may be joined.");
+        return JoinGameResults(false, "This game is ongoing. Only games that have not been started may be joined.");
       }
 
       if (joinedGame.players.values.length == joinedGame.matchOptions.maxPlayers) {
@@ -592,7 +584,7 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
-void update_group_state(Group selectedGroup) async {
+Future update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
   GroupState groupState = selectedGroup.state;
   print(groupState.index);
@@ -745,7 +737,7 @@ Future<String> get_curr_target_uid({required String playerUID, required String g
   }
 }
 
-Future<void> eliminatePlayer(BuildContext context, Player player, Player target, Group group) async {
+Future<void> eliminatePlayer(Player player, Player target, Group group) async {
   print("In eliminate player A");
   print("target: $target");
   print("target's target: ${target.target}");
@@ -770,12 +762,13 @@ Future<void> eliminatePlayer(BuildContext context, Player player, Player target,
   print("In eliminate player C");
 
   String tempTargetUID = await getTargetUID(globals.selectedGroup, globals.myUserData.uid);
-  load_curr_target(uid: tempTargetUID);
+  await load_curr_target(uid: tempTargetUID);
 
   // check if there are no more targets
   if (player.target == player.userID) {
     print("you're your own target");
     globals.selectedGroup.state = GroupState.finished;
+    await update_group_state(globals.selectedGroup);
   }
 }
 
