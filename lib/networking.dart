@@ -847,26 +847,26 @@ Future<void> eliminatePlayer(BuildContext context, Player player,
 }
 
 // sets the eliminator for a target on the db
-Future<void> setEliminator({required String eliminatorUID, required String userID, required String groupID}) async {
-
+Future<void> setEliminator(
+    {required String eliminatorUID,
+    required String userID,
+    required String groupID}) async {
   CollectionReference playersRef = FirebaseFirestore.instance
       .collection('groups')
       .doc(groupID)
       .collection('players');
 
   // Get all the player documents from the 'players' collection
-  await playersRef.doc(userID).set({'eliminator': eliminatorUID});
+
+  await playersRef.doc(userID).update({'eliminator': eliminatorUID});
 }
 
-Future<String> getEliminatorUID({required String playerUID, required String groupID}) async {
-
+Future<String> getEliminatorUID(
+    {required String playerUID, required String groupID}) async {
   var db = FirebaseFirestore.instance;
 
-  final docRef = db
-      .collection("groups")
-      .doc(groupID)
-      .collection("players")
-      .doc(playerUID);
+  final docRef =
+      db.collection("groups").doc(groupID).collection("players").doc(playerUID);
 
   try {
     var doc = await docRef.get();
