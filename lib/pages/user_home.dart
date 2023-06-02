@@ -182,17 +182,19 @@ class _UserHomeState extends State<UserHome> {
       double screenHeight, GroupState currentState) {
     Widget screen = prematchScreen(); //default screen that returns
 
-    if (currentState == GroupState.finished) {
-      // game finished state
-      screen = postmatchScreen();
-      print("going to finishedScreen switch statement");
-    } else if (currentState == GroupState.running) {
-      screen = runningScreen(screenWidth, screenHeight, context);
-      print("going to aliveScreen switch statement");
-    } else {
-      screen = prematchScreen();
-      print("going to prematchScreen switch statement");
-    }
+    screen = postmatchScreen();
+
+//    if (currentState == GroupState.finished) {
+//      // game finished state
+//      screen = postmatchScreen();
+//      print("going to finishedScreen switch statement");
+//    } else if (currentState == GroupState.running) {
+//      screen = runningScreen(screenWidth, screenHeight, context);
+//      print("going to aliveScreen switch statement");
+//    } else {
+//      screen = prematchScreen();
+//      print("going to prematchScreen switch statement");
+//    }
 
     return Stack(children: [
       InfoButton(context, screenWidth, screenHeight),
@@ -401,9 +403,10 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () => {print("eliminated canceled"),
-                  backToAlive(), 
-                  },
+                onPressed: () => {
+                  print("eliminated canceled"),
+                  backToAlive(),
+                },
                 child: Text("No"),
               ),
             ],
@@ -455,7 +458,9 @@ StreamBuilder prematchScreen() {
             label: "Start match",
             color: const Color.fromARGB(255, 43, 167, 204),
             //currPlayers: snapshot.data!.size,
-            buttonState: enoughPlayers,
+            //buttonState: enoughPlayers,
+            buttonState:
+                enoughPlayers && selectedGroup.groupHost == myUserData.uid,
             onPressed: () async {
               print("pressed start match button");
               await startGameOrRespawn();
@@ -470,15 +475,36 @@ StreamBuilder prematchScreen() {
   );
 }
 
+Future<void> getWinningPlayers() async {
+  CollectionReference playerList = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(selectedGroup.group_name)
+      .collection('players');
+
+  QuerySnapshot querySnapshot = await playerList.get();
+
+  querySnapshot.docs.forEach((element) {
+    if (element['points'] != 2) {
+//      element
+    }
+    //print(playerList.doc(element.id));
+    print(element['state']);
+  });
+}
+
 Center postmatchScreen() {
+  // call async function (Future type) to get information on last person alive and person with most points
+  getWinningPlayers();
+
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Padding(
+      const Padding(
         padding: EdgeInsets.all(20),
         child: Text("Match Finished!", style: TextStyle(fontSize: 30)),
       ),
-      Padding(
+      const Padding(
         padding: EdgeInsets.all(20),
+        //child: Text("Winner: ", style: TextStyle(fontSize: 20)),
         child: Text("Winner: ", style: TextStyle(fontSize: 20)),
       ),
       Padding(

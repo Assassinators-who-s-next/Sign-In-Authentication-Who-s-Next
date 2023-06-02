@@ -120,7 +120,7 @@ Future set_user_data(
 
 Future<void> reloadSelectedGroup() async {
   if (!globals.hasSelectedGroup) return;
-  
+
   String groupID = globals.selectedGroup.group_name;
   Group fetchedGroup = await loadGroup(groupID);
   globals.selectedGroup = (fetchedGroup);
@@ -150,6 +150,8 @@ Future<void> loadPlayerNamesFromList(List<Player> players) async {
       // print("loading ${userData!.name}");
       players[i].userData = userData;
       players[i].name = userData!.name;
+
+      userData.uid;
     } catch (e) {
       print("failed to load user data");
     }
@@ -579,13 +581,15 @@ Future<JoinGameResults> join_game(
     try {
       var joinedGame = await loadGroup(gameCode);
 
-    if (joinedGame.state != GroupState.notStarted) {
-      return JoinGameResults(false, "This Game is ongoing. Only games that have not been started may be joined.");
-    }
+      if (joinedGame.state != GroupState.notStarted) {
+        return JoinGameResults(false,
+            "This Game is ongoing. Only games that have not been started may be joined.");
+      }
 
-    if (joinedGame.players.values.length == joinedGame.matchOptions.maxPlayers) {
-      return JoinGameResults(false, "Game is full.");
-    }
+      if (joinedGame.players.values.length ==
+          joinedGame.matchOptions.maxPlayers) {
+        return JoinGameResults(false, "Game is full.");
+      }
       // await gameRef
       //     .collection('players')
       //     .doc(userID)
@@ -597,9 +601,9 @@ Future<JoinGameResults> join_game(
 
       bool isNotInGroup = globals.myGroups.isEmpty;
       globals.myGroups.add(joinedGame);
-      
+
       globals.setSelectedGroup(joinedGame);
-      
+
       set_user_data(userID!, globals.myUserData, globals.myGroups);
       return JoinGameResults(true);
     } catch (e) {
@@ -778,10 +782,6 @@ Future<void> set_curr_target(String targetUID) async {
   globals.currentTarget = await get_user_data(targetUID);
 }
 
-
-
-
-
 Future<void> load_curr_target({required String uid}) async {
   print("In load curr target in networking");
   var groupSize = globals.selectedGroup.players.length;
@@ -811,7 +811,6 @@ Future<String> get_curr_target_uid(
     return "default";
   }
 }
-
 
 Future<void> eliminatePlayer(
     BuildContext context, Player player, Player target, Group group) async {
