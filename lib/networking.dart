@@ -831,7 +831,7 @@ Future<void> eliminatePlayer(
   target.target = "no target";
 
   // synchronize our local updates to db for both current user and target
-  await setPlayerInGroup(globals.myUserData.uid, group.group_name, player);
+  await setPlayerInGroup(player.userID, group.group_name, player);
   await setPlayerInGroup(target.userID, group.group_name, target);
 
   // updates new target locally (updates globals.currentTarget)
@@ -842,7 +842,7 @@ Future<void> eliminatePlayer(
   //await load_curr_target(uid: tempTargetUID);
 
   // check if there are no more targets
-  if (player.target == globals.myUserData.uid) {
+  if (player.target == player.userID) {
     print("You are your own target, game over");
     globals.selectedGroup.state = GroupState.finished;
     await update_group_state(globals.selectedGroup);
