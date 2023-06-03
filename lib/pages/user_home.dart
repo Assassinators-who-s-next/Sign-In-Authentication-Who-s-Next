@@ -418,7 +418,7 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   //put target have eliminate notification page appear on their hand
                   print("eliminating self: ${self.name}");
                   print("the eliminator: $eliminator");
-                  await eliminatePlayer(self, eliminator, myGroup);
+                  await eliminatePlayer(player: eliminator, target: self, group: myGroup);
                   // await getPlayerInGroup(
                   //     selectedGroup,
                   //     await getEliminatorUID(

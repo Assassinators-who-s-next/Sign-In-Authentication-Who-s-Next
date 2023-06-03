@@ -811,7 +811,10 @@ Future<String> get_curr_target_uid(
   }
 }
 
-Future<void> eliminatePlayer(Player player, Player target, Group group) async {
+Future<void> eliminatePlayer(
+    {required Player player,
+    required Player target,
+    required Group group}) async {
   print("In eliminate player A");
   print("target: $target");
   print("target's target: ${target.target}");
