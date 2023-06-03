@@ -184,17 +184,17 @@ class _UserHomeState extends State<UserHome> {
 
     // screen = postmatchScreen();
 
-   if (currentState == GroupState.finished) {
-     // game finished state
-     screen = postmatchScreen();
-     print("going to finishedScreen switch statement");
-   } else if (currentState == GroupState.running) {
-     screen = runningScreen(screenWidth, screenHeight, context);
-     print("going to aliveScreen switch statement");
-   } else {
-     screen = prematchScreen();
-     print("going to prematchScreen switch statement");
-   }
+    if (currentState == GroupState.finished) {
+      // game finished state
+      screen = postmatchScreen();
+      print("going to finishedScreen switch statement");
+    } else if (currentState == GroupState.running) {
+      screen = runningScreen(screenWidth, screenHeight, context);
+      print("going to aliveScreen switch statement");
+    } else {
+      screen = prematchScreen();
+      print("going to prematchScreen switch statement");
+    }
 
     return Stack(children: [
       InfoButton(context, screenWidth, screenHeight),
@@ -489,14 +489,9 @@ Future<String> getLastPlayer() async {
 
   print('got querysnapshot');
 
-  stateSnapshot.docs.forEach((element) {
-    print(element.get('name'));
-  });
-
   String lastPlayerNameSnapshot = stateSnapshot.docs.first.get('name');
 
-  print('state lsit');
-  print(lastPlayerNameSnapshot);
+  print("player that was alive until last $lastPlayerNameSnapshot");
 
   return lastPlayerNameSnapshot;
 }
@@ -509,19 +504,16 @@ Future<String> getMaxPointsPlayer() async {
 
   print('got collection');
 
+  //player who has the most points
   QuerySnapshot maxPointsSnapshot =
       await playerList.orderBy('points', descending: true).limit(1).get();
 
-  maxPointsSnapshot.docs.forEach((element) {
-    print(element.get('name'));
-  });
-
   print('got querysnapshot');
 
+  //the name of that player
   String maxPointsNameSnapshot = maxPointsSnapshot.docs.first.get('name');
 
-  print('points lsit');
-  print(maxPointsNameSnapshot);
+  print("player that has the most point $maxPointsNameSnapshot");
 
   return maxPointsNameSnapshot;
 }
@@ -530,9 +522,11 @@ Center postmatchScreen() {
   // future string to string????
   Future<String> maxPlayer = getMaxPointsPlayer();
   Future<String> lastPlayer = getLastPlayer();
-  // call async function (Future type) to get information on last person alive and person with most points
-//  print('maxpoints player: ${maxPlayer.toString()}');
-//  print('last player: ${lastPlayer.toString()}');
+
+//  String maxPointPlyaer = maxPlayer.toString();
+//  String lastPlayerStanding = lastPlayer.toString();
+//  print('maxpoints player: ${maxPointPlayer}');
+//  print('last player: ${lastPlayerStanding}');
 
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
