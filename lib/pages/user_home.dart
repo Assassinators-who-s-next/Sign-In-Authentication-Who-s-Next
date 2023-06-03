@@ -28,6 +28,17 @@ class _UserHomeState extends State<UserHome> {
   bool notifyTarget = false;
   late Group selGroup;
 
+  _UserHomeState()
+  {
+    addGroupUpdateListener(updateGroupRef);
+  }
+
+  @override
+  void dispose() {
+    removeGroupUpdateListener(updateGroupRef);
+    super.dispose();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -38,12 +49,17 @@ class _UserHomeState extends State<UserHome> {
   // I think you need this when you click different group
   void SetSelectedGroup(Group group) async {
     setSelectedGroup(group);
-    setState(() {
-      selGroup = selectedGroup;
-    });
+    updateGroupRef();
     SetFinishedLoadingState(false);
     await reloadSelectedGroup();
     SetFinishedLoadingState(true);
+  }
+
+  void updateGroupRef()
+  {
+    setState(() {
+      selGroup = selectedGroup;
+    });
   }
 
   @override
@@ -338,7 +354,7 @@ Center deadScreen(double screenWidth, double screenHeight) {
           const Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              'You are eliminated.\n Please wait until winner announce.',
+              'You are eliminated.\n Please wait until the match is completed.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.red,
@@ -373,7 +389,7 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
           const Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              'You are about to get eliminated by annonymous player. Is this you?',
+              'Anonymous player claims they have eliminated you. Do you verify this occurred?',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.red,
