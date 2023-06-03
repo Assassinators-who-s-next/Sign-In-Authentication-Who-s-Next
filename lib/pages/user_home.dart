@@ -251,7 +251,10 @@ class _UserHomeState extends State<UserHome> {
 
           if (playerState == PlayerState.preparingToDie) {
             print("going to prepareToDieScreen modal");
-            return prepareToDieScreen(screenWidth, screenHeight) as Widget;
+
+            
+
+            return prepareToDieScreen(screenWidth, screenHeight);
           } else if (playerState == PlayerState.dead) {
             print("going to deadScreen modal");
             return deadScreen(screenWidth, screenHeight);
@@ -379,13 +382,8 @@ Center deadScreen(double screenWidth, double screenHeight) {
   );
 }
 
-Future<Center> prepareToDieScreen(
-    double screenWidth, double screenHeight) async {
-  currentEliminator = await getEliminatorUID(
-      playerUID: myUserData.uid, groupID: selectedGroup.group_name);
-  if (currentEliminator == Null) {
-    currentEliminator = "anonymous";
-  }
+Center prepareToDieScreen(double screenWidth, double screenHeight) {
+
   return Center(
     child: SizedBox(
       width: screenWidth,
@@ -396,7 +394,7 @@ Future<Center> prepareToDieScreen(
           Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              "$currentEliminator claims they have eliminated you. Do you verify this occurred?",
+              "{Current Eliminator} claims they have eliminated you. Do you verify this occurred?",
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.red,
@@ -417,7 +415,7 @@ Future<Center> prepareToDieScreen(
                   //put target have eliminate notification page appear on their hand
                   print("eliminating self: ${getSelf()!.name}"),
                   print("the eliminator: ${await getPlayerInGroup(selectedGroup, currentEliminator)}"),
-                  await eliminatePlayer(getSelf()!, await getPlayerInGroup(selectedGroup, currentEliminator), selectedGroup),
+                  await eliminatePlayer(await getPlayerInGroup(selectedGroup, await getEliminatorUID(playerUID: myUserData.uid, groupID: selectedGroup.group_name)), getSelf()!, selectedGroup),
                   
                   //endElimination(),
                   print("eliminated done")

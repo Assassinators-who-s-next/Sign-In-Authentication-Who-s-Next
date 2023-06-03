@@ -43,7 +43,8 @@ void triggerGroupUpdateEvent() {
 void Refresh() async {
   globals.SetFinishedLoadingState(false);
   await reloadSelectedGroup();
-  globals.myUserData.imagePath = await ProfilePage.retrieveImage(globals.myUserData);
+  globals.myUserData.imagePath =
+      await ProfilePage.retrieveImage(globals.myUserData);
   globals.SetFinishedLoadingState(true);
 }
 
@@ -86,7 +87,8 @@ Future<List<String>> get_user_groups(String userId) async {
   DocumentSnapshot userDocument = await usersRef.doc(userId).get();
 
   if (userDocument.exists) {
-    List<String> playerGroups = List<String>.from(userDocument.get('playerGroups') ?? []);
+    List<String> playerGroups =
+        List<String>.from(userDocument.get('playerGroups') ?? []);
 
     return playerGroups;
   } else {
@@ -96,7 +98,8 @@ Future<List<String>> get_user_groups(String userId) async {
   }
 }
 
-Future set_user_data(String userID, UserData userData, List<Group> playerGroups) async {
+Future set_user_data(
+    String userID, UserData userData, List<Group> playerGroups) async {
   CollectionReference usersRef = FirebaseFirestore.instance.collection('users');
   await usersRef.doc(userID).set({
     'user_id': userID,
@@ -107,7 +110,8 @@ Future set_user_data(String userID, UserData userData, List<Group> playerGroups)
     'pronouns': userData.pronouns,
     'description': userData.description,
     'frequentedLocations': userData.frequentedLocations,
-    'playerGroups': playerGroups.map((curGroup) => curGroup.group_name).toList(),
+    'playerGroups':
+        playerGroups.map((curGroup) => curGroup.group_name).toList(),
   });
 }
 
@@ -128,7 +132,8 @@ Future<void> reloadSelectedGroup() async {
   // load names on this group
   await loadPlayerNamesFromList(globals.selectedGroup.players.values.toList());
 
-  if (globals.selectedGroup.state == GroupState.running) await set_curr_target(globals.getSelf()!.target);
+  if (globals.selectedGroup.state == GroupState.running)
+    await set_curr_target(globals.getSelf()!.target);
 }
 
 Future<void> loadPlayerNamesFromList(List<Player> players) async {
@@ -169,7 +174,8 @@ Future<void> loadPlayerNamesFromList(List<Player> players) async {
 }
 
 Future<Group> loadGroup(String groupID) async {
-  CollectionReference groupsRef = FirebaseFirestore.instance.collection('groups');
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
 
   DocumentSnapshot groupDocument = await groupsRef.doc(groupID).get();
 
@@ -180,18 +186,25 @@ Future<Group> loadGroup(String groupID) async {
     //List<dynamic> playerDataList = await groupsRef.collection(groupID).get('players');
     //await groupsRef.doc(groupID).collection('players').get();
 
-    QuerySnapshot playerSnapshot = await FirebaseFirestore.instance.collection('groups').doc(groupID).collection('players').get();
-    List<dynamic> playerDataList = playerSnapshot.docs.map((doc) => doc.data()).toList();
+    QuerySnapshot playerSnapshot = await FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupID)
+        .collection('players')
+        .get();
+    List<dynamic> playerDataList =
+        playerSnapshot.docs.map((doc) => doc.data()).toList();
 
     print("loading group: ${groupID}");
     if (!playerDataList.isEmpty) {
       for (var data in playerDataList) {
-        String userId = data['user_id'] ?? ''; // Use an empty string if the value is null
+        String userId =
+            data['user_id'] ?? ''; // Use an empty string if the value is null
         int points = data['points'] ?? 0; // Use 0 if the value is null
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
         String targetUID = data['target'] ?? "";
         String? eliminatedBy = data['eliminatedBy'];
-        players[userId] = Player(userId, points, null, state: playerState, target: targetUID, eliminator: eliminatedBy);
+        players[userId] = Player(userId, points, null,
+            state: playerState, target: targetUID, eliminator: eliminatedBy);
       }
     }
 
@@ -230,7 +243,9 @@ Future<Group> loadGroup(String groupID) async {
       timeEnding = groupDocument.get('timeEnding');
     } catch (e) {}
 
-    return Group(groupID, players, matchOptions, groupHost, timeStarted, timeEnding, state: state);
+    return Group(
+        groupID, players, matchOptions, groupHost, timeStarted, timeEnding,
+        state: state);
   } else {
     throw Exception('Group does not exist');
   }
@@ -260,7 +275,8 @@ Future<bool> load_my_user_data(String userId) async {
   print("Printing User data from load_my_user_data: ${globals.myUserData}");
   globals.myGroups = myGroups;
 
-  globals.myUserData.imagePath = await ProfilePage.retrieveImage(globals.myUserData);
+  globals.myUserData.imagePath =
+      await ProfilePage.retrieveImage(globals.myUserData);
 
   if (!myGroups.isEmpty) {
     // this should instead remember locally what the last group was
@@ -300,7 +316,8 @@ Future set_default_user_data(String token) async {
   globals.myGroups = playerGroups;
 }
 
-void login_custom(BuildContext context, String userName, String password) async {
+void login_custom(
+    BuildContext context, String userName, String password) async {
   bool success = await load_my_user_data(userName);
   //if (!sucess) set_default_user_data(userName);
 }
@@ -317,10 +334,13 @@ Future<void> login_apple(BuildContext context, String token) async {
   if (!success) set_default_user_data(token);
 }
 
-Future<void> setPlayerInGroup(String userID, String newGroupID, Player player) async {
-  CollectionReference groupsRef = FirebaseFirestore.instance.collection('groups');
+Future<void> setPlayerInGroup(
+    String userID, String newGroupID, Player player) async {
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
 
-  print('in setPlayerInGroup\nplayer id: ${player.userID}\nplayer points: ${player.points}\nplayer state: ${player.state.index}');
+  print(
+      'in setPlayerInGroup\nplayer id: ${player.userID}\nplayer points: ${player.points}\nplayer state: ${player.state.index}');
 
   await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
     'name': player.name,
@@ -337,16 +357,22 @@ Future<void> setPlayerInGroup(String userID, String newGroupID, Player player) a
 Future<Player> getPlayerInGroup(Group group, String playerUID) async {
   print("getplayeringroup A");
 
-  CollectionReference groupsRef = FirebaseFirestore.instance.collection('groups');
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
 
   print("getplayeringroup B");
   print("playerUID in getPlayerInGroup: $playerUID");
 
-  DocumentSnapshot playerDocument = await groupsRef.doc(group.group_name).collection('players').doc(playerUID).get();
+  DocumentSnapshot playerDocument = await groupsRef
+      .doc(group.group_name)
+      .collection('players')
+      .doc(playerUID)
+      .get();
 
   print("getplayeringroup C");
 
-  print("Print getPlayerInGroup: ${groupsRef.doc(group.group_name).collection('players').doc(playerUID).get()}");
+  print(
+      "Print getPlayerInGroup: ${groupsRef.doc(group.group_name).collection('players').doc(playerUID).get()}");
   if (playerDocument.exists) {
     // Extract field values from the document snapshot
 
@@ -411,7 +437,8 @@ StreamSubscription<QuerySnapshot>? _playersSubscription;
 void ListenToGroupChanges(String groupID) {
   print("Listening to group changes");
 
-  CollectionReference groupsRef = FirebaseFirestore.instance.collection('groups');
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
 
   DocumentReference groupDocRef = groupsRef.doc(groupID);
 
@@ -463,10 +490,12 @@ void stopListeningToGroupChanges() {
   _playersSubscription = null;
 }
 
-Future<Group> createGroup(BuildContext context, String? userID, MatchOptions matchOptions) async {
+Future<Group> createGroup(
+    BuildContext context, String? userID, MatchOptions matchOptions) async {
   String newGroupID = getRandomString(5);
 
-  CollectionReference groupsRef = FirebaseFirestore.instance.collection('groups');
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
 
   // Check if the game already exists
   DocumentSnapshot gameSnapshot = await groupsRef.doc(newGroupID).get();
@@ -497,9 +526,19 @@ Future<Group> createGroup(BuildContext context, String? userID, MatchOptions mat
 
   print('User $userID created new game: $newGroupID');
 
-  Group newGroup = Group(newGroupID, {userID: Player(userID, 0, null)}, matchOptions, userID, DateTime.utc(1989, 11, 9), DateTime.utc(1989, 11, 9));
+  Group newGroup = Group(
+      newGroupID,
+      {userID: Player(userID, 0, null)},
+      matchOptions,
+      userID,
+      DateTime.utc(1989, 11, 9),
+      DateTime.utc(1989, 11, 9));
 
-  final snapshot = await FirebaseFirestore.instance.collection('group').doc(newGroupID).collection('players').get();
+  final snapshot = await FirebaseFirestore.instance
+      .collection('group')
+      .doc(newGroupID)
+      .collection('players')
+      .get();
   if (snapshot.size == 0) {
     print('no players collection to be found');
   } else {
@@ -521,14 +560,18 @@ Future<Group> createGroup(BuildContext context, String? userID, MatchOptions mat
   return newGroup;
 }
 
-Future<JoinGameResults> join_game(BuildContext context, String gameCode, String? userID, {int points = 0}) async {
-  DocumentReference gameRef = FirebaseFirestore.instance.collection('groups').doc(gameCode);
+Future<JoinGameResults> join_game(
+    BuildContext context, String gameCode, String? userID,
+    {int points = 0}) async {
+  DocumentReference gameRef =
+      FirebaseFirestore.instance.collection('groups').doc(gameCode);
 
   try {
     // Add the new user to the game's "users" subcollection
 
     // Check if the game already exists
-    DocumentSnapshot gameSnapshot = await gameRef.collection('players').doc(userID).get();
+    DocumentSnapshot gameSnapshot =
+        await gameRef.collection('players').doc(userID).get();
     if (gameSnapshot.exists) {
       // Handle error case where game already exists
       //throw Exception('Game with ID $game_code already contains a player with ID: $userID');
@@ -538,10 +581,12 @@ Future<JoinGameResults> join_game(BuildContext context, String gameCode, String?
       var joinedGame = await loadGroup(gameCode);
 
       if (joinedGame.state != GroupState.notStarted) {
-        return JoinGameResults(false, "This game is ongoing. Only games that have not been started may be joined.");
+        return JoinGameResults(false,
+            "This game is ongoing. Only games that have not been started may be joined.");
       }
 
-      if (joinedGame.players.values.length == joinedGame.matchOptions.maxPlayers) {
+      if (joinedGame.players.values.length ==
+          joinedGame.matchOptions.maxPlayers) {
         return JoinGameResults(false, "Game is full.");
       }
       // await gameRef
@@ -572,14 +617,16 @@ Future<JoinGameResults> join_game(BuildContext context, String gameCode, String?
 void update_user_image(String whatToChange, String changeTo) {
   var db = FirebaseFirestore.instance;
   final nameRef = db.collection("users").doc(globals.myUserData.uid);
-  nameRef.update({whatToChange: changeTo}).then((value) => print("DocumentSnapshot successfully updated!"),
+  nameRef.update({whatToChange: changeTo}).then(
+      (value) => print("DocumentSnapshot successfully updated!"),
       onError: (e) => print("Error updating document $e"));
 }
 
 void update_user(BuildContext context, String whatToChange, String changeTo) {
   var db = FirebaseFirestore.instance;
   final nameRef = db.collection("users").doc(globals.myUserData.uid);
-  nameRef.update({whatToChange: changeTo}).then((value) => print("DocumentSnapshot successfully updated!"),
+  nameRef.update({whatToChange: changeTo}).then(
+      (value) => print("DocumentSnapshot successfully updated!"),
       onError: (e) => print("Error updating document $e"));
 }
 
@@ -587,13 +634,21 @@ Future update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
   GroupState groupState = selectedGroup.state;
   print(groupState.index);
-  await FirebaseFirestore.instance.collection('groups').doc(groupID).update({'state': groupState.index});
+  await FirebaseFirestore.instance
+      .collection('groups')
+      .doc(groupID)
+      .update({'state': groupState.index});
 }
 
 Future<void> setTargetUID(Group group, String playerUID) async {
-  CollectionReference groupsRef = FirebaseFirestore.instance.collection('groups');
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
 
-  DocumentSnapshot userDocument = await groupsRef.doc(group.group_name).collection('players').doc(playerUID).get();
+  DocumentSnapshot userDocument = await groupsRef
+      .doc(group.group_name)
+      .collection('players')
+      .doc(playerUID)
+      .get();
 
 /*
   await groupsRef.doc().set({
@@ -613,9 +668,14 @@ Future<void> setTargetUID(Group group, String playerUID) async {
 }
 
 Future<String> getTargetUID(Group group, String playerUID) async {
-  CollectionReference groupsRef = FirebaseFirestore.instance.collection('groups');
+  CollectionReference groupsRef =
+      FirebaseFirestore.instance.collection('groups');
 
-  DocumentSnapshot userDocument = await groupsRef.doc(group.group_name).collection('players').doc(playerUID).get();
+  DocumentSnapshot userDocument = await groupsRef
+      .doc(group.group_name)
+      .collection('players')
+      .doc(playerUID)
+      .get();
 
   String targetUID = await userDocument.get('target');
 
@@ -645,7 +705,8 @@ Future<void> startGameOrRespawn() async {
   playerList.shuffle();
 
   globals.selectedGroup.timeStarted = DateTime.now();
-  globals.selectedGroup.timeEnding = DateTime.now().add(Duration(hours: globals.selectedGroup.matchOptions.totalGameTimeDuration));
+  globals.selectedGroup.timeEnding = DateTime.now().add(Duration(
+      hours: globals.selectedGroup.matchOptions.totalGameTimeDuration));
 
   // asign targets
   var groupSize = globals.selectedGroup.players.length;
@@ -668,7 +729,10 @@ Future<void> startGameOrRespawn() async {
 
 Future<void> resetPoints(Group group) async {
   // Get the reference to the 'players' collection
-  CollectionReference playersRef = FirebaseFirestore.instance.collection('groups').doc(group.group_name).collection('players');
+  CollectionReference playersRef = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(group.group_name)
+      .collection('players');
 
   // Get all the player documents from the 'players' collection
   QuerySnapshot playerSnapshot = await playersRef.get();
@@ -681,7 +745,10 @@ Future<void> resetPoints(Group group) async {
 
 Future<void> resetState(Group group) async {
   // Get the reference to the 'players' collection
-  CollectionReference playersRef = FirebaseFirestore.instance.collection('groups').doc(group.group_name).collection('players');
+  CollectionReference playersRef = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(group.group_name)
+      .collection('players');
 
   // Get all the player documents from the 'players' collection
   QuerySnapshot playerSnapshot = await playersRef.get();
@@ -696,7 +763,10 @@ Future<void> resetState(Group group) async {
 
 Future<void> resetTarget(Group group) async {
   // Get the reference to the 'players' collection
-  CollectionReference playersRef = FirebaseFirestore.instance.collection('groups').doc(group.group_name).collection('players');
+  CollectionReference playersRef = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(group.group_name)
+      .collection('players');
 
   // Get all the player documents from the 'players' collection
   QuerySnapshot playerSnapshot = await playersRef.get();
@@ -719,10 +789,15 @@ Future<void> load_curr_target({required String uid}) async {
   await set_curr_target(globals.selectedGroup.players[uid]!.target);
 }
 
-Future<String> get_curr_target_uid({required String playerUID, required String groupCode}) async {
+Future<String> get_curr_target_uid(
+    {required String playerUID, required String groupCode}) async {
   var db = FirebaseFirestore.instance;
 
-  final docRef = db.collection("groups").doc(groupCode).collection("players").doc(playerUID);
+  final docRef = db
+      .collection("groups")
+      .doc(groupCode)
+      .collection("players")
+      .doc(playerUID);
 
   try {
     var doc = await docRef.get();
@@ -758,7 +833,7 @@ Future<void> eliminatePlayer(Player player, Player target, Group group) async {
   // updates new target locally (updates globals.currentTarget)
   globals.currentTarget = await get_user_data(player.target);
 
-  // probably unnecessary 
+  // probably unnecessary
   //String tempTargetUID = await getTargetUID(globals.selectedGroup, globals.myUserData.uid);
   //await load_curr_target(uid: tempTargetUID);
 
@@ -769,19 +844,34 @@ Future<void> eliminatePlayer(Player player, Player target, Group group) async {
   }
 }
 
+Future<void> eliminatePlayerCash(String player, String target, Group group) async {
+
+  
+
+
+}
+
 // sets the eliminator for a target on the db
-Future<void> setEliminator({required String eliminatorUID, required String userID, required String groupID}) async {
-  CollectionReference playersRef = FirebaseFirestore.instance.collection('groups').doc(groupID).collection('players');
+Future<void> setEliminator(
+    {required String eliminatorUID,
+    required String userID,
+    required String groupID}) async {
+  CollectionReference playersRef = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(groupID)
+      .collection('players');
 
   // Get all the player documents from the 'players' collection
 
   await playersRef.doc(userID).update({'eliminator': eliminatorUID});
 }
 
-Future<String> getEliminatorUID({required String playerUID, required String groupID}) async {
+Future<String> getEliminatorUID(
+    {required String playerUID, required String groupID}) async {
   var db = FirebaseFirestore.instance;
 
-  final docRef = db.collection("groups").doc(groupID).collection("players").doc(playerUID);
+  final docRef =
+      db.collection("groups").doc(groupID).collection("players").doc(playerUID);
 
   try {
     var doc = await docRef.get();
@@ -796,12 +886,13 @@ Future<String> getEliminatorUID({required String playerUID, required String grou
 }
 
 Future logout(context) async {
-  if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
+  if (defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS) {
     GoogleSignIn _googleSignIn = GoogleSignIn();
     await _googleSignIn.signOut();
   }
 
-  await FirebaseAuth.instance
-      .signOut()
-      .then((value) => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthPage()), (route) => false));
+  await FirebaseAuth.instance.signOut().then((value) => Navigator.of(context)
+      .pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthPage()),
+          (route) => false));
 }
