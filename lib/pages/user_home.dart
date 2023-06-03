@@ -329,6 +329,7 @@ void beginElimination() {
   Player player =
       selectedGroup.players[currentTarget!.uid]!; //HOPE IT IS DEEP COPY
   player.state = PlayerState.preparingToDie;
+  player.eliminator = myUserData.uid;
   setPlayerInGroup(currentTarget!.uid, selectedGroup.group_name, player);
 }
 
