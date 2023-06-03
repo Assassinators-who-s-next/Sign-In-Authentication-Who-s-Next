@@ -74,6 +74,7 @@ UserData? currentTarget = UserData(
   frequentedLocations: "",
 );
 
+String currentEliminator = "";
 
 User? fireBaseUser;
 

@@ -744,30 +744,54 @@ Future<void> eliminatePlayer(Player player, Player target, Group group) async {
   // increment current user's points
   player.points += 1;
 
-  print("In eliminate player B");
-
   // set players state to dead
   target.state = PlayerState.dead;
 
+  // set target's target to empty string (technically unecessary but good for debugging)
   player.target = target.target;
-  target.target = "";
+  target.target = "no target";
 
+  // synchronize our local updates to db for both current user and target
   await setPlayerInGroup(globals.myUserData.uid, group.group_name, player);
   await setPlayerInGroup(target.userID, group.group_name, target);
 
-  print("\n\n\nplayer.target = target.target: ${player.target}");
+  // updates new target locally (updates globals.currentTarget)
   globals.currentTarget = await get_user_data(player.target);
 
-  print("In eliminate player C");
-
-  String tempTargetUID = await getTargetUID(globals.selectedGroup, globals.myUserData.uid);
-  await load_curr_target(uid: tempTargetUID);
+  // probably unnecessary 
+  //String tempTargetUID = await getTargetUID(globals.selectedGroup, globals.myUserData.uid);
+  //await load_curr_target(uid: tempTargetUID);
 
   // check if there are no more targets
   if (player.target == player.userID) {
-    print("you're your own target");
     globals.selectedGroup.state = GroupState.finished;
     await update_group_state(globals.selectedGroup);
+  }
+}
+
+// sets the eliminator for a target on the db
+Future<void> setEliminator({required String eliminatorUID, required String userID, required String groupID}) async {
+  CollectionReference playersRef = FirebaseFirestore.instance.collection('groups').doc(groupID).collection('players');
+
+  // Get all the player documents from the 'players' collection
+
+  await playersRef.doc(userID).update({'eliminator': eliminatorUID});
+}
+
+Future<String> getEliminatorUID({required String playerUID, required String groupID}) async {
+  var db = FirebaseFirestore.instance;
+
+  final docRef = db.collection("groups").doc(groupID).collection("players").doc(playerUID);
+
+  try {
+    var doc = await docRef.get();
+    var data = doc.data() as Map<String, dynamic>;
+    String eliminatorUID = data['eliminator'];
+    print("ELIMINATOR UID: $eliminatorUID");
+    return eliminatorUID;
+  } catch (e) {
+    print("Error getting target: $e");
+    return "default";
   }
 }
 

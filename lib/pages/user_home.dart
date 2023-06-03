@@ -28,8 +28,7 @@ class _UserHomeState extends State<UserHome> {
   bool notifyTarget = false;
   late Group selGroup;
 
-  _UserHomeState()
-  {
+  _UserHomeState() {
     addGroupUpdateListener(updateGroupRef);
   }
 
@@ -55,8 +54,7 @@ class _UserHomeState extends State<UserHome> {
     SetFinishedLoadingState(true);
   }
 
-  void updateGroupRef()
-  {
+  void updateGroupRef() {
     setState(() {
       selGroup = selectedGroup;
     });
@@ -253,7 +251,7 @@ class _UserHomeState extends State<UserHome> {
 
           if (playerState == PlayerState.preparingToDie) {
             print("going to prepareToDieScreen modal");
-            return prepareToDieScreen(screenWidth, screenHeight);
+            return prepareToDieScreen(screenWidth, screenHeight) as Widget;
           } else if (playerState == PlayerState.dead) {
             print("going to deadScreen modal");
             return deadScreen(screenWidth, screenHeight);
@@ -292,7 +290,12 @@ class _UserHomeState extends State<UserHome> {
                       color: Color.fromARGB(255, 238, 127, 119),
                       buttonState: true,
                       onPressed: () async {
-                        print("pressed eliminate button");
+                        setEliminator(
+                          eliminatorUID: myUserData.uid,
+                          userID: currentTarget!.uid,
+                          groupID: selectedGroup.group_name,
+                        );
+
                         beginElimination();
                         // Player playerSelf = getSelf()!;
                         // Player playerTarget =
@@ -376,7 +379,13 @@ Center deadScreen(double screenWidth, double screenHeight) {
   );
 }
 
-Center prepareToDieScreen(double screenWidth, double screenHeight) {
+Future<Center> prepareToDieScreen(
+    double screenWidth, double screenHeight) async {
+  currentEliminator = await getEliminatorUID(
+      playerUID: myUserData.uid, groupID: selectedGroup.group_name);
+  if (currentEliminator == Null) {
+    currentEliminator = "anonymous";
+  }
   return Center(
     child: SizedBox(
       width: screenWidth,
@@ -384,12 +393,12 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              'Anonymous player claims they have eliminated you. Do you verify this occurred?',
+              "$currentEliminator claims they have eliminated you. Do you verify this occurred?",
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.red,
                 fontSize: 30,
               ),
@@ -404,9 +413,13 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () => {
+                onPressed: () async => {
                   //put target have eliminate notification page appear on their hand
-                  endElimination(),
+                  print("eliminating self: ${getSelf()!.name}"),
+                  print("the eliminator: ${await getPlayerInGroup(selectedGroup, currentEliminator)}"),
+                  await eliminatePlayer(getSelf()!, await getPlayerInGroup(selectedGroup, currentEliminator), selectedGroup),
+                  
+                  //endElimination(),
                   print("eliminated done")
                 },
                 child: Text("Yes"),
@@ -417,9 +430,10 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () => {print("eliminated canceled"),
-                  backToAlive(), 
-                  },
+                onPressed: () => {
+                  print("eliminated canceled"),
+                  backToAlive(),
+                },
                 child: Text("No"),
               ),
             ],
