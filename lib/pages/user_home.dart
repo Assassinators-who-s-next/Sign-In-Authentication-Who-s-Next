@@ -182,19 +182,19 @@ class _UserHomeState extends State<UserHome> {
       double screenHeight, GroupState currentState) {
     Widget screen = prematchScreen(); //default screen that returns
 
-    screen = postmatchScreen();
+    // screen = postmatchScreen();
 
-//    if (currentState == GroupState.finished) {
-//      // game finished state
-//      screen = postmatchScreen();
-//      print("going to finishedScreen switch statement");
-//    } else if (currentState == GroupState.running) {
-//      screen = runningScreen(screenWidth, screenHeight, context);
-//      print("going to aliveScreen switch statement");
-//    } else {
-//      screen = prematchScreen();
-//      print("going to prematchScreen switch statement");
-//    }
+   if (currentState == GroupState.finished) {
+     // game finished state
+     screen = postmatchScreen();
+     print("going to finishedScreen switch statement");
+   } else if (currentState == GroupState.running) {
+     screen = runningScreen(screenWidth, screenHeight, context);
+     print("going to aliveScreen switch statement");
+   } else {
+     screen = prematchScreen();
+     print("going to prematchScreen switch statement");
+   }
 
     return Stack(children: [
       InfoButton(context, screenWidth, screenHeight),
