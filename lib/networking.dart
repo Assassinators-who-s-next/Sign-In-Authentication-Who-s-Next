@@ -821,6 +821,7 @@ Future<void> eliminatePlayer(Player player, Player target, Group group) async {
 
   // set players state to dead
   target.state = PlayerState.dead;
+  target.eliminator = player.userID;
 
   // set target's target to empty string (technically unecessary but good for debugging)
   player.target = target.target;
@@ -844,12 +845,8 @@ Future<void> eliminatePlayer(Player player, Player target, Group group) async {
   }
 }
 
-Future<void> eliminatePlayerCash(String player, String target, Group group) async {
-
-  
-
-
-}
+Future<void> eliminatePlayerCash(
+    String player, String target, Group group) async {}
 
 // sets the eliminator for a target on the db
 Future<void> setEliminator(
