@@ -393,7 +393,7 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
           Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              "{Current Eliminator} claims they have eliminated you. Do you verify this occurred?",
+              "${getSelf()!.eliminator} claims they have eliminated you. Do you verify this occurred?",
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.red,
