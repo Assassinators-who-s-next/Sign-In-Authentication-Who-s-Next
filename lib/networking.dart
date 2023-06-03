@@ -202,7 +202,7 @@ Future<Group> loadGroup(String groupID) async {
         int points = data['points'] ?? 0; // Use 0 if the value is null
         PlayerState playerState = PlayerState.values[data['state'] ?? 0];
         String targetUID = data['target'] ?? "";
-        String? eliminatedBy = data['eliminatedBy'];
+        String? eliminatedBy = data['eliminator'];
         players[userId] = Player(userId, points, null,
             state: playerState, target: targetUID, eliminator: eliminatedBy);
       }
