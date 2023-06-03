@@ -151,9 +151,8 @@ Future<void> loadPlayerNamesFromList(List<Player> players) async {
       players[i].userData = userData;
       players[i].name = userData!.name;
 
-      updatePlayer(players[i].userID, players[i]);
+      await updatePlayer(players[i].userID, players[i].name);
 
-      userData.uid;
     } catch (e) {
       print("failed to load user data");
     }
@@ -617,15 +616,15 @@ Future<JoinGameResults> join_game(
   }
 }
 
-Future<void> updatePlayer(String playerID, String name) async {
+Future<void> updatePlayer(String playerID, String? name) async {
   var db = FirebaseFirestore.instance;
   final nameRef = db
       .collection("groups")
       .doc(globals.selectedGroup.group_name)
       .collection("players")
       .doc(playerID);
-  nameRef.update({'name': }).then(
-      (value) => print("DocumentSnapshot successfully updated!"),
+  nameRef.update({'name': name}).then(
+      (value) => print("player name, $name, successfully updated!"),
       onError: (e) => print("Error updating document $e"));
 }
 
@@ -645,17 +644,6 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
       onError: (e) => print("Error updating document $e"));
 }
 
-Future<void> updatePlayer() async {
-  var db = FirebaseFirestore.instance;
-  final nameRef = db
-      .collection("groups")
-      .doc(globals.selectedGroup.group_name)
-      .collection("players")
-      .doc(globals.myUserData.uid);
-  nameRef.update({'name': globals.myUserData.name}).then(
-      (value) => print("DocumentSnapshot successfully updated!"),
-      onError: (e) => print("Error updating document $e"));
-}
 
 void update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
