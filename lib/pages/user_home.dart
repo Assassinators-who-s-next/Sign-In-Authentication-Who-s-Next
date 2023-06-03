@@ -17,6 +17,7 @@ import 'package:basic_auth/pages/join_create_game_page.dart';
 import 'package:basic_auth/image_upload.dart';
 
 import '../game_group.dart';
+import '../player.dart';
 
 class UserHome extends StatefulWidget {
   @override
@@ -252,8 +253,6 @@ class _UserHomeState extends State<UserHome> {
           if (playerState == PlayerState.preparingToDie) {
             print("going to prepareToDieScreen modal");
 
-            
-
             return prepareToDieScreen(screenWidth, screenHeight);
           } else if (playerState == PlayerState.dead) {
             print("going to deadScreen modal");
@@ -383,7 +382,6 @@ Center deadScreen(double screenWidth, double screenHeight) {
 }
 
 Center prepareToDieScreen(double screenWidth, double screenHeight) {
-
   return Center(
     child: SizedBox(
       width: screenWidth,
@@ -411,14 +409,25 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () async => {
+                onPressed: () async {
+                  Player self = getSelf()!;
+                  Player eliminator = selectedGroup.players[self.target]!;
+                  Group myGroup = selectedGroup;
+
                   //put target have eliminate notification page appear on their hand
-                  print("eliminating self: ${getSelf()!.name}"),
-                  print("the eliminator: ${await getPlayerInGroup(selectedGroup, currentEliminator)}"),
-                  await eliminatePlayer(await getPlayerInGroup(selectedGroup, await getEliminatorUID(playerUID: myUserData.uid, groupID: selectedGroup.group_name)), getSelf()!, selectedGroup),
-                  
+                  print("eliminating self: ${self.name}");
+                  print("the eliminator: $eliminator");
+                  await eliminatePlayer(self, eliminator, myGroup);
+                  // await getPlayerInGroup(
+                  //     selectedGroup,
+                  //     await getEliminatorUID(
+                  //         playerUID: myUserData.uid,
+                  //         groupID: selectedGroup.group_name)),
+                  // getSelf()!,
+                  // selectedGroup);
+
                   //endElimination(),
-                  print("eliminated done")
+                  print("eliminated done");
                 },
                 child: Text("Yes"),
               ),
