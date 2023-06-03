@@ -842,14 +842,12 @@ Future<void> eliminatePlayer(
   //await load_curr_target(uid: tempTargetUID);
 
   // check if there are no more targets
-  if (player.target == player.userID) {
+  if (player.target == globals.myUserData.uid) {
+    print("You are your own target, game over");
     globals.selectedGroup.state = GroupState.finished;
     await update_group_state(globals.selectedGroup);
   }
 }
-
-Future<void> eliminatePlayerCash(
-    String player, String target, Group group) async {}
 
 // sets the eliminator for a target on the db
 Future<void> setEliminator(
