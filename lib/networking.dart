@@ -835,7 +835,6 @@ Future<void> joshEliminatePlayer() async {
   String myName = await userDocument.get('user_id');
 
   Player me = globals.selectedGroup.players[myName]!;
-  me.points += 1;
   me.state = PlayerState.dead;
   me.target = "no target";
 

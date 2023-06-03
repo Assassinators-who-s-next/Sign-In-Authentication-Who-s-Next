@@ -250,18 +250,18 @@ class _UserHomeState extends State<UserHome> {
                       buttonState: true,
                       onPressed: () async {
                         //updates the eliminator of the target
-                        await FirebaseFirestore.instance
-                            .collection('groups')
-                            .doc(selectedGroup.group_name)
-                            .collection('players')
-                            .doc(currentTarget!.uid)
-                            .update({
-                          'eliminator': myUserData.uid,
-                        }).then((value) => {
-                          print("pressed eliminate button\n"),
-                          print("elimnator of target is ${myUserData.uid}")
-                        }
-                  );
+                  //       await FirebaseFirestore.instance
+                  //           .collection('groups')
+                  //           .doc(selectedGroup.group_name)
+                  //           .collection('players')
+                  //           .doc(currentTarget!.uid)
+                  //           .update({
+                  //         'eliminator': myUserData.uid,
+                  //       }).then((value) => {
+                  //         print("pressed eliminate button\n"),
+                  //         print("elimnator of target is ${myUserData.uid}")
+                  //       }
+                  // );
                         beginElimination();
                         // Player playerSelf = getSelf()!;
                         // Player playerTarget =
