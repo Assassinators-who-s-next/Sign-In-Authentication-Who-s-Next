@@ -198,6 +198,8 @@ class _UserHomeState extends State<UserHome> {
       double screenHeight, GroupState currentState) {
     Widget screen = prematchScreen(); //default screen that returns
 
+    // screen = postmatchScreen();
+
     if (currentState == GroupState.finished) {
       // game finished state
       screen = postmatchScreen();
@@ -417,9 +419,10 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () => {print("eliminated canceled"),
-                  backToAlive(), 
-                  },
+                onPressed: () => {
+                  print("eliminated canceled"),
+                  backToAlive(),
+                },
                 child: Text("No"),
               ),
             ],
@@ -471,7 +474,9 @@ StreamBuilder prematchScreen() {
             label: "Start match",
             color: const Color.fromARGB(255, 43, 167, 204),
             //currPlayers: snapshot.data!.size,
-            buttonState: enoughPlayers,
+            //buttonState: enoughPlayers,
+            buttonState:
+                enoughPlayers && selectedGroup.groupHost == myUserData.uid,
             onPressed: () async {
               print("pressed start match button");
               await startGameOrRespawn();
@@ -486,16 +491,74 @@ StreamBuilder prematchScreen() {
   );
 }
 
+//Future<void> getWinningPlayers() async {
+Future<String> getLastPlayer() async {
+  CollectionReference playerList = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(selectedGroup.group_name)
+      .collection('players');
+
+  print('got collection');
+
+  QuerySnapshot stateSnapshot =
+      await playerList.where('state', isLessThan: 2).limit(1).get();
+
+  print('got querysnapshot');
+
+  String lastPlayerNameSnapshot = stateSnapshot.docs.first.get('name');
+
+  print("player that was alive until last $lastPlayerNameSnapshot");
+
+  return lastPlayerNameSnapshot;
+}
+
+Future<String> getMaxPointsPlayer() async {
+  CollectionReference playerList = FirebaseFirestore.instance
+      .collection('groups')
+      .doc(selectedGroup.group_name)
+      .collection('players');
+
+  print('got collection');
+
+  //player who has the most points
+  QuerySnapshot maxPointsSnapshot =
+      await playerList.orderBy('points', descending: true).limit(1).get();
+
+  print('got querysnapshot');
+
+  //the name of that player
+  String maxPointsNameSnapshot = maxPointsSnapshot.docs.first.get('name');
+
+  print("player that has the most point $maxPointsNameSnapshot");
+
+  return maxPointsNameSnapshot;
+}
+
 Center postmatchScreen() {
+  // future string to string????
+  Future<String> maxPlayer = getMaxPointsPlayer();
+  Future<String> lastPlayer = getLastPlayer();
+
+//  String maxPointPlyaer = maxPlayer.toString();
+//  String lastPlayerStanding = lastPlayer.toString();
+//  print('maxpoints player: ${maxPointPlayer}');
+//  print('last player: ${lastPlayerStanding}');
+
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Padding(
+      const Padding(
         padding: EdgeInsets.all(20),
         child: Text("Match Finished!", style: TextStyle(fontSize: 30)),
       ),
       Padding(
         padding: EdgeInsets.all(20),
-        child: Text("Winner: ", style: TextStyle(fontSize: 20)),
+        //child: Text("Winner: ", style: TextStyle(fontSize: 20)),
+        child: Column(
+          children: [
+            Text("Last Standing: ", style: TextStyle(fontSize: 20)),
+            Text("Most Points: ", style: TextStyle(fontSize: 20)),
+          ],
+        ),
       ),
       Padding(
         padding: const EdgeInsetsDirectional.all(40),

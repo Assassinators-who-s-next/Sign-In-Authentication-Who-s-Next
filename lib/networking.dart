@@ -145,6 +145,9 @@ Future<void> loadPlayerNamesFromList(List<Player> players) async {
       // print("loading ${userData!.name}");
       players[i].userData = userData;
       players[i].name = userData!.name;
+
+      await updatePlayer(players[i].userID, players[i].name);
+
     } catch (e) {
       print("failed to load user data");
     }
@@ -569,6 +572,18 @@ Future<JoinGameResults> join_game(BuildContext context, String gameCode, String?
   }
 }
 
+Future<void> updatePlayer(String playerID, String? name) async {
+  var db = FirebaseFirestore.instance;
+  final nameRef = db
+      .collection("groups")
+      .doc(globals.selectedGroup.group_name)
+      .collection("players")
+      .doc(playerID);
+  nameRef.update({'name': name}).then(
+      (value) => print("player name, $name, successfully updated!"),
+      onError: (e) => print("Error updating document $e"));
+}
+
 void update_user_image(String whatToChange, String changeTo) {
   var db = FirebaseFirestore.instance;
   final nameRef = db.collection("users").doc(globals.myUserData.uid);
@@ -582,6 +597,7 @@ void update_user(BuildContext context, String whatToChange, String changeTo) {
   nameRef.update({whatToChange: changeTo}).then((value) => print("DocumentSnapshot successfully updated!"),
       onError: (e) => print("Error updating document $e"));
 }
+
 
 Future update_group_state(Group selectedGroup) async {
   String groupID = selectedGroup.group_name;
@@ -735,6 +751,7 @@ Future<String> get_curr_target_uid({required String playerUID, required String g
     return "default";
   }
 }
+
 
 Future<void> eliminatePlayer(Player player, Player target, Group group) async {
   print("In eliminate player A");
