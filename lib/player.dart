@@ -13,7 +13,8 @@ class Player {
   String target = ""; // exist on the database
   String? eliminator; // exist on the database
   PlayerState state = PlayerState.alive; // exist on the database
-  Player(this.userID, this.points, this.userData, {this.state = PlayerState.alive, this.target = "", this.eliminator});
+  Player(this.userID, this.points, this.userData,
+      {this.state = PlayerState.alive, this.target = "", this.eliminator});
 
   String get_name() {
     if (name != null) return name!;

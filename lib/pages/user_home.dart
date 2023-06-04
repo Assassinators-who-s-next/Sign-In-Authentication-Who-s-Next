@@ -28,8 +28,7 @@ class _UserHomeState extends State<UserHome> {
   bool notifyTarget = false;
   late Group selGroup;
 
-  _UserHomeState()
-  {
+  _UserHomeState() {
     addGroupUpdateListener(updateGroupRef);
   }
 
@@ -55,8 +54,7 @@ class _UserHomeState extends State<UserHome> {
     SetFinishedLoadingState(true);
   }
 
-  void updateGroupRef()
-  {
+  void updateGroupRef() {
     setState(() {
       selGroup = selectedGroup;
     });
@@ -198,8 +196,6 @@ class _UserHomeState extends State<UserHome> {
       double screenHeight, GroupState currentState) {
     Widget screen = prematchScreen(); //default screen that returns
 
-    // screen = postmatchScreen();
-
     if (currentState == GroupState.finished) {
       // game finished state
       screen = postmatchScreen();
@@ -279,7 +275,7 @@ class _UserHomeState extends State<UserHome> {
               children: [
                 TargetName(username: targetData.name),
                 ProfilePicture(
-                    radius: screenWidth * .40,
+                    radius: screenWidth * 0.40,
                     imagePath: targetData.imagePath!,
                     //imagePath: targetData.imagePath ?? UserPreferences.placeholderImagePath,
                     isNetworkPath: myUserData.imagePath != null &&
@@ -491,58 +487,70 @@ StreamBuilder prematchScreen() {
   );
 }
 
-//Future<void> getWinningPlayers() async {
-Future<String> getLastPlayer() async {
-  CollectionReference playerList = FirebaseFirestore.instance
-      .collection('groups')
-      .doc(selectedGroup.group_name)
-      .collection('players');
+String? getLastPlayerStandingImage() {
+  Map<String, Player> playersList = selectedGroup.players;
 
-  print('got collection');
+  String? lastPlayerImage = "";
 
-  QuerySnapshot stateSnapshot =
-      await playerList.where('state', isLessThan: 2).limit(1).get();
+  playersList.forEach((key, value) {
+    if (value.state != PlayerState.dead) {
+      if (value.userData!.imagePath == null) {
+        return;
+      }
 
-  print('got querysnapshot');
+      lastPlayerImage = value.userData!.imagePath;
+      return;
+    }
+  });
 
-  String lastPlayerNameSnapshot = stateSnapshot.docs.first.get('name');
-
-  print("player that was alive until last $lastPlayerNameSnapshot");
-
-  return lastPlayerNameSnapshot;
+  return lastPlayerImage;
 }
 
-Future<String> getMaxPointsPlayer() async {
-  CollectionReference playerList = FirebaseFirestore.instance
-      .collection('groups')
-      .doc(selectedGroup.group_name)
-      .collection('players');
+String? getLastPlayerStandingName() {
+  Map<String, Player> playersList = selectedGroup.players;
 
-  print('got collection');
+  String? lastPlayerName = "";
 
-  //player who has the most points
-  QuerySnapshot maxPointsSnapshot =
-      await playerList.orderBy('points', descending: true).limit(1).get();
+  playersList.forEach((key, value) {
+    if (value.state != PlayerState.dead) {
+      lastPlayerName = value.name;
+      return;
+    }
+  });
 
-  print('got querysnapshot');
+  return lastPlayerName;
+}
 
-  //the name of that player
-  String maxPointsNameSnapshot = maxPointsSnapshot.docs.first.get('name');
+String? getMaxPointsPlayerImage() {
+  List playersList = selectedGroup.players.values.toList();
 
-  print("player that has the most point $maxPointsNameSnapshot");
+  playersList.sort((a, b) => b.points.compareTo(a.points));
 
-  return maxPointsNameSnapshot;
+  Player maxPoints = playersList.first;
+
+  if (maxPoints.userData!.imagePath == null) {
+    return "";
+  }
+
+  return maxPoints.userData!.imagePath;
+}
+
+String? getMaxPointsPlayerName() {
+  List playersList = selectedGroup.players.values.toList();
+
+  playersList.sort((a, b) => b.points.compareTo(a.points));
+
+  Player maxPoints = playersList.first;
+
+  return maxPoints.name;
 }
 
 Center postmatchScreen() {
-  // future string to string????
-  Future<String> maxPlayer = getMaxPointsPlayer();
-  Future<String> lastPlayer = getLastPlayer();
+  String? maxPointsPlayerName = getMaxPointsPlayerName();
+  String maxPointsPlayerImage = getMaxPointsPlayerImage() as String;
 
-//  String maxPointPlyaer = maxPlayer.toString();
-//  String lastPlayerStanding = lastPlayer.toString();
-//  print('maxpoints player: ${maxPointPlayer}');
-//  print('last player: ${lastPlayerStanding}');
+  String? lastPlayerName = getLastPlayerStandingName();
+  String lastPlayerImage = getLastPlayerStandingImage() as String;
 
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -551,12 +559,38 @@ Center postmatchScreen() {
         child: Text("Match Finished!", style: TextStyle(fontSize: 30)),
       ),
       Padding(
-        padding: EdgeInsets.all(20),
-        //child: Text("Winner: ", style: TextStyle(fontSize: 20)),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Text("Last Standing: ", style: TextStyle(fontSize: 20)),
-            Text("Most Points: ", style: TextStyle(fontSize: 20)),
+            const Text("Last Standing",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Padding(padding: EdgeInsetsDirectional.all(5)),
+            Text("$lastPlayerName", style: const TextStyle(fontSize: 20)),
+            const Padding(padding: EdgeInsetsDirectional.all(5)),
+            ProfilePicture(
+                radius: WidgetsBinding.instance.platformDispatcher.views.first
+                        .physicalSize.width *
+                    0.20,
+                imagePath: lastPlayerImage == ""
+                    ? "lib/images/placeHolderProfileImage.jpg"
+                    : lastPlayerImage,
+                isNetworkPath: lastPlayerImage != "",
+                onClicked: () => print('clicked on last winning player')),
+            const Padding(padding: EdgeInsetsDirectional.all(15)),
+            const Text("Most Points ",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Padding(padding: EdgeInsetsDirectional.all(5)),
+            Text("$maxPointsPlayerName", style: const TextStyle(fontSize: 20)),
+            const Padding(padding: EdgeInsetsDirectional.all(5)),
+            ProfilePicture(
+                radius: WidgetsBinding.instance.platformDispatcher.views.first
+                        .physicalSize.width *
+                    0.20,
+                imagePath: maxPointsPlayerImage == ""
+                    ? "lib/images/placeHolderProfileImage.jpg"
+                    : maxPointsPlayerImage,
+                isNetworkPath: lastPlayerImage != "",
+                onClicked: () => print('clicked on last winning player')),
           ],
         ),
       ),
