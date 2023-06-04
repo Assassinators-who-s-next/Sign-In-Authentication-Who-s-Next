@@ -275,7 +275,6 @@ Future<bool> load_my_user_data(String userId) async {
   }
 
   globals.myUserData = myUserData;
-  print("Printing User data from load_my_user_data: ${globals.myUserData}");
   globals.myGroups = myGroups;
 
   globals.myUserData.imagePath =
@@ -294,12 +293,10 @@ Future set_default_user_data(String token) async {
   String? firstName = globals.fireBaseUser?.displayName!.split(' ')[0];
 
   var firstNameLength = firstName?.length ?? 0;
-  print('name size ${firstNameLength}');
 
   // FIXME: magic variable on name size, based on maxLines in profile.dart
   if (firstNameLength > 26) {
     firstName = firstName!.substring(0, 26);
-    print('after substring ${firstName}');
   }
 
   UserData userData = UserData(
@@ -342,8 +339,6 @@ Future<void> setPlayerInGroup(
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
 
-  print(
-      'in setPlayerInGroup\nplayer id: ${player.userID}\nplayer points: ${player.points}\nplayer state: ${player.state.index}');
 
   await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
     'name': player.name,
@@ -354,7 +349,6 @@ Future<void> setPlayerInGroup(
     'eliminator': player.eliminator,
   });
 
-  print('finished setting player in group');
 }
 
 Future<Player> getPlayerInGroup(Group group, String playerUID) async {
