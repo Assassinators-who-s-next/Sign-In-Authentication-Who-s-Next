@@ -820,7 +820,7 @@ Future<String> get_curr_target_uid(
 }
 
 Future<void> joshEliminatePlayer() async {
-  //retrieve the eliminator value from current player from database
+  
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
 
