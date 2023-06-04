@@ -139,7 +139,6 @@ class _UserHomeState extends State<UserHome> {
                     MaterialPageRoute(
                       builder: (context) => JoinCreatePage(),
                     )),
-                print("pressed join/create button")
               },
               child: Text("Join/Create"),
             ),
@@ -158,13 +157,10 @@ class _UserHomeState extends State<UserHome> {
     if (currentState == GroupState.finished) {
       // game finished state
       screen = postmatchScreen();
-      print("going to finishedScreen switch statement");
     } else if (currentState == GroupState.running) {
       screen = runningScreen(screenWidth, screenHeight, context);
-      print("going to aliveScreen switch statement");
     } else {
       screen = prematchScreen();
-      print("going to prematchScreen switch statement");
     }
 
     return Stack(children: [
@@ -209,10 +205,8 @@ class _UserHomeState extends State<UserHome> {
           PlayerState playerState = snapshot.data ?? PlayerState.alive;
 
           if (playerState == PlayerState.preparingToDie) {
-            print("going to prepareToDieScreen modal");
             return prepareToDieScreen(screenWidth, screenHeight);
           } else if (playerState == PlayerState.dead) {
-            print("going to deadScreen modal");
             return deadScreen(screenWidth, screenHeight);
           }
 
@@ -249,34 +243,9 @@ class _UserHomeState extends State<UserHome> {
                       color: Color.fromARGB(255, 238, 127, 119),
                       buttonState: true,
                       onPressed: () async {
-                        //updates the eliminator of the target
-                  //       await FirebaseFirestore.instance
-                  //           .collection('groups')
-                  //           .doc(selectedGroup.group_name)
-                  //           .collection('players')
-                  //           .doc(currentTarget!.uid)
-                  //           .update({
-                  //         'eliminator': myUserData.uid,
-                  //       }).then((value) => {
-                  //         print("pressed eliminate button\n"),
-                  //         print("elimnator of target is ${myUserData.uid}")
-                  //       }
-                  // );
+
                         beginElimination();
-                        // Player playerSelf = getSelf()!;
-                        // Player playerTarget =
-                        //     await getPlayerInGroup(selectedGroup, currentTarget!.uid);
-                        // playerSelf.target =
-                        //     await getTargetUID(selectedGroup, myUserData.uid);
-                        // playerTarget.target =
-                        //     await getTargetUID(selectedGroup, currentTarget!.uid);
-                        // SetSelectedGroup(selectedGroup);
-                        // print("\n\n playerSelf: $playerSelf");
-                        // print("\n\n playerTarget: $playerTarget");
-                        // // eliminate target
-                        // await eliminatePlayer(
-                        //     context, playerSelf, playerTarget, selectedGroup);
-                        // setSelectedGroup(selectedGroup);
+
                       }),
                 ),
               ],
@@ -375,7 +344,6 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                 ),
                 onPressed: () async {
                   //put target have eliminate notification page appear on their hand
-                  print("eliminated done");
                   joshEliminatePlayer();
                   // endElimination();
                 },
@@ -388,7 +356,6 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   textStyle: TextStyle(fontSize: 25),
                 ),
                 onPressed: () async {
-                  print("eliminated canceled");
                   backToAlive();
                 },
                 child: Text("No"),
@@ -422,7 +389,6 @@ StreamBuilder prematchScreen() {
         );
 //          return const Center(child: Text('Loading'));
       }
-//        print('${snapshot.data!.size}');
 
       bool enoughPlayers = false;
       if (snapshot.data!.size >= 2) {
@@ -446,11 +412,9 @@ StreamBuilder prematchScreen() {
             buttonState:
                 enoughPlayers && selectedGroup.groupHost == myUserData.uid,
             onPressed: () async {
-              print("pressed start match button");
               await startGameOrRespawn(); //at least this one working i believe
               selectedGroup.state = GroupState.running;
               update_group_state(selectedGroup);
-              print("end press start match button");
             },
           ),
         )
@@ -466,16 +430,14 @@ Future<String> getLastPlayer() async {
       .doc(selectedGroup.group_name)
       .collection('players');
 
-  print('got collection');
+  
 
   QuerySnapshot stateSnapshot =
       await playerList.where('state', isLessThan: 2).limit(1).get();
 
-  print('got querysnapshot');
 
   String lastPlayerNameSnapshot = stateSnapshot.docs.first.get('name');
 
-  print("player that was alive until last $lastPlayerNameSnapshot");
 
   return lastPlayerNameSnapshot;
 }
@@ -486,18 +448,16 @@ Future<String> getMaxPointsPlayer() async {
       .doc(selectedGroup.group_name)
       .collection('players');
 
-  print('got collection');
+  
 
   //player who has the most points
   QuerySnapshot maxPointsSnapshot =
       await playerList.orderBy('points', descending: true).limit(1).get();
 
-  print('got querysnapshot');
 
   //the name of that player
   String maxPointsNameSnapshot = maxPointsSnapshot.docs.first.get('name');
 
-  print("player that has the most point $maxPointsNameSnapshot");
 
   return maxPointsNameSnapshot;
 }
@@ -507,10 +467,6 @@ Center postmatchScreen() {
   Future<String> maxPlayer = getMaxPointsPlayer();
   Future<String> lastPlayer = getLastPlayer();
 
-//  String maxPointPlyaer = maxPlayer.toString();
-//  String lastPlayerStanding = lastPlayer.toString();
-//  print('maxpoints player: ${maxPointPlayer}');
-//  print('last player: ${lastPlayerStanding}');
 
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
