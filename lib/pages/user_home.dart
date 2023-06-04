@@ -314,7 +314,7 @@ Center deadScreen(double screenWidth, double screenHeight) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(20),
             child: Text(
               'You are eliminated.\n Please wait until the match is completed.',
@@ -325,16 +325,6 @@ Center deadScreen(double screenWidth, double screenHeight) {
               ),
             ),
           ),
-          Padding(
-              padding: EdgeInsets.all(20),
-              child: LargeUserHomeButton(
-                  label: "Debug(go to finished screen)",
-                  color: Color.fromARGB(255, 43, 167, 204),
-                  buttonState: true,
-                  onPressed: () => {
-                        selectedGroup.state = GroupState.finished,
-                        update_group_state(selectedGroup),
-                      }))
         ],
       ),
     ),
@@ -499,7 +489,8 @@ String getMaxPointsPlayerImage() {
 
   String? maxPointsPlayerImage = "";
 
-  if (maxPoints.userData == null || maxPoints.userData!.imagePath == null ||
+  if (maxPoints.userData == null ||
+      maxPoints.userData!.imagePath == null ||
       maxPoints.userData!.imagePath == "") {
     return maxPointsPlayerImage;
   }
@@ -525,7 +516,6 @@ Center postmatchScreen() {
 
   String lastPlayerName = getLastPlayerStandingName();
   String lastPlayerImage = getLastPlayerStandingImage();
-  print("(${maxPointsPlayerName}, ${maxPointsPlayerImage}), (${lastPlayerName},${lastPlayerImage})");
 
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -574,7 +564,7 @@ Center postmatchScreen() {
         child: LargeUserHomeButton(
           label: "Start a new match",
           color: const Color.fromARGB(255, 43, 167, 204),
-          buttonState: true,
+          buttonState: selectedGroup.groupHost == myUserData.uid,
           onPressed: () => {
             selectedGroup.state = GroupState.notStarted,
             update_group_state(selectedGroup),
