@@ -352,7 +352,7 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
           const Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              'Anonymous player claims they have eliminated you. Do you verify this occurred?',
+              "You have been eliminated! Do you acknowledge this occurred?",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.red,
