@@ -73,51 +73,6 @@ class _UserHomeState extends State<UserHome> {
       screenHeight = width;
     }
 
-//   return myGroups.isEmpty
-//       ? noGroupScreenContent(context)
-//       : StreamBuilder<DocumentSnapshot>(
-//           stream: FirebaseFirestore.instance
-//               .collection('groups')
-//               .doc(selectedGroup.group_name)
-//               .snapshots(),
-//           builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-//             if (snapshot.hasError) {
-//               return Text("Something went wrong");
-//             }
-//             if (snapshot.connectionState == ConnectionState.waiting) {
-//               return Center(child: CircularProgressIndicator());
-//             }
-//             if (!snapshot.hasData || !snapshot.data!.exists) {
-//               // Handle the case when the group document doesn't exist
-//               return Text("Group does not exist");
-//             }
-//             Map<String, dynamic>? data = snapshot.data!.data() as Map<String, dynamic>?;
-//             if (data == null) {
-//               // Handle the case when the group document has no data
-//               return Text("Group data is null");
-//             }
-//             PlayerState playerState = data['players'][myUserData.uid]?.state ?? PlayerState.alive; // Use the null-aware operator to handle missing player data
-//             print("This is player state");
-//             print(playerState);
-//             GroupState groupState = data['state'] ?? GroupState.notStarted;
-//             print("This is group state");
-//             print(groupState);
-//             return GameListDrawer(
-//               screenWidth: screenWidth,
-//               screenHeight: screenHeight,
-//               content: homeScreenContent(
-//                 context,
-//                 screenWidth,
-//                 screenHeight,
-//                 groupState,
-//                 playerState,
-//               ),
-//               onSelectGroup: (p0) => SetSelectedGroup(p0),
-//             );
-//           },
-//         );
-// }
-
     return myGroups.isEmpty
         ? noGroupScreenContent(context)
         : StreamBuilder<GroupState>(
@@ -294,7 +249,19 @@ class _UserHomeState extends State<UserHome> {
                       color: Color.fromARGB(255, 238, 127, 119),
                       buttonState: true,
                       onPressed: () async {
-                        print("pressed eliminate button");
+                        //updates the eliminator of the target
+                  //       await FirebaseFirestore.instance
+                  //           .collection('groups')
+                  //           .doc(selectedGroup.group_name)
+                  //           .collection('players')
+                  //           .doc(currentTarget!.uid)
+                  //           .update({
+                  //         'eliminator': myUserData.uid,
+                  //       }).then((value) => {
+                  //         print("pressed eliminate button\n"),
+                  //         print("elimnator of target is ${myUserData.uid}")
+                  //       }
+                  // );
                         beginElimination();
                         // Player playerSelf = getSelf()!;
                         // Player playerTarget =
@@ -310,7 +277,6 @@ class _UserHomeState extends State<UserHome> {
                         // await eliminatePlayer(
                         //     context, playerSelf, playerTarget, selectedGroup);
                         // setSelectedGroup(selectedGroup);
-                        // beginElimination();
                       }),
                 ),
               ],
@@ -322,20 +288,21 @@ class _UserHomeState extends State<UserHome> {
 
 //basically update the state of the playerstate
 //and upload it to the database
-void beginElimination() {
+Future<void> beginElimination() async {
   Player player =
       selectedGroup.players[currentTarget!.uid]!; //HOPE IT IS DEEP COPY
   player.state = PlayerState.preparingToDie;
+  player.eliminator = myUserData.uid;
   setPlayerInGroup(currentTarget!.uid, selectedGroup.group_name, player);
 }
 
-void endElimination() {
+Future<void> endElimination() async {
   Player player = selectedGroup.players[myUserData.uid]!; //HOPE IT IS DEEP COPY
   player.state = PlayerState.dead;
   setPlayerInGroup(myUserData.uid, selectedGroup.group_name, player);
 }
 
-void backToAlive() {
+Future<void> backToAlive() async {
   Player player = selectedGroup.players[myUserData.uid]!; //HOPE IT IS DEEP COPY
   player.state = PlayerState.alive;
   setPlayerInGroup(myUserData.uid, selectedGroup.group_name, player);
@@ -406,10 +373,11 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () => {
+                onPressed: () async {
                   //put target have eliminate notification page appear on their hand
-                  endElimination(),
-                  print("eliminated done")
+                  print("eliminated done");
+                  joshEliminatePlayer();
+                  // endElimination();
                 },
                 child: Text("Yes"),
               ),
@@ -419,9 +387,9 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
                   textStyle: TextStyle(fontSize: 25),
                 ),
-                onPressed: () => {
-                  print("eliminated canceled"),
-                  backToAlive(),
+                onPressed: () async {
+                  print("eliminated canceled");
+                  backToAlive();
                 },
                 child: Text("No"),
               ),
@@ -479,7 +447,7 @@ StreamBuilder prematchScreen() {
                 enoughPlayers && selectedGroup.groupHost == myUserData.uid,
             onPressed: () async {
               print("pressed start match button");
-              await startGameOrRespawn();
+              await startGameOrRespawn(); //at least this one working i believe
               selectedGroup.state = GroupState.running;
               update_group_state(selectedGroup);
               print("end press start match button");
