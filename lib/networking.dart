@@ -197,6 +197,7 @@ Future<Group> loadGroup(String groupID) async {
     List<dynamic> playerDataList =
         playerSnapshot.docs.map((doc) => doc.data()).toList();
 
+    print("loading group: ${groupID}");
     if (!playerDataList.isEmpty) {
       for (var data in playerDataList) {
         String userId =
@@ -338,7 +339,6 @@ Future<void> setPlayerInGroup(
   CollectionReference groupsRef =
       FirebaseFirestore.instance.collection('groups');
 
- 
 
   await groupsRef.doc(newGroupID).collection('players').doc(userID).set({
     'name': player.name,
@@ -388,6 +388,7 @@ Future<Player> getPlayerInGroup(Group group, String playerUID) async {
     UserData? playerUser = await get_user_data(playerUID);
 
     String targetUID = await getTargetUID(group, playerUID);
+    print("targetUID for player: ${playerUID} $targetUID");
 
     Player playerToReturn = Player(
       playerUser!.uid,
@@ -398,6 +399,7 @@ Future<Player> getPlayerInGroup(Group group, String playerUID) async {
     );
     playerToReturn.name = playerUser.name;
 
+    print("\n\n\nPlayer to return: ${playerToReturn}\n\n\n");
     return playerToReturn;
     // Create a UserData object with the extracted field values
     /*
@@ -460,6 +462,7 @@ void ListenToGroupChanges(String groupID) {
     snapshot.docChanges.forEach((change) {
       if (change.type == DocumentChangeType.modified) {
         // Handle modified player document
+        print('Any player modified: ${change.doc.data()}');
       }
     });
 
@@ -509,6 +512,7 @@ Future<Group> createGroup(
   userPlayer.name = globals.myUserData.name; // NEEDS TO BE REFACTORED
   await setPlayerInGroup(userID, newGroupID, userPlayer);
 
+  print('User $userID created new game: $newGroupID');
 
   Group newGroup = Group(
       newGroupID,
@@ -523,13 +527,13 @@ Future<Group> createGroup(
       .doc(newGroupID)
       .collection('players')
       .get();
+  if (snapshot.size == 0) {
+    print('no players collection to be found');
+  } else {
+    print('there is a player collection');
+  }
 
-  // if (snapshot.size == 0) {
-  //   print('no players collection to be found');
-  // } else {
-  //   print('there is a player collection');
-  // }
-
+  print('num players in newly created group: ${newGroup.players.length}');
 
   globals.myGroups.add(newGroup);
   bool isNotInGroup = globals.myGroups.isEmpty;
@@ -580,6 +584,7 @@ Future<JoinGameResults> join_game(
       Player player = Player(userID!, points, null);
       player.name = globals.myUserData.name;
       await setPlayerInGroup(userID, gameCode, player);
+      print('User $userID added to game $gameCode');
 
       bool isNotInGroup = globals.myGroups.isEmpty;
       globals.myGroups.add(joinedGame);
@@ -716,8 +721,11 @@ Future<void> startGameOrRespawn() async {
     if (player.userID == globals.myUserData.uid) {
       {
         await set_curr_target(player.target);
+        print("current target: ${globals.currentTarget!.uid}");
       }
     }
+
+    print("CURRENT TARGET NAME: ${globals.currentTarget!.name}");
   }
 }
 
@@ -776,7 +784,9 @@ Future<void> set_curr_target(String targetUID) async {
 }
 
 Future<void> load_curr_target({required String uid}) async {
+  print("In load curr target in networking");
   var groupSize = globals.selectedGroup.players.length;
+  print("group size: ${groupSize}");
 
   await set_curr_target(globals.selectedGroup.players[uid]!.target);
 }
@@ -795,6 +805,7 @@ Future<String> get_curr_target_uid(
     var doc = await docRef.get();
     var data = doc.data() as Map<String, dynamic>;
     String targetUID = data['target'];
+    print("TARGET UID: $targetUID");
     return targetUID;
   } catch (e) {
     print("Error getting target: $e");
@@ -829,6 +840,7 @@ Future<void> joshEliminatePlayer() async {
   setPlayerInGroup(eliminatorName, globals.selectedGroup.group_name, eliminator);
 
   if(eliminator.target == eliminatorName) {
+    print("you're your own target");
     globals.selectedGroup.state = GroupState.finished;
     await update_group_state(globals.selectedGroup);
   }
@@ -836,11 +848,14 @@ Future<void> joshEliminatePlayer() async {
 }
 
 Future<void> eliminatePlayer(Player player, Player target, Group group) async {
-
+  print("In eliminate player A");
+  print("target: $target");
+  print("target's target: ${target.target}");
 
   // increment current user's points
   player.points += 1;
 
+  print("In eliminate player B");
 
   // set players state to dead
   target.state = PlayerState.dead;
@@ -851,8 +866,10 @@ Future<void> eliminatePlayer(Player player, Player target, Group group) async {
   await setPlayerInGroup(globals.myUserData.uid, group.group_name, player);
   await setPlayerInGroup(target.userID, group.group_name, target);
 
+  print("\n\n\nplayer.target = target.target: ${player.target}");
   globals.currentTarget = await get_user_data(player.target);
 
+  print("In eliminate player C");
 
   String tempTargetUID =
       await getTargetUID(globals.selectedGroup, globals.myUserData.uid);
@@ -860,6 +877,7 @@ Future<void> eliminatePlayer(Player player, Player target, Group group) async {
 
   // check if there are no more targets
   if (player.target == player.userID) {
+    print("you're your own target");
     globals.selectedGroup.state = GroupState.finished;
     await update_group_state(globals.selectedGroup);
   }
