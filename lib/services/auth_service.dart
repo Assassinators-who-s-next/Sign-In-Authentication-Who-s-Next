@@ -9,14 +9,15 @@ import "package:basic_auth/globals.dart";
 import 'package:flutter/foundation.dart';
 
 class AuthService {
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-  String? name;
-  String? imageUrl;
+//  final GoogleSignIn googleSignIn = GoogleSignIn();
+//  String? name;
+//  String? imageUrl;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? uid;
-  String? userEmail;
+//  String? userEmail;
 
+/*
   Future<User?> registerWithEmailPassword(String email, String password) async {
     await Firebase.initializeApp();
     User? user;
@@ -68,7 +69,7 @@ class AuthService {
     }
     return user;
   }
-
+*/
   signInWithGoogle() async {
     // begin interactive sign in process
     await Firebase.initializeApp();
