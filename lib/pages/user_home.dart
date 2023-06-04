@@ -28,8 +28,7 @@ class _UserHomeState extends State<UserHome> {
   bool notifyTarget = false;
   late Group selGroup;
 
-  _UserHomeState()
-  {
+  _UserHomeState() {
     addGroupUpdateListener(updateGroupRef);
   }
 
@@ -55,8 +54,7 @@ class _UserHomeState extends State<UserHome> {
     SetFinishedLoadingState(true);
   }
 
-  void updateGroupRef()
-  {
+  void updateGroupRef() {
     setState(() {
       selGroup = selectedGroup;
     });
@@ -216,12 +214,14 @@ class _UserHomeState extends State<UserHome> {
             return deadScreen(screenWidth, screenHeight);
           }
 
+          bool isDefaultPicture = currentTarget!.imagePath == null ||
+              currentTarget!.imagePath == "";
+
           UserData targetData = UserData(
               description: currentTarget!.description,
               email: "",
               frequentedLocations: currentTarget!.frequentedLocations,
-              imagePath: currentTarget!.imagePath == null ||
-                      currentTarget!.imagePath == ""
+              imagePath: isDefaultPicture
                   ? "lib/images/placeHolderProfileImage.jpg"
                   : currentTarget!.imagePath,
               name: currentTarget!.name,
@@ -236,9 +236,7 @@ class _UserHomeState extends State<UserHome> {
                 ProfilePicture(
                     radius: screenWidth * .40,
                     imagePath: targetData.imagePath!,
-                    //imagePath: targetData.imagePath ?? UserPreferences.placeholderImagePath,
-                    isNetworkPath: myUserData.imagePath != null &&
-                        myUserData.imagePath != "",
+                    isNetworkPath: !isDefaultPicture,
                     onClicked: () => print("clicked elimation target")),
                 Text("freq locations: ${targetData.frequentedLocations}"),
                 Text("Descrpt: ${targetData.description}"),
@@ -250,18 +248,18 @@ class _UserHomeState extends State<UserHome> {
                       buttonState: true,
                       onPressed: () async {
                         //updates the eliminator of the target
-                  //       await FirebaseFirestore.instance
-                  //           .collection('groups')
-                  //           .doc(selectedGroup.group_name)
-                  //           .collection('players')
-                  //           .doc(currentTarget!.uid)
-                  //           .update({
-                  //         'eliminator': myUserData.uid,
-                  //       }).then((value) => {
-                  //         print("pressed eliminate button\n"),
-                  //         print("elimnator of target is ${myUserData.uid}")
-                  //       }
-                  // );
+                        //       await FirebaseFirestore.instance
+                        //           .collection('groups')
+                        //           .doc(selectedGroup.group_name)
+                        //           .collection('players')
+                        //           .doc(currentTarget!.uid)
+                        //           .update({
+                        //         'eliminator': myUserData.uid,
+                        //       }).then((value) => {
+                        //         print("pressed eliminate button\n"),
+                        //         print("elimnator of target is ${myUserData.uid}")
+                        //       }
+                        // );
                         beginElimination();
                         // Player playerSelf = getSelf()!;
                         // Player playerTarget =
