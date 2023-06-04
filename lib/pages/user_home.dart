@@ -542,7 +542,7 @@ Center postmatchScreen() {
                 isNetworkPath: lastPlayerImage != "",
                 onClicked: () => print('clicked on last winning player')),
             const Padding(padding: EdgeInsetsDirectional.all(15)),
-            const Text("Most Points ",
+            const Text("Most Eliminations",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const Padding(padding: EdgeInsetsDirectional.all(5)),
             Text("$maxPointsPlayerName", style: const TextStyle(fontSize: 20)),
