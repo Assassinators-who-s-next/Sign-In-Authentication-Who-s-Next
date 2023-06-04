@@ -830,7 +830,6 @@ Future<void> joshEliminatePlayer() async {
 
   Player me = globals.selectedGroup.players[myName]!;
   me.state = PlayerState.dead;
-  me.target = "no target";
 
   Player eliminator = globals.selectedGroup.players[eliminatorName]!;
   eliminator.points += 1;
