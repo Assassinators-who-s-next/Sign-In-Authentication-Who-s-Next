@@ -26,71 +26,67 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-
-      body: SafeArea(
-        child: oldLoginScreen(context))
-    );
+        backgroundColor: Colors.grey[300],
+        body: SafeArea(
+            //child: oldLoginScreen(context))
+            child: newLoginScreen(context)));
   }
 
-  Widget newLoginScreen(BuildContext context)
-  {
+  Widget newLoginScreen(BuildContext context) {
     return Align(
       alignment: AlignmentDirectional.topCenter,
       child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: 
-          [
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
             const Icon(
-                  Icons.face_rounded,
-                  size: 175,
-                ),
+              Icons.face_rounded,
+              size: 175,
+            ),
             Text(
-            'Who\'s Next?',
-            style: TextStyle(
-              color: Colors.grey[700],
-              fontSize: 40,
+              'Who\'s Next?',
+              style: TextStyle(
+                color: Colors.grey[700],
+                fontSize: 40,
               ),
             ),
             SizedBox(height: 50),
             googleButton(context)
-          ])
-      ),
+          ])),
     );
   }
 
-  Widget googleButton(BuildContext context)
-  {
+  Widget googleButton(BuildContext context) {
     return GestureDetector(
-              onTap: () => AuthService().signInWithGoogle(),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: const Color.fromARGB(255, 224, 47, 47)),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * .6,
-                  height: 45,
-                  child: Stack(children: [
-                    Center(child: Text("Sign in with Google", style: TextStyle(color: Colors.white))),
-                    Align(alignment: AlignmentDirectional.centerStart, 
-                    child: Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Image.asset("lib/images/google-logo-red.png"),
-                    )),
-                  ]),
-                ),
-                ),
-            );
+      onTap: () => AuthService().signInWithGoogle(),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: const Color.fromARGB(255, 224, 47, 47)),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * .6,
+          height: 45,
+          child: Stack(children: [
+            Center(
+                child: Text("Sign in with Google",
+                    style: TextStyle(color: Colors.white))),
+            Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Image.asset("lib/images/google-logo-red.png"),
+                )),
+          ]),
+        ),
+      ),
+    );
   }
-
-  Widget oldLoginScreen(BuildContext context)
-  {
-    return 
-    Center(
+/*
+  Widget oldLoginScreen(BuildContext context) {
+    return Center(
       child: SingleChildScrollView(
-            child: Column(
+          child: Column(
         children: [
           // logo
           const SizedBox(height: 50),
@@ -99,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
             size: 100,
           ),
           const SizedBox(height: 50),
-    
+
           // welcome back
           Text(
             'Who\'s Next?',
@@ -109,8 +105,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           const SizedBox(height: 50),
-    
-          
+
           // username
           MyTextField(
             controller: emailController,
@@ -118,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
             obscureText: false,
           ),
           const SizedBox(height: 15),
-    
+
           // password
           MyTextField(
             controller: passwordController,
@@ -126,8 +121,7 @@ class _LoginPageState extends State<LoginPage> {
             obscureText: true,
           ),
           const SizedBox(height: 10),
-          
-    
+
           // forgot password STILL NEED FUNCTIONALITY
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -142,15 +136,14 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           const SizedBox(height: 25),
-          
-    
+
           // sign in button
           MyButton(
             onTap: () => AuthService().signInWithEmailPassword(
                 emailController.text, passwordController.text),
           ),
           const SizedBox(height: 50),
-    
+
           // or sign in with
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -178,8 +171,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           const SizedBox(height: 25),
-          
-    
+
           // google/apple sign in button
           googleButton(context),
           /*
@@ -195,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
           */
-          
+
           const SizedBox(height: 25),
           /*
           ElevatedButton(
@@ -218,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
           
           const SizedBox(height: 25),
           */
-    
+
           // not a member? register here
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -235,8 +227,8 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ],
-        )
-      ),
+      )),
     );
   }
+*/
 }
