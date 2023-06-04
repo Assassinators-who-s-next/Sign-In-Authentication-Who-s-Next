@@ -455,7 +455,7 @@ StreamBuilder prematchScreen() {
   );
 }
 
-String? getLastPlayerStandingImage() {
+String getLastPlayerStandingImage() {
   Map<String, Player> playersList = selectedGroup.players;
 
   String? lastPlayerImage = "";
@@ -472,10 +472,10 @@ String? getLastPlayerStandingImage() {
     }
   });
 
-  return lastPlayerImage;
+  return lastPlayerImage ?? "";
 }
 
-String? getLastPlayerStandingName() {
+String getLastPlayerStandingName() {
   Map<String, Player> playersList = selectedGroup.players;
 
   String? lastPlayerName = "";
@@ -487,10 +487,10 @@ String? getLastPlayerStandingName() {
     }
   });
 
-  return lastPlayerName;
+  return lastPlayerName ?? "";
 }
 
-String? getMaxPointsPlayerImage() {
+String getMaxPointsPlayerImage() {
   List playersList = selectedGroup.players.values.toList();
 
   playersList.sort((a, b) => b.points.compareTo(a.points));
@@ -499,32 +499,33 @@ String? getMaxPointsPlayerImage() {
 
   String? maxPointsPlayerImage = "";
 
-  if (maxPoints.userData!.imagePath == null ||
+  if (maxPoints.userData == null || maxPoints.userData!.imagePath == null ||
       maxPoints.userData!.imagePath == "") {
     return maxPointsPlayerImage;
   }
 
   maxPointsPlayerImage = maxPoints.userData!.imagePath;
 
-  return maxPointsPlayerImage;
+  return maxPointsPlayerImage ?? "";
 }
 
-String? getMaxPointsPlayerName() {
+String getMaxPointsPlayerName() {
   List playersList = selectedGroup.players.values.toList();
 
   playersList.sort((a, b) => b.points.compareTo(a.points));
 
   Player maxPoints = playersList.first;
 
-  return maxPoints.name;
+  return maxPoints.name ?? "";
 }
 
 Center postmatchScreen() {
-  String? maxPointsPlayerName = getMaxPointsPlayerName();
-  String maxPointsPlayerImage = getMaxPointsPlayerImage() as String;
+  String maxPointsPlayerName = getMaxPointsPlayerName();
+  String maxPointsPlayerImage = getMaxPointsPlayerImage();
 
-  String? lastPlayerName = getLastPlayerStandingName();
-  String lastPlayerImage = getLastPlayerStandingImage() as String;
+  String lastPlayerName = getLastPlayerStandingName();
+  String lastPlayerImage = getLastPlayerStandingImage();
+  print("(${maxPointsPlayerName}, ${maxPointsPlayerImage}), (${lastPlayerName},${lastPlayerImage})");
 
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -563,7 +564,7 @@ Center postmatchScreen() {
                 imagePath: maxPointsPlayerImage == ""
                     ? "lib/images/placeHolderProfileImage.jpg"
                     : maxPointsPlayerImage,
-                isNetworkPath: lastPlayerImage != "",
+                isNetworkPath: maxPointsPlayerImage != "",
                 onClicked: () => print('clicked on last winning player')),
           ],
         ),
