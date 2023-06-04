@@ -462,7 +462,8 @@ String? getLastPlayerStandingImage() {
 
   playersList.forEach((key, value) {
     if (value.state != PlayerState.dead) {
-      if (value.userData!.imagePath == null) {
+      if (value.userData!.imagePath == null ||
+          value.userData!.imagePath == "") {
         return;
       }
 
@@ -496,11 +497,16 @@ String? getMaxPointsPlayerImage() {
 
   Player maxPoints = playersList.first;
 
-  if (maxPoints.userData!.imagePath == null) {
-    return "";
+  String? maxPointsPlayerImage = "";
+
+  if (maxPoints.userData!.imagePath == null ||
+      maxPoints.userData!.imagePath == "") {
+    return maxPointsPlayerImage;
   }
 
-  return maxPoints.userData!.imagePath;
+  maxPointsPlayerImage = maxPoints.userData!.imagePath;
+
+  return maxPointsPlayerImage;
 }
 
 String? getMaxPointsPlayerName() {
