@@ -236,8 +236,18 @@ class _UserHomeState extends State<UserHome> {
                     imagePath: targetData.imagePath!,
                     isNetworkPath: !isDefaultPicture,
                     onClicked: () => print("clicked elimation target")),
-                Text("freq locations: ${targetData.frequentedLocations}"),
-                Text("Descrpt: ${targetData.description}"),
+                const Padding(padding: EdgeInsetsDirectional.all(10)),
+                Row(children: [
+                  Text("Pronouns: ${targetData.pronouns}"),
+                  const Padding(padding: EdgeInsetsDirectional.all(5))
+                ]),
+                Row(children: [
+                  Text("About: ${targetData.description}"),
+                  const Padding(padding: EdgeInsetsDirectional.all(5))
+                ]),
+                Row(children: [
+                  Text("Frequent Locations: ${targetData.frequentedLocations}")
+                ]),
                 Padding(
                   padding: const EdgeInsetsDirectional.all(40),
                   child: LargeUserHomeButton(
