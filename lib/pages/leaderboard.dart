@@ -4,6 +4,7 @@ import 'package:basic_auth/components/leaderboard_element.dart';
 import '../player.dart';
 import '../game_group.dart';
 import '../networking.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 import '../globals.dart' as globals;
 
@@ -16,107 +17,59 @@ class LeaderBoard extends StatefulWidget {
 
   void reload(BuildContext context) async {
     print("Testing reload 1");
-    await reloadGroup();
+    await reloadSelectedGroup();
     print("Testing reload 2: " + globals.selectedGroup.toString());
-    //_LeaderboardState.instance?.updatePlayers();
-    final state = leaderboardKey.currentState;
-    //state?.updatePlayers();
-    print("Testing reload 3, state null? " + (state == null).toString());
 
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (BuildContext context) => LeaderBoard(),
-    //   ),
-    // );
-
-    print("Testing reload 4, state null? " + (state == null).toString());
+    // TODO: figure out how to reload the state
   }
 
   @override
   _LeaderboardState createState() => _LeaderboardState();
-
-  // @override
-  // _LeaderboardState createState() {
-  //   var newState = _LeaderboardState();
-  //   myState = newState;
-  //   return newState;
-  // }
 }
 
 void sortPlayers() {
-  globals.selectedGroup.players.sort((a, b) => b.points.compareTo(a.points));
-}
-
-Future<void> reloadGroup() async {
-  String groupID = globals.selectedGroup.group_name;
-  Group fetchedGroup = await loadGroup(groupID);
-  globals.selectedGroup = fetchedGroup;
-
-  //replace old instance of group with new one
-  for (int i = 0; i < globals.myGroups.length; i++) {
-    if (globals.myGroups[i].group_name == groupID) {
-      globals.myGroups[i] = fetchedGroup;
-    }
-  }
-
-  // load names on this group
-  await applyName(globals.selectedGroup.players);
-
-  print("finished reloading group");
+  //globals.selectedGroup.players.sort((a, b) => b.points.compareTo(a.points));
 }
 
 class _LeaderboardState extends State<LeaderBoard> {
-  final List<Widget> _players = [];
+  List<LeaderboardElement> _players = [];
 
-  // void updatePlayers() {
-  //   setState(() {
-  //     _players.clear();
-  //     print("Updating player with : " +
-  //         globals.selectedGroup.players.length.toString() +
-  //         " players");
-  //     for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-  //       Player cur_player = globals.selectedGroup.players[i];
-  //       _players.add(LeaderboardElemnt(
-  //           playerName: cur_player.get_name(),
-  //           playerPoints: cur_player.points));
-  //       print("Adding player: " + cur_player.get_name());
-  //     }
-  //   });
-  // }
+  _LeaderboardState() {
+    addGroupUpdateListener(OnGroupUpdate);
+  }
 
   @override
-  void initState() {
-    // for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-    //   Player cur_player = globals.selectedGroup.players[i];
+  void dispose() {
+    removeGroupUpdateListener(OnGroupUpdate);
+    super.dispose();
+  }
 
-    //   String player_name = cur_player.get_name();
-    //   int player_points = cur_player.points;
-    //   var newElement = LeaderboardElemnt(
-    //       playerName: player_name ?? "unknown",
-    //       playerPoints: player_points ?? 0);
-    //   _players.add(newElement);
-    // }
-    super.initState();
+  void OnGroupUpdate() {
+    //print("Testing OnGroupUpdate");
+    // refresh page
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     _players.clear();
-    for (int i = 0; i < globals.selectedGroup.players.length; i++) {
-      Player cur_player = globals.selectedGroup.players[i];
+    List<Player> playerList = globals.selectedGroup.players.values.toList();
+    for (int i = 0; i < playerList.length; i++) {
+      Player cur_player = playerList[i];
 
       String player_name = cur_player.get_name();
       int player_points = cur_player.points;
-      var newElement = LeaderboardElemnt(
+      var newElement = LeaderboardElement(
+          player: cur_player,
           playerName: player_name ?? "unknown",
-          playerPoints: player_points ?? 0);
+          playerPoints: player_points ?? 0,
+          eliminated: cur_player.state == PlayerState.dead);
       _players.add(newElement);
     }
 
     // TODO: sort everytime read from Firebase, need to figure out where in ListView.builder
-    _players.sort((a, b) => int.parse((b as LeaderboardElemnt).getPoints())
-        .compareTo(int.parse((a as LeaderboardElemnt).getPoints())));
+    _players.sort((a, b) => int.parse((b as LeaderboardElement).getPoints())
+        .compareTo(int.parse((a as LeaderboardElement).getPoints())));
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -143,10 +96,13 @@ class _LeaderboardState extends State<LeaderBoard> {
         itemCount: _players.length,
         itemBuilder: (context, index) {
           return Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                  bottom:
-                      BorderSide(color: Color.fromARGB(255, 204, 204, 204))),
+            decoration: BoxDecoration(
+              color: _players[index].eliminated
+                  ? Color.fromARGB(255, 209, 209, 209)
+                  : Color.fromARGB(255, 255, 255, 255),
+              border: const Border(
+                  bottom: BorderSide(
+                      color: Color.fromARGB(255, 204, 204, 204), width: 1)),
             ),
             child: ListTile(
               title: _players[index],
@@ -165,13 +121,13 @@ class _LeaderboardState extends State<LeaderBoard> {
         const Text('Leaderboard',
             style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
         const Padding(padding: EdgeInsets.only(bottom: 10)),
-        const Text('Respawn in: xx:xx:xx'),
+        //const Text('Respawn in: xx:xx:xx'),
         const Padding(padding: EdgeInsets.only(bottom: 15)),
         Padding(
           padding: const EdgeInsets.only(bottom: 5, left: 20, right: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('Players'), Text('Score')],
+            children: [Text('Players'), Text('Eliminations')],
           ),
         ),
       ],

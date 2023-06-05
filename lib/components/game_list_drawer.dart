@@ -1,4 +1,6 @@
 import 'package:basic_auth/globals.dart';
+import 'package:basic_auth/models/user_data.dart';
+import 'package:basic_auth/networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:basic_auth/pages/join_create_game_page.dart';
@@ -7,7 +9,12 @@ import '../game_group.dart';
 import '../game_group.dart';
 
 class GameListDrawer extends StatelessWidget {
-  const GameListDrawer({super.key, required this.screenWidth, required this.screenHeight, required this.content, required this.onSelectGroup});
+  const GameListDrawer(
+      {super.key,
+      required this.screenWidth,
+      required this.screenHeight,
+      required this.content,
+      required this.onSelectGroup});
 
   final double screenWidth;
   final double screenHeight;
@@ -19,7 +26,8 @@ class GameListDrawer extends StatelessWidget {
     return Scaffold(
       // top bar
       appBar: AppBar(
-        title: Text(selectedGroup.group_name), // could have names of each game, or game code
+        title: Text(selectedGroup
+            .group_name), // could have names of each game, or game code
       ),
       // a list of all games currently in, 3 lines on left
       // TODO: each listTile will change the center and the appBar title
@@ -30,9 +38,11 @@ class GameListDrawer extends StatelessWidget {
               GameList(context),
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(context,MaterialPageRoute(
-                    builder: (context) => JoinCreatePage(),
-                  ));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => JoinCreatePage(),
+                      ));
                 },
                 child: Text('Join/Create Game'),
               ),
@@ -45,30 +55,31 @@ class GameListDrawer extends StatelessWidget {
     );
   }
 
-  void OnClickGameListItem(BuildContext context, Group group)
-  {
+  void OnClickGameListItem(BuildContext context, Group group) async {
     Navigator.pop(context);
+    if (selectedGroup == group) return;
+    if (group.state == GroupState.running) {
+      await set_curr_target(await get_curr_target_uid(playerUID: myUserData.uid, groupCode: group.group_name));
+    }
+
     onSelectGroup.call(group);
   }
 
   Column GameList(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: 
-      [
+      children: [
         for (Group group in myGroups)
-          GameListItem(group: group, onPressed:(game) => OnClickGameListItem(context, group))
+          GameListItem(
+              group: group,
+              onPressed: (game) => OnClickGameListItem(context, group))
       ],
     );
   }
 }
 
 class GameListItem extends StatelessWidget {
-  const GameListItem({
-    super.key,
-    required this.group,
-    required this.onPressed
-  });
+  const GameListItem({super.key, required this.group, required this.onPressed});
 
   final Group group;
   final void Function(Group) onPressed;
@@ -78,8 +89,18 @@ class GameListItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(child: TextButton(onPressed: () => onPressed(group), child: SizedBox(child: Center(child: Text(group.group_name, style: TextStyle(fontSize: 25))), height: 45,))),
-        Divider(height: 0,),
+        SizedBox(
+            child: TextButton(
+                onPressed: () => onPressed(group),
+                child: SizedBox(
+                  child: Center(
+                      child: Text(group.group_name,
+                          style: TextStyle(fontSize: 25))),
+                  height: 45,
+                ))),
+        Divider(
+          height: 0,
+        ),
       ],
     );
   }

@@ -5,10 +5,11 @@ import 'dart:async';
 import 'package:basic_auth/models/player_with_target.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:basic_auth/player.dart';
 import 'models/user_data.dart';
 import 'models/match_options.dart';
 import 'game_group.dart';
+import 'networking.dart';
 
 UserData myUserData = UserData(
   uid: "",
@@ -19,26 +20,35 @@ UserData myUserData = UserData(
   description: "",
   frequentedLocations: "",
 );
-String myName = "no_name";
+
+void SetFinishedLoadingState(bool state) {
+  finishedLoadingUser = state;
+  finishedLoadingUserController.add(state);
+}
+
+Player? getSelf() => selectedGroup.players[myUserData.uid];
+
 bool finishedLoadingUser = false;
 StreamController finishedLoadingUserController =
     StreamController<bool>.broadcast();
+bool hasSelectedGroup = false;
 Group selectedGroup = Group(
-  "join or create games to play",
-  [],
+  "join or create a game to play",
+  {},
   MatchOptions(
     -1,
-    'Single',
-    'Fixed',
-    5,
-    'Limited',
-    60,
-    'Area A',
-    'Helmet',
+    '',
+    '',
+    -1,
+    '',
+    -1,
+    '',
+    '',
   ),
   "",
-  state: GroupState.notStarted
-
+  new DateTime.utc(1989, 11, 9),
+  new DateTime.utc(1989, 11, 9),
+  state: GroupState.notStarted,
 );
 //    GameState.gameWaiting.name);
 List<Group> myGroups = [];
@@ -54,6 +64,21 @@ TargetInfo currentTarget = TargetInfo(
 );
 */
 
-UserData? currentTarget;
+UserData? currentTarget = UserData(
+  uid: "",
+  imagePath: "",
+  name: "",
+  email: "",
+  pronouns: "",
+  description: "",
+  frequentedLocations: "",
+);
 
 User? fireBaseUser;
+
+void setSelectedGroup(Group group) {
+  stopListeningToGroupChanges();
+  hasSelectedGroup = true;
+  selectedGroup = group;
+  ListenToGroupChanges(group.group_name);
+}

@@ -8,6 +8,7 @@ import '../utils/popup_modal.dart';
 import 'home_page.dart';
 import '../game_group.dart';
 import '../player.dart';
+import '../image_upload.dart';
 
 import 'package:basic_auth/models/match_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -29,8 +29,8 @@ class AuthPage extends StatelessWidget {
               String? uid = FirebaseAuth.instance.currentUser?.uid;
 
               //login_custom(context, "whatever", "password");
-              if (!loadingUser)
-                Login(context, email, uid);
+              if (!loadingUser) Login(context, email, uid);
+
               
               return HomePage();
               // user not logged in
@@ -41,14 +41,19 @@ class AuthPage extends StatelessWidget {
     );
   }
 
-  void Login(BuildContext context, String? email, String? uid) async
-  {
+  void Login(BuildContext context, String? email, String? uid) async {
     loadingUser = true;
-    finishedLoadingUser = false;
-    finishedLoadingUserController.add(false);
+    SetFinishedLoadingState(false);
     await login_google(context, email!, uid!);
-    finishedLoadingUser = true;
-    finishedLoadingUserController.add(true);
+
+    try {
+      if (hasSelectedGroup) 
+          currentTarget = await get_user_data(await get_curr_target_uid(playerUID: uid, groupCode: selectedGroup.group_name));
+    } catch (E) {
+      print("ERROR!!!!: ${E}");
+    }
+
+    SetFinishedLoadingState(true);
     loadingUser = false;
   }
 }

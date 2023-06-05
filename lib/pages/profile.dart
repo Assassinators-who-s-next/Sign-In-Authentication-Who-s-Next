@@ -1,5 +1,6 @@
 import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/components/profile_text_field.dart';
+import 'package:basic_auth/image_upload.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,12 @@ class Profile extends StatelessWidget {
               children: [
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Center(child: Text('Profile Page', style: TextStyle(fontSize: 50, ), textAlign: TextAlign.center)),
+                  child: Center(
+                      child: Text('Profile Page',
+                          style: TextStyle(
+                            fontSize: 40,
+                          ),
+                          textAlign: TextAlign.center)),
                 ),
                 Center(child: buildPicture(user, context)),
                 //buildPicture(myUserData, context),
@@ -47,28 +53,41 @@ class Profile extends StatelessWidget {
   }
 
   Padding buildPicture(UserData user, BuildContext context) {
+    const double pictureRadius = 250;
+    const double plusIconSize = 65;
+    const double plusIconDistance = pictureRadius * (.707);
     return Padding(
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
-          /*ProfilePicture(
-            name: myUserData.name,
-            role: '',
-            radius: 31,
-            fontsize: 21,
-            tooltip: true,
-            img: Image.network(myUserData.imagePath),
-          ),*/
-
-          ProfilePicture(
-              radius: 250,
-              //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
-              imagePath:
-                  user.imagePath == null || user.imagePath == "" ? "lib/images/placeHolderProfileImage.jpg" : user.imagePath!,
-              isNetworkPath: user.imagePath != null,
-              onClicked: () {
-                print("Profile picture clicked");
-              }),
+          InkWell(
+            borderRadius: BorderRadius.circular(pictureRadius),
+            onTap: () => ProfilePage.pickAndUploadImage(user),
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children:
+                [
+                ProfilePicture(
+                    radius: pictureRadius,
+                    //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
+                    imagePath: user.imagePath == null || user.imagePath == ""
+                        ? "lib/images/placeHolderProfileImage.jpg"
+                        : user.imagePath!,
+                    //isNetworkPath: user.imagePath != null,
+                    isNetworkPath: user.imagePath != null && user.imagePath != "",
+                    onClicked: () => {}
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: plusIconDistance, top: plusIconDistance),
+                      child: Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: [
+                          Icon(Icons.circle, size: plusIconSize * .7, color: Colors.white),
+                          Icon(Icons.add_circle, size: plusIconSize, color: Theme.of(context).colorScheme.primary)
+                        ])),
+                ]
+            ),
+          ),
           Padding(
             padding: EdgeInsets.only(top: 10),
             child: ElevatedButton(
@@ -125,8 +144,10 @@ class Profile extends StatelessWidget {
           text: userData.frequentedLocations,
           width: width,
           onChanged: (frequentedLocations) {
-            myUserData.frequentedLocations = frequentedLocations; // change locally (maybe doesn't need to happen but we'll deal with that later)
-            update_user(context, 'frequentedLocations', frequentedLocations); // change on database
+            myUserData.frequentedLocations =
+                frequentedLocations; // change locally (maybe doesn't need to happen but we'll deal with that later)
+            update_user(context, 'frequentedLocations',
+                frequentedLocations); // change on database
           },
           maxLines: 4,
           maxLength: 200,

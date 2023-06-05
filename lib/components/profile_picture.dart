@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 class ProfilePicture extends StatelessWidget {
@@ -27,12 +25,13 @@ class ProfilePicture extends StatelessWidget {
         color: Colors.transparent,
         child: Ink.image(
           image: isNetworkPath
-              ? NetworkImage(imagePath)
+              //? NetworkImage(imagePath)
+              ? Image.network(imagePath).image
               : Image.asset(imagePath).image,
           fit: BoxFit.cover,
           width: radius,
           height: radius,
-          child: InkWell(onTap: onClicked),
+          //child: InkWell(onTap: onClicked),
         ),
       ),
     );
