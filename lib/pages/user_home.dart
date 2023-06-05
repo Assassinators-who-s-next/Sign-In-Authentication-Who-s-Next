@@ -151,8 +151,6 @@ class _UserHomeState extends State<UserHome> {
       double screenHeight, GroupState currentState) {
     Widget screen = prematchScreen(); //default screen that returns
 
-    // screen = postmatchScreen();
-
     if (currentState == GroupState.finished) {
       // game finished state
       screen = postmatchScreen();
@@ -234,7 +232,7 @@ class _UserHomeState extends State<UserHome> {
               children: [
                 TargetName(username: targetData.name),
                 ProfilePicture(
-                    radius: screenWidth * .40,
+                    radius: screenWidth * 0.40,
                     imagePath: targetData.imagePath!,
                     isNetworkPath: !isDefaultPicture,
                     onClicked: () => print("clicked elimation target")),
@@ -316,7 +314,7 @@ Center deadScreen(double screenWidth, double screenHeight) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(20),
             child: Text(
               'You are eliminated.\n Please wait until the match is completed.',
@@ -327,16 +325,6 @@ Center deadScreen(double screenWidth, double screenHeight) {
               ),
             ),
           ),
-          Padding(
-              padding: EdgeInsets.all(20),
-              child: LargeUserHomeButton(
-                  label: "Debug(go to finished screen)",
-                  color: Color.fromARGB(255, 43, 167, 204),
-                  buttonState: true,
-                  onPressed: () => {
-                        selectedGroup.state = GroupState.finished,
-                        update_group_state(selectedGroup),
-                      }))
         ],
       ),
     ),
@@ -354,7 +342,7 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
           const Padding(
             padding: EdgeInsets.all(20),
             child: Text(
-              'Anonymous player claims they have eliminated you. Do you verify this occurred?',
+              "You have been eliminated! Do you acknowledge this occurred?",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.red,
@@ -457,58 +445,77 @@ StreamBuilder prematchScreen() {
   );
 }
 
-//Future<void> getWinningPlayers() async {
-Future<String> getLastPlayer() async {
-  CollectionReference playerList = FirebaseFirestore.instance
-      .collection('groups')
-      .doc(selectedGroup.group_name)
-      .collection('players');
+String getLastPlayerStandingImage() {
+  Map<String, Player> playersList = selectedGroup.players;
 
-  print('got collection');
+  String? lastPlayerImage = "";
 
-  QuerySnapshot stateSnapshot =
-      await playerList.where('state', isLessThan: 2).limit(1).get();
+  playersList.forEach((key, value) {
+    if (value.state != PlayerState.dead) {
+      if (value.userData!.imagePath == null ||
+          value.userData!.imagePath == "") {
+        return;
+      }
 
-  print('got querysnapshot');
+      lastPlayerImage = value.userData!.imagePath;
+      return;
+    }
+  });
 
-  String lastPlayerNameSnapshot = stateSnapshot.docs.first.get('name');
-
-  print("player that was alive until last $lastPlayerNameSnapshot");
-
-  return lastPlayerNameSnapshot;
+  return lastPlayerImage ?? "";
 }
 
-Future<String> getMaxPointsPlayer() async {
-  CollectionReference playerList = FirebaseFirestore.instance
-      .collection('groups')
-      .doc(selectedGroup.group_name)
-      .collection('players');
+String getLastPlayerStandingName() {
+  Map<String, Player> playersList = selectedGroup.players;
 
-  print('got collection');
+  String? lastPlayerName = "";
 
-  //player who has the most points
-  QuerySnapshot maxPointsSnapshot =
-      await playerList.orderBy('points', descending: true).limit(1).get();
+  playersList.forEach((key, value) {
+    if (value.state != PlayerState.dead) {
+      lastPlayerName = value.name;
+      return;
+    }
+  });
 
-  print('got querysnapshot');
+  return lastPlayerName ?? "";
+}
 
-  //the name of that player
-  String maxPointsNameSnapshot = maxPointsSnapshot.docs.first.get('name');
+String getMaxPointsPlayerImage() {
+  List playersList = selectedGroup.players.values.toList();
 
-  print("player that has the most point $maxPointsNameSnapshot");
+  playersList.sort((a, b) => b.points.compareTo(a.points));
 
-  return maxPointsNameSnapshot;
+  Player maxPoints = playersList.first;
+
+  String? maxPointsPlayerImage = "";
+
+  if (maxPoints.userData == null ||
+      maxPoints.userData!.imagePath == null ||
+      maxPoints.userData!.imagePath == "") {
+    return maxPointsPlayerImage;
+  }
+
+  maxPointsPlayerImage = maxPoints.userData!.imagePath;
+
+  return maxPointsPlayerImage ?? "";
+}
+
+String getMaxPointsPlayerName() {
+  List playersList = selectedGroup.players.values.toList();
+
+  playersList.sort((a, b) => b.points.compareTo(a.points));
+
+  Player maxPoints = playersList.first;
+
+  return maxPoints.name ?? "";
 }
 
 Center postmatchScreen() {
-  // future string to string????
-  Future<String> maxPlayer = getMaxPointsPlayer();
-  Future<String> lastPlayer = getLastPlayer();
+  String maxPointsPlayerName = getMaxPointsPlayerName();
+  String maxPointsPlayerImage = getMaxPointsPlayerImage();
 
-//  String maxPointPlyaer = maxPlayer.toString();
-//  String lastPlayerStanding = lastPlayer.toString();
-//  print('maxpoints player: ${maxPointPlayer}');
-//  print('last player: ${lastPlayerStanding}');
+  String lastPlayerName = getLastPlayerStandingName();
+  String lastPlayerImage = getLastPlayerStandingImage();
 
   return Center(
     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -517,12 +524,38 @@ Center postmatchScreen() {
         child: Text("Match Finished!", style: TextStyle(fontSize: 30)),
       ),
       Padding(
-        padding: EdgeInsets.all(20),
-        //child: Text("Winner: ", style: TextStyle(fontSize: 20)),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Text("Last Standing: ", style: TextStyle(fontSize: 20)),
-            Text("Most Points: ", style: TextStyle(fontSize: 20)),
+            const Text("Last Standing",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Padding(padding: EdgeInsetsDirectional.all(5)),
+            Text("$lastPlayerName", style: const TextStyle(fontSize: 20)),
+            const Padding(padding: EdgeInsetsDirectional.all(5)),
+            ProfilePicture(
+                radius: WidgetsBinding.instance.platformDispatcher.views.first
+                        .physicalSize.width *
+                    0.20,
+                imagePath: lastPlayerImage == ""
+                    ? "lib/images/placeHolderProfileImage.jpg"
+                    : lastPlayerImage,
+                isNetworkPath: lastPlayerImage != "",
+                onClicked: () => print('clicked on last winning player')),
+            const Padding(padding: EdgeInsetsDirectional.all(15)),
+            const Text("Most Eliminations",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Padding(padding: EdgeInsetsDirectional.all(5)),
+            Text("$maxPointsPlayerName", style: const TextStyle(fontSize: 20)),
+            const Padding(padding: EdgeInsetsDirectional.all(5)),
+            ProfilePicture(
+                radius: WidgetsBinding.instance.platformDispatcher.views.first
+                        .physicalSize.width *
+                    0.20,
+                imagePath: maxPointsPlayerImage == ""
+                    ? "lib/images/placeHolderProfileImage.jpg"
+                    : maxPointsPlayerImage,
+                isNetworkPath: maxPointsPlayerImage != "",
+                onClicked: () => print('clicked on last winning player')),
           ],
         ),
       ),
@@ -531,7 +564,7 @@ Center postmatchScreen() {
         child: LargeUserHomeButton(
           label: "Start a new match",
           color: const Color.fromARGB(255, 43, 167, 204),
-          buttonState: true,
+          buttonState: selectedGroup.groupHost == myUserData.uid,
           onPressed: () => {
             selectedGroup.state = GroupState.notStarted,
             update_group_state(selectedGroup),

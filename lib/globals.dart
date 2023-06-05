@@ -74,7 +74,6 @@ UserData? currentTarget = UserData(
   frequentedLocations: "",
 );
 
-
 User? fireBaseUser;
 
 void setSelectedGroup(Group group) {

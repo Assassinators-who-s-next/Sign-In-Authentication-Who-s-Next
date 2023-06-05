@@ -23,7 +23,7 @@ import 'home_page.dart';
 const List<String> types_of_elims = <String>[
   'Finger Guns',
   'Water Balloons',
-  'Camera Snipe',
+  'Rubber Band Gun',
   'Pied to the Face'
 ];
 
