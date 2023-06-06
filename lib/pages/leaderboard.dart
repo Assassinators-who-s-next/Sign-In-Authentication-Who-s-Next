@@ -2,74 +2,56 @@ import 'package:flutter/material.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/components/leaderboard_element.dart';
 import '../player.dart';
-import '../game_group.dart';
-import '../networking.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-
 import '../globals.dart' as globals;
 
 class LeaderBoard extends StatefulWidget {
   const LeaderBoard({Key? key}) : super(key: key);
 
-  static GlobalKey<_LeaderboardState> leaderboardKey = GlobalKey();
-
-  //_LeaderboardState? myState;
+  static GlobalKey<LeaderboardState> leaderboardKey = GlobalKey();
 
   void reload(BuildContext context) async {
-    print("Testing reload 1");
     await reloadSelectedGroup();
-    print("Testing reload 2: " + globals.selectedGroup.toString());
-
-    // TODO: figure out how to reload the state
   }
 
   @override
-  _LeaderboardState createState() => _LeaderboardState();
+  LeaderboardState createState() => LeaderboardState();
 }
 
-void sortPlayers() {
-  //globals.selectedGroup.players.sort((a, b) => b.points.compareTo(a.points));
-}
+class LeaderboardState extends State<LeaderBoard> {
+  List<LeaderboardElement> players = [];
 
-class _LeaderboardState extends State<LeaderBoard> {
-  List<LeaderboardElement> _players = [];
-
-  _LeaderboardState() {
-    addGroupUpdateListener(OnGroupUpdate);
+  LeaderboardState() {
+    addGroupUpdateListener(onGroupUpdate);
   }
 
   @override
   void dispose() {
-    removeGroupUpdateListener(OnGroupUpdate);
+    removeGroupUpdateListener(onGroupUpdate);
     super.dispose();
   }
 
-  void OnGroupUpdate() {
-    //print("Testing OnGroupUpdate");
-    // refresh page
+  void onGroupUpdate() {
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    _players.clear();
+    players.clear();
     List<Player> playerList = globals.selectedGroup.players.values.toList();
     for (int i = 0; i < playerList.length; i++) {
-      Player cur_player = playerList[i];
+      Player curPlayer = playerList[i];
 
-      String player_name = cur_player.get_name();
-      int player_points = cur_player.points;
+      String playerName = curPlayer.getName();
+      int playerPoints = curPlayer.points;
       var newElement = LeaderboardElement(
-          player: cur_player,
-          playerName: player_name ?? "unknown",
-          playerPoints: player_points ?? 0,
-          eliminated: cur_player.state == PlayerState.dead);
-      _players.add(newElement);
+          player: curPlayer,
+          playerName: playerName,
+          playerPoints: playerPoints,
+          eliminated: curPlayer.state == PlayerState.dead);
+      players.add(newElement);
     }
 
-    // TODO: sort everytime read from Firebase, need to figure out where in ListView.builder
-    _players.sort((a, b) => int.parse((b as LeaderboardElement).getPoints())
-        .compareTo(int.parse((a as LeaderboardElement).getPoints())));
+    players.sort((a, b) => int.parse((b).getPoints()).compareTo(int.parse((a).getPoints())));
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -78,10 +60,8 @@ class _LeaderboardState extends State<LeaderBoard> {
         body: SafeArea(
           child: Column(
             children: [
-              // top info
               const Padding(padding: EdgeInsets.only(top: 10)),
               leaderboardTopInfo(),
-              // list of players
               leaderboardPlayerInfo(),
             ],
           ),
@@ -93,19 +73,19 @@ class _LeaderboardState extends State<LeaderBoard> {
   Expanded leaderboardPlayerInfo() {
     return Expanded(
       child: ListView.builder(
-        itemCount: _players.length,
+        itemCount: players.length,
         itemBuilder: (context, index) {
           return Container(
             decoration: BoxDecoration(
-              color: _players[index].eliminated
-                  ? Color.fromARGB(255, 209, 209, 209)
-                  : Color.fromARGB(255, 255, 255, 255),
+              color: players[index].eliminated
+                  ? const Color.fromARGB(255, 209, 209, 209)
+                  : const Color.fromARGB(255, 255, 255, 255),
               border: const Border(
                   bottom: BorderSide(
                       color: Color.fromARGB(255, 204, 204, 204), width: 1)),
             ),
             child: ListTile(
-              title: _players[index],
+              title: players[index],
               contentPadding:
                   const EdgeInsets.only(top: 5, bottom: 5, right: 15, left: 15),
             ),
@@ -121,13 +101,12 @@ class _LeaderboardState extends State<LeaderBoard> {
         const Text('Leaderboard',
             style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
         const Padding(padding: EdgeInsets.only(bottom: 10)),
-        //const Text('Respawn in: xx:xx:xx'),
         const Padding(padding: EdgeInsets.only(bottom: 15)),
         Padding(
           padding: const EdgeInsets.only(bottom: 5, left: 20, right: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text('Players'), Text('Eliminations')],
+            children: const [Text('Players'), Text('Eliminations')],
           ),
         ),
       ],

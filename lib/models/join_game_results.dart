@@ -1,7 +1,7 @@
 class JoinGameResults
 {
- String? errorMessage;
- final bool success;
+  String? errorMessage;
+  final bool success;
 
   JoinGameResults(this.success, [this.errorMessage]);
 }

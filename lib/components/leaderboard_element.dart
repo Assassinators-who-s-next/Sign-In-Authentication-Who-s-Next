@@ -1,4 +1,3 @@
-import 'package:basic_auth/globals.dart';
 import 'package:basic_auth/player.dart';
 import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +17,11 @@ class LeaderboardElement extends StatelessWidget {
       required this.eliminated});
 
   String getName() {
-    return this.playerName;
+    return playerName;
   }
 
   String getPoints() {
-    return '${this.playerPoints}';
+    return '$playerPoints';
   }
 
   @override
@@ -40,7 +39,6 @@ class LeaderboardElement extends StatelessWidget {
         ProfilePicture(
           radius: 50,
           imagePath: playerImagePath,
-          //imagePath: myUserData.imagePath!,
           isNetworkPath: isNetworkPath,
           onClicked: () {},
         ),
@@ -55,7 +53,6 @@ class LeaderboardElement extends StatelessWidget {
             ),
           ),
         ),
-//        const Spacer(),
         Text(
           playerPoints.toString(),
           style: const TextStyle(

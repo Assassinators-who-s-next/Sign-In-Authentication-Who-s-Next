@@ -25,13 +25,11 @@ class ProfilePicture extends StatelessWidget {
         color: Colors.transparent,
         child: Ink.image(
           image: isNetworkPath
-              //? NetworkImage(imagePath)
               ? Image.network(imagePath).image
               : Image.asset(imagePath).image,
           fit: BoxFit.cover,
           width: radius,
           height: radius,
-          //child: InkWell(onTap: onClicked),
         ),
       ),
     );

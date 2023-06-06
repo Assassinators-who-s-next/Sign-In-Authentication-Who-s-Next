@@ -1,22 +1,17 @@
-import 'package:basic_auth/auth.dart';
 import 'package:basic_auth/components/profile_text_field.dart';
 import 'package:basic_auth/image_upload.dart';
 import 'package:basic_auth/networking.dart';
-import 'package:basic_auth/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
 import '../models/user_data.dart';
-import 'join_create_game_page.dart';
-import 'login_page.dart';
-import 'package:basic_auth/globals.dart';
-
+import '../globals.dart' as globals;
 import 'package:basic_auth/components/profile_picture.dart';
-//import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
 class Profile extends StatelessWidget {
+  const Profile({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final user = myUserData;
-    //final user = UserPreferences?.user;
+    final user = globals.myUserData;
 
     return Scaffold(
         backgroundColor: Colors.grey[300],
@@ -35,13 +30,11 @@ class Profile extends StatelessWidget {
                           textAlign: TextAlign.center)),
                 ),
                 Center(child: buildPicture(user, context)),
-                //buildPicture(myUserData, context),
 
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Column(
                     children: [
-                      //buildDisplayedInfo(user, context),
                       buildDisplayedInfo(user, context),
                     ],
                   ),
@@ -57,7 +50,7 @@ class Profile extends StatelessWidget {
     const double plusIconSize = 65;
     const double plusIconDistance = pictureRadius * (.707);
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           InkWell(
@@ -69,32 +62,30 @@ class Profile extends StatelessWidget {
                 [
                 ProfilePicture(
                     radius: pictureRadius,
-                    //imagePath: myUserData.imagePath ?? UserPreferences.placeholderImagePath,
                     imagePath: user.imagePath == null || user.imagePath == ""
                         ? "lib/images/placeHolderProfileImage.jpg"
                         : user.imagePath!,
-                    //isNetworkPath: user.imagePath != null,
                     isNetworkPath: user.imagePath != null && user.imagePath != "",
                     onClicked: () => {}
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: plusIconDistance, top: plusIconDistance),
+                      padding: const EdgeInsets.only(left: plusIconDistance, top: plusIconDistance),
                       child: Stack(
                         alignment: AlignmentDirectional.center,
                         children: [
-                          Icon(Icons.circle, size: plusIconSize * .7, color: Colors.white),
+                          const Icon(Icons.circle, size: plusIconSize * .7, color: Colors.white),
                           Icon(Icons.add_circle, size: plusIconSize, color: Theme.of(context).colorScheme.primary)
                         ])),
                 ]
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.only(top: 10),
             child: ElevatedButton(
               onPressed: () {
                 logout(context);
               },
-              child: Text('Logout'),
+              child: const Text('Logout'),
             ),
           ),
         ],
@@ -113,8 +104,8 @@ class Profile extends StatelessWidget {
           text: userData.name,
           width: width,
           onChanged: (name) {
-            myUserData.name = name;
-            update_user(context, 'name', name);
+            globals.myUserData.name = name;
+            updateUser(context, 'name', name);
           },
           maxLength: 26,
         ),
@@ -123,8 +114,8 @@ class Profile extends StatelessWidget {
           text: userData.pronouns,
           width: width,
           onChanged: (pronouns) {
-            myUserData.pronouns = pronouns;
-            update_user(context, 'pronouns', pronouns);
+            globals.myUserData.pronouns = pronouns;
+            updateUser(context, 'pronouns', pronouns);
           },
           maxLength: 10,
         ),
@@ -133,8 +124,8 @@ class Profile extends StatelessWidget {
           text: userData.description,
           width: width,
           onChanged: (description) {
-            myUserData.description = description;
-            update_user(context, 'description', description);
+            globals.myUserData.description = description;
+            updateUser(context, 'description', description);
           },
           maxLines: 4,
           maxLength: 200,
@@ -144,10 +135,10 @@ class Profile extends StatelessWidget {
           text: userData.frequentedLocations,
           width: width,
           onChanged: (frequentedLocations) {
-            myUserData.frequentedLocations =
-                frequentedLocations; // change locally (maybe doesn't need to happen but we'll deal with that later)
-            update_user(context, 'frequentedLocations',
-                frequentedLocations); // change on database
+            globals.myUserData.frequentedLocations =
+                frequentedLocations; 
+            updateUser(context, 'frequentedLocations',
+                frequentedLocations); 
           },
           maxLines: 4,
           maxLength: 200,

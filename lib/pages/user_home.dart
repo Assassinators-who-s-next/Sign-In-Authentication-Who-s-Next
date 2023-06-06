@@ -1,34 +1,30 @@
-import 'dart:developer';
+// ignore_for_file: deprecated_member_use
 
 import 'package:basic_auth/components/game_list_drawer.dart';
 import 'package:basic_auth/components/profile_picture.dart';
-import 'package:basic_auth/globals.dart';
-import 'package:basic_auth/models/match_options.dart';
 import 'package:basic_auth/player.dart';
 import 'package:basic_auth/utils/popup_modal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:basic_auth/models/user_data.dart';
-import 'package:loader_overlay/loader_overlay.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:basic_auth/networking.dart';
 import 'package:basic_auth/pages/join_create_game_page.dart';
-import 'package:basic_auth/image_upload.dart';
-
 import '../game_group.dart';
+import '../globals.dart' as globals;
 
 class UserHome extends StatefulWidget {
+  const UserHome({super.key});
+
   @override
-  State<UserHome> createState() => _UserHomeState();
+  State<UserHome> createState() => UserHomeState();
 }
 
-class _UserHomeState extends State<UserHome> {
+class UserHomeState extends State<UserHome> {
   bool? isCheckedBox = false;
   bool notifyTarget = false;
   late Group selGroup;
 
-  _UserHomeState() {
+  UserHomeState() {
     addGroupUpdateListener(updateGroupRef);
   }
 
@@ -40,23 +36,21 @@ class _UserHomeState extends State<UserHome> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    selGroup = selectedGroup; //this might not get the state update as well
+    selGroup = globals.selectedGroup;
   }
 
-  // I think you need this when you click different group
-  void SetSelectedGroup(Group group) async {
-    setSelectedGroup(group);
+  void setSelectedGroup(Group group) async {
+    globals.setSelectedGroup(group);
     updateGroupRef();
-    SetFinishedLoadingState(false);
+    globals.setFinishedLoadingState(false);
     await reloadSelectedGroup();
-    SetFinishedLoadingState(true);
+    globals.setFinishedLoadingState(true);
   }
 
   void updateGroupRef() {
     setState(() {
-      selGroup = selectedGroup;
+      selGroup = globals.selectedGroup;
     });
   }
 
@@ -71,17 +65,17 @@ class _UserHomeState extends State<UserHome> {
       screenHeight = width;
     }
 
-    return myGroups.isEmpty
+    return globals.myGroups.isEmpty
         ? noGroupScreenContent(context)
         : StreamBuilder<GroupState>(
-            stream: getGroupStateStream(selGroup.group_name),
+            stream: getGroupStateStream(selGroup.groupName),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Text("Something went wrong");
+                return const Text("Something went wrong");
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
 
               GroupState groupState = snapshot.data ?? GroupState.notStarted;
@@ -91,7 +85,7 @@ class _UserHomeState extends State<UserHome> {
                 screenHeight: screenHeight,
                 content: homeScreenContent(
                     context, screenWidth, screenHeight, groupState),
-                onSelectGroup: (p0) => SetSelectedGroup(p0),
+                onSelectGroup: (p0) => setSelectedGroup(p0),
               );
             });
   }
@@ -109,8 +103,7 @@ class _UserHomeState extends State<UserHome> {
           return GroupState.values[state];
         }
       }
-      return GroupState
-          .notStarted; // Return a default value if state or data is null
+      return GroupState.notStarted;
     });
   }
 
@@ -127,9 +120,9 @@ class _UserHomeState extends State<UserHome> {
             padding: const EdgeInsetsDirectional.all(40),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Color.fromARGB(255, 43, 167, 204),
-                minimumSize: Size(200, 50),
-                textStyle: TextStyle(fontSize: 25),
+                primary: const Color.fromARGB(255, 43, 167, 204),
+                minimumSize: const Size(200, 50),
+                textStyle: const TextStyle(fontSize: 25),
               ),
               onPressed: () => {
                 Navigator.pushReplacement(
@@ -137,9 +130,8 @@ class _UserHomeState extends State<UserHome> {
                     MaterialPageRoute(
                       builder: (context) => JoinCreatePage(),
                     )),
-                print("pressed join/create button")
               },
-              child: Text("Join/Create"),
+              child: const Text("Join/Create"),
             ),
           ),
         ],
@@ -149,22 +141,18 @@ class _UserHomeState extends State<UserHome> {
 
   Widget homeScreenContent(BuildContext context, double screenWidth,
       double screenHeight, GroupState currentState) {
-    Widget screen = prematchScreen(); //default screen that returns
+    Widget screen = prematchScreen(); 
 
     if (currentState == GroupState.finished) {
-      // game finished state
       screen = postmatchScreen();
-      print("going to finishedScreen switch statement");
     } else if (currentState == GroupState.running) {
       screen = runningScreen(screenWidth, screenHeight, context);
-      print("going to aliveScreen switch statement");
     } else {
       screen = prematchScreen();
-      print("going to prematchScreen switch statement");
     }
 
     return Stack(children: [
-      InfoButton(context, screenWidth, screenHeight),
+      infoButton(context, screenWidth, screenHeight),
       screen,
     ]);
   }
@@ -185,47 +173,45 @@ class _UserHomeState extends State<UserHome> {
         }
       }
       return PlayerState
-          .alive; // Return a default value if state or data is null
+          .alive;
     });
   }
 
   StreamBuilder<PlayerState> runningScreen(
       double screenWidth, double screenHeight, BuildContext context) {
     return StreamBuilder<PlayerState>(
-        stream: getPlayerStateStream(selectedGroup.group_name, myUserData.uid),
+        stream: getPlayerStateStream(globals.selectedGroup.groupName, globals.myUserData.uid),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text("running screen crashed(player state have some issue)");
+            return const Text("running screen crashed(player state have some issue)");
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           PlayerState playerState = snapshot.data ?? PlayerState.alive;
 
           if (playerState == PlayerState.preparingToDie) {
-            print("going to prepareToDieScreen modal");
             return prepareToDieScreen(screenWidth, screenHeight);
           } else if (playerState == PlayerState.dead) {
-            print("going to deadScreen modal");
             return deadScreen(screenWidth, screenHeight);
           }
 
-          bool isDefaultPicture = currentTarget!.imagePath == null ||
-              currentTarget!.imagePath == "";
+          bool isDefaultPicture = globals.currentTarget!.imagePath == null ||
+              globals.currentTarget!.imagePath == "";
 
 
           UserData targetData = UserData(
-              description: currentTarget!.description,
+              description: globals.currentTarget!.description,
               email: "",
-              frequentedLocations: currentTarget!.frequentedLocations,
+              frequentedLocations: globals.currentTarget!.frequentedLocations,
               imagePath: isDefaultPicture
                   ? "lib/images/placeHolderProfileImage.jpg"
-                  : currentTarget!.imagePath,
-              name: currentTarget!.name,
-              pronouns: currentTarget!.pronouns,
-              uid: currentTarget!.uid);
+                  : globals.currentTarget!.imagePath,
+              name: globals.currentTarget!.name,
+              pronouns: globals.currentTarget!.pronouns,
+              uid: globals.currentTarget!.uid);
 
           return Center(
             child: Column(
@@ -236,20 +222,19 @@ class _UserHomeState extends State<UserHome> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TargetName(username: targetData.name),
-                      Text("(${targetData.pronouns})", style: TextStyle(color: Colors.grey)),
+                      Text("(${targetData.pronouns})", style: const TextStyle(color: Colors.grey)),
                       
                     ]
                   ),
                 ),
 
-                Padding(padding: const EdgeInsetsDirectional.all(5),),
+                const Padding(padding: EdgeInsetsDirectional.all(5)),
                  
-                //TargetName(username: targetData.name),
                 ProfilePicture(
                     radius: screenWidth * 0.40,
                     imagePath: targetData.imagePath!,
                     isNetworkPath: !isDefaultPicture,
-                    onClicked: () => print("clicked elimation target")),
+                    onClicked: () => {}),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -261,7 +246,7 @@ class _UserHomeState extends State<UserHome> {
                   padding: const EdgeInsetsDirectional.all(40),
                   child: LargeUserHomeButton(
                       label: "Eliminate",
-                      color: Color.fromARGB(255, 238, 127, 119),
+                      color: const Color.fromARGB(255, 238, 127, 119),
                       buttonState: true,
                       onPressed: () async {
                         beginElimination();
@@ -274,30 +259,27 @@ class _UserHomeState extends State<UserHome> {
   }
 }
 
-//basically update the state of the playerstate
-//and upload it to the database
+
 Future<void> beginElimination() async {
   Player player =
-      selectedGroup.players[currentTarget!.uid]!; //HOPE IT IS DEEP COPY
+      globals.selectedGroup.players[globals.currentTarget!.uid]!;
   player.state = PlayerState.preparingToDie;
-  player.eliminator = myUserData.uid;
-  setPlayerInGroup(currentTarget!.uid, selectedGroup.group_name, player);
+  player.eliminator = globals.myUserData.uid;
+  setPlayerInGroup(globals.currentTarget!.uid, globals.selectedGroup.groupName, player);
 }
 
 Future<void> endElimination() async {
-  Player player = selectedGroup.players[myUserData.uid]!; //HOPE IT IS DEEP COPY
+  Player player = globals.selectedGroup.players[globals.myUserData.uid]!; 
   player.state = PlayerState.dead;
-  setPlayerInGroup(myUserData.uid, selectedGroup.group_name, player);
+  setPlayerInGroup(globals.myUserData.uid, globals.selectedGroup.groupName, player);
 }
 
 Future<void> backToAlive() async {
-  Player player = selectedGroup.players[myUserData.uid]!; //HOPE IT IS DEEP COPY
+  Player player = globals.selectedGroup.players[globals.myUserData.uid]!;
   player.state = PlayerState.alive;
-  setPlayerInGroup(myUserData.uid, selectedGroup.group_name, player);
+  setPlayerInGroup(globals.myUserData.uid, globals.selectedGroup.groupName, player);
 }
 
-/* Create a function deadScreen() where it returns the widget that has the component of a big header text with red color
-   that generates "you're dead, wait for winner comes up" with the gray background */
 Center deadScreen(double screenWidth, double screenHeight) {
   return Center(
     child: SizedBox(
@@ -347,29 +329,25 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 238, 127, 119),
+                  backgroundColor: const Color.fromARGB(255, 238, 127, 119),
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
-                  textStyle: TextStyle(fontSize: 25),
+                  textStyle: const TextStyle(fontSize: 25),
                 ),
                 onPressed: () async {
-                  //put target have eliminate notification page appear on their hand
-                  print("eliminated done");
-                  joshEliminatePlayer();
-                  // endElimination();
+                  eliminatePlayer();
                 },
-                child: Text("Yes"),
+                child: const Text("Yes"),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 43, 167, 204),
+                  backgroundColor: const Color.fromARGB(255, 43, 167, 204),
                   minimumSize: Size(screenWidth * 0.25, screenHeight * 0.05),
-                  textStyle: TextStyle(fontSize: 25),
+                  textStyle: const TextStyle(fontSize: 25),
                 ),
                 onPressed: () async {
-                  print("eliminated canceled");
                   backToAlive();
                 },
-                child: Text("No"),
+                child: const Text("No"),
               ),
             ],
           )
@@ -379,28 +357,23 @@ Center prepareToDieScreen(double screenWidth, double screenHeight) {
   );
 }
 
-//Center prematchScreen(double screenWidth) {
 StreamBuilder prematchScreen() {
   return StreamBuilder<QuerySnapshot>(
     stream: FirebaseFirestore.instance
         .collection('groups')
-        .doc(selectedGroup.group_name)
+        .doc(globals.selectedGroup.groupName)
         .collection('players')
         .snapshots(),
     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-      // error
       if (snapshot.hasError) {
         return Center(
-            child: Text('Error loading game ${selectedGroup.group_name}'));
-        // receiving data
+            child: Text('Error loading game ${globals.selectedGroup.groupName}'));
       } else if (snapshot.connectionState == ConnectionState.waiting) {
         return const Padding(
           padding: EdgeInsetsDirectional.all(20),
           child: Center(child: CircularProgressIndicator()),
         );
-//          return const Center(child: Text('Loading'));
       }
-//        print('${snapshot.data!.size}');
 
       bool enoughPlayers = false;
       if (snapshot.data!.size >= 2) {
@@ -412,23 +385,19 @@ StreamBuilder prematchScreen() {
           padding: EdgeInsets.all(20),
           child: Text("Players In Match: ", style: TextStyle(fontSize: 30)),
         ),
-        Text("${snapshot.data!.size}/${selectedGroup.matchOptions.maxPlayers}",
+        Text("${snapshot.data!.size}/${globals.selectedGroup.matchOptions.maxPlayers}",
             style: const TextStyle(fontSize: 25)),
         Padding(
           padding: const EdgeInsetsDirectional.all(40),
           child: LargeUserHomeButton(
             label: "Start match",
             color: const Color.fromARGB(255, 43, 167, 204),
-            //currPlayers: snapshot.data!.size,
-            //buttonState: enoughPlayers,
             buttonState:
-                enoughPlayers && selectedGroup.groupHost == myUserData.uid,
+                enoughPlayers && globals.selectedGroup.groupHost == globals.myUserData.uid,
             onPressed: () async {
-              print("pressed start match button");
-              await startGameOrRespawn(); //at least this one working i believe
-              selectedGroup.state = GroupState.running;
-              update_group_state(selectedGroup);
-              print("end press start match button");
+              await startGameOrRespawn();
+              globals.selectedGroup.state = GroupState.running;
+              updateGroupState(globals.selectedGroup);
             },
           ),
         )
@@ -438,7 +407,7 @@ StreamBuilder prematchScreen() {
 }
 
 String getLastPlayerStandingImage() {
-  Map<String, Player> playersList = selectedGroup.players;
+  Map<String, Player> playersList = globals.selectedGroup.players;
 
   String? lastPlayerImage = "";
 
@@ -458,7 +427,7 @@ String getLastPlayerStandingImage() {
 }
 
 String getLastPlayerStandingName() {
-  Map<String, Player> playersList = selectedGroup.players;
+  Map<String, Player> playersList = globals.selectedGroup.players;
 
   String? lastPlayerName = "";
 
@@ -473,7 +442,7 @@ String getLastPlayerStandingName() {
 }
 
 String getMaxPointsPlayerImage() {
-  List playersList = selectedGroup.players.values.toList();
+  List playersList = globals.selectedGroup.players.values.toList();
 
   playersList.sort((a, b) => b.points.compareTo(a.points));
 
@@ -493,7 +462,7 @@ String getMaxPointsPlayerImage() {
 }
 
 String getMaxPointsPlayerName() {
-  List playersList = selectedGroup.players.values.toList();
+  List playersList = globals.selectedGroup.players.values.toList();
 
   playersList.sort((a, b) => b.points.compareTo(a.points));
 
@@ -522,7 +491,7 @@ Center postmatchScreen() {
             const Text("Last Standing",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const Padding(padding: EdgeInsetsDirectional.all(5)),
-            Text("$lastPlayerName", style: const TextStyle(fontSize: 20)),
+            Text(lastPlayerName, style: const TextStyle(fontSize: 20)),
             const Padding(padding: EdgeInsetsDirectional.all(5)),
             ProfilePicture(
                 radius: WidgetsBinding.instance.platformDispatcher.views.first
@@ -532,12 +501,12 @@ Center postmatchScreen() {
                     ? "lib/images/placeHolderProfileImage.jpg"
                     : lastPlayerImage,
                 isNetworkPath: lastPlayerImage != "",
-                onClicked: () => print('clicked on last winning player')),
+                onClicked: () => {}),
             const Padding(padding: EdgeInsetsDirectional.all(15)),
             const Text("Most Eliminations",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const Padding(padding: EdgeInsetsDirectional.all(5)),
-            Text("$maxPointsPlayerName", style: const TextStyle(fontSize: 20)),
+            Text(maxPointsPlayerName, style: const TextStyle(fontSize: 20)),
             const Padding(padding: EdgeInsetsDirectional.all(5)),
             ProfilePicture(
                 radius: WidgetsBinding.instance.platformDispatcher.views.first
@@ -547,7 +516,7 @@ Center postmatchScreen() {
                     ? "lib/images/placeHolderProfileImage.jpg"
                     : maxPointsPlayerImage,
                 isNetworkPath: maxPointsPlayerImage != "",
-                onClicked: () => print('clicked on last winning player')),
+                onClicked: () => {}),
           ],
         ),
       ),
@@ -556,10 +525,10 @@ Center postmatchScreen() {
         child: LargeUserHomeButton(
           label: "Start a new match",
           color: const Color.fromARGB(255, 43, 167, 204),
-          buttonState: selectedGroup.groupHost == myUserData.uid,
+          buttonState: globals.selectedGroup.groupHost == globals.myUserData.uid,
           onPressed: () => {
-            selectedGroup.state = GroupState.notStarted,
-            update_group_state(selectedGroup),
+            globals.selectedGroup.state = GroupState.notStarted,
+            updateGroupState(globals.selectedGroup),
           },
         ),
       ),
@@ -567,7 +536,7 @@ Center postmatchScreen() {
   );
 }
 
-Container InfoButton(
+Container infoButton(
     BuildContext context, double screenWidth, double screenHeight) {
   double size = screenWidth * .075;
   return Container(
@@ -580,15 +549,15 @@ Container InfoButton(
           onTap: () => {
             showPopup(
               context,
-              title: Text("Match Info: ",
-                  style: const TextStyle(
+              title: const Text("Match Info: ",
+                  style: TextStyle(
                       fontSize: 35, fontWeight: FontWeight.bold)),
-              content: AboutPopupContent(),
+              content: aboutPopupContent(),
               bottomWidgets: [
                 closeButton(context),
               ],
-              width: screenWidth * .9, //width
-              height: screenHeight * .9, //height
+              width: screenWidth * .9,
+              height: screenHeight * .9,
             )
           },
           child: Icon(Icons.info, size: size),
@@ -598,7 +567,7 @@ Container InfoButton(
   );
 }
 
-Widget AboutPopupContent() {
+Widget aboutPopupContent() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -606,23 +575,23 @@ Widget AboutPopupContent() {
       //    "${selectedGroup.matchOptions.totalGameTimeDuration} ${selectedGroup.matchOptions.totalGameTimeType}"),
       //MatchInfoText("Respawn Time",
       //    "${selectedGroup.matchOptions.respawnDuration} ${selectedGroup.matchOptions.respawnTimeType}"),
-      MatchInfoText("Permitted Elimation Type",
-          selectedGroup.matchOptions.eliminationType),
-      MatchInfoText(
-          "Off Limit Areas", selectedGroup.matchOptions.offLimitAreas),
-      MatchInfoText("Safety Methods", selectedGroup.matchOptions.safetyMethods),
+      matchInfoText("Permitted Elimation Type",
+          globals.selectedGroup.matchOptions.eliminationType),
+      matchInfoText(
+          "Off Limit Areas", globals.selectedGroup.matchOptions.offLimitAreas),
+      matchInfoText("Safety Methods", globals.selectedGroup.matchOptions.safetyMethods),
     ],
   );
 }
 
-Column MatchInfoText(String label, String text) {
+Column matchInfoText(String label, String text) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("${label}: ",
+      Text("$label: ",
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
       Text(text),
-      SizedBox(
+      const SizedBox(
         height: 15,
       ),
     ],
@@ -633,29 +602,23 @@ class LargeUserHomeButton extends StatelessWidget {
   final String label;
   final Color color;
   final VoidCallback onPressed;
-// final int currPlayers;
-//  int currPlayers;
   final bool buttonState;
-//  const LargeUserHomeButton({
-  LargeUserHomeButton({
+  const LargeUserHomeButton({
     required this.label,
     required this.color,
     required this.onPressed,
-    //this.currPlayers = 2,
     required this.buttonState,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-//    print('curr plauers: ${currPlayers}');
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        minimumSize: Size.fromHeight(50),
-        textStyle: TextStyle(fontSize: 25),
+        minimumSize: const Size.fromHeight(50),
+        textStyle: const TextStyle(fontSize: 25),
       ),
-      //onPressed: (currPlayers < 2) ? null : onPressed,
       onPressed: (buttonState) ? onPressed : null,
       child: Text(label),
     );
@@ -672,9 +635,9 @@ class TargetName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.all(5),
-      child: Text('Target: ${username}',
-          style: TextStyle(fontSize: 30), textAlign: TextAlign.center),
+      padding: const EdgeInsetsDirectional.all(5),
+      child: Text('Target: $username',
+          style: const TextStyle(fontSize: 30), textAlign: TextAlign.center),
     );
   }
 }
