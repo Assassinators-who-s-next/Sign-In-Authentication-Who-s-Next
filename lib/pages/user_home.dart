@@ -236,7 +236,7 @@ class _UserHomeState extends State<UserHome> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TargetName(username: targetData.name),
-                      Text(targetData.pronouns, style: TextStyle(color: Colors.grey)),
+                      Text("(${targetData.pronouns})", style: TextStyle(color: Colors.grey)),
                       
                     ]
                   ),
