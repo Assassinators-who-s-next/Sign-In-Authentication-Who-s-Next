@@ -215,6 +215,7 @@ class _UserHomeState extends State<UserHome> {
           bool isDefaultPicture = currentTarget!.imagePath == null ||
               currentTarget!.imagePath == "";
 
+
           UserData targetData = UserData(
               description: currentTarget!.description,
               email: "",
@@ -230,14 +231,32 @@ class _UserHomeState extends State<UserHome> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TargetName(username: targetData.name),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TargetName(username: targetData.name),
+                      Text(targetData.pronouns, style: TextStyle(color: Colors.grey)),
+                      
+                    ]
+                  ),
+                ),
+
+                Padding(padding: const EdgeInsetsDirectional.all(5),),
+                 
+                //TargetName(username: targetData.name),
                 ProfilePicture(
                     radius: screenWidth * 0.40,
                     imagePath: targetData.imagePath!,
                     isNetworkPath: !isDefaultPicture,
                     onClicked: () => print("clicked elimation target")),
-                Text("freq locations: ${targetData.frequentedLocations}"),
-                Text("Descrpt: ${targetData.description}"),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Frequented Locations: ${targetData.frequentedLocations}"),
+                    Text("Insider Intelligence: ${targetData.description}"),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsetsDirectional.all(40),
                   child: LargeUserHomeButton(
@@ -245,34 +264,7 @@ class _UserHomeState extends State<UserHome> {
                       color: Color.fromARGB(255, 238, 127, 119),
                       buttonState: true,
                       onPressed: () async {
-                        //updates the eliminator of the target
-                        //       await FirebaseFirestore.instance
-                        //           .collection('groups')
-                        //           .doc(selectedGroup.group_name)
-                        //           .collection('players')
-                        //           .doc(currentTarget!.uid)
-                        //           .update({
-                        //         'eliminator': myUserData.uid,
-                        //       }).then((value) => {
-                        //         print("pressed eliminate button\n"),
-                        //         print("elimnator of target is ${myUserData.uid}")
-                        //       }
-                        // );
                         beginElimination();
-                        // Player playerSelf = getSelf()!;
-                        // Player playerTarget =
-                        //     await getPlayerInGroup(selectedGroup, currentTarget!.uid);
-                        // playerSelf.target =
-                        //     await getTargetUID(selectedGroup, myUserData.uid);
-                        // playerTarget.target =
-                        //     await getTargetUID(selectedGroup, currentTarget!.uid);
-                        // SetSelectedGroup(selectedGroup);
-                        // print("\n\n playerSelf: $playerSelf");
-                        // print("\n\n playerTarget: $playerTarget");
-                        // // eliminate target
-                        // await eliminatePlayer(
-                        //     context, playerSelf, playerTarget, selectedGroup);
-                        // setSelectedGroup(selectedGroup);
                       }),
                 ),
               ],
@@ -313,7 +305,7 @@ Center deadScreen(double screenWidth, double screenHeight) {
       height: screenHeight / 2,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: const [
           Padding(
             padding: EdgeInsets.all(20),
             child: Text(
@@ -680,7 +672,7 @@ class TargetName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.all(40),
+      padding: EdgeInsetsDirectional.all(5),
       child: Text('Target: ${username}',
           style: TextStyle(fontSize: 30), textAlign: TextAlign.center),
     );
