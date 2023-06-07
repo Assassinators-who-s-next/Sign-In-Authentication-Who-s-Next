@@ -27,8 +27,8 @@ Future showSimplePopup(BuildContext context, {String? title, String? contentText
 {
   return showPopup(
     context,
-    title: title != null ? Text(title!, style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)) : null,
-    content: contentText != null ? Text(contentText!, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)) : null,
+    title: title != null ? Text(title, style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold)) : null,
+    content: contentText != null ? Text(contentText, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)) : null,
     bottomWidgets: bottomWidgets, 
     height: height, 
     width: width);

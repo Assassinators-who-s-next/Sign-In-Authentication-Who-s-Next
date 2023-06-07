@@ -1,29 +1,25 @@
-import 'package:basic_auth/auth.dart';
-import 'package:basic_auth/pages/create_game_page.dart';
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
+import 'package:whos_next/pages/create_game_page.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import '../models/join_game_results.dart';
-import '../networking.dart';
-import '../utils/popup_modal.dart';
+import 'package:whos_next/models/join_game_results.dart';
+import 'package:whos_next/networking.dart';
+import 'package:whos_next/utils/popup_modal.dart';
 import 'home_page.dart';
-import '../game_group.dart';
-import '../player.dart';
-import '../image_upload.dart';
-
-import 'package:basic_auth/models/match_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class JoinCreatePage extends StatelessWidget {
-  var createButtonColor = Color.fromARGB(255, 233, 58, 45);
-  var joinButtonColor = Colors.blue;
+  final Color createButtonColor = const Color.fromARGB(255, 233, 58, 45);
+  final Color joinButtonColor = Colors.blue;
 
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController gameCodeController = TextEditingController();
+  
   JoinCreatePage({super.key});
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController gameCodeController = TextEditingController();
 
-  void JoinGame(BuildContext context) async {
+  void joinGame(BuildContext context) async {
     String gameCode = gameCodeController.text.trim();
-    print("Join Game button pressed with code $gameCode");
     if (gameCode == "") {
       showSimplePopupWithCancel(context,
           contentText: "Must supply game code in order to join match.");
@@ -34,7 +30,7 @@ class JoinCreatePage extends StatelessWidget {
 
     User? user = FirebaseAuth.instance.currentUser;
     JoinGameResults results = JoinGameResults(false, "Join failure.");
-    await join_game(context, gameCode, user?.uid)
+    await joinGroup(context, gameCode, user?.uid)
         .then((value) => {results = value});
 
     context.loaderOverlay.hide();
@@ -45,41 +41,9 @@ class JoinCreatePage extends StatelessWidget {
     }
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => (HomePage())),
-    );
-
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => HomePage()),
-    // );
-  }
-
-/*
-  void CreateGame(BuildContext context) async {
-    print("Create Game button pressed");
-    User? user = FirebaseAuth.instance.currentUser;
-    MatchOptions placeholderMatchOptions = MatchOptions(
-      'Single',
-      'Fixed',
-      5,
-      'Limited',
-      60,
-      'Area A',
-      'Helmet',
-    );
-    createGame(context, user?.uid, placeholderMatchOptions);
-
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (BuildContext context) => (CreateGamePage())),
-    // );
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreateGamePage()),
+      MaterialPageRoute(builder: (BuildContext context) => (const HomePage())),
     );
   }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -87,20 +51,19 @@ class JoinCreatePage extends StatelessWidget {
       child: Scaffold(
           backgroundColor: Colors.grey[300],
           appBar: AppBar(
-            title: Text('Enter the game'),
+            title: const Text('Enter the game'),
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (BuildContext context) => (HomePage())),
+                      builder: (BuildContext context) => (const HomePage())),
                 );
               },
             ),
           ),
 
-          // safe area ignores 'notch area' on different phone shapes
           body: SafeArea(
             child: Center(
               child: Column(
@@ -110,7 +73,7 @@ class JoinCreatePage extends StatelessWidget {
                     padding: const EdgeInsets.all(16.0),
                     child: TextFormField(
                       controller: gameCodeController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Join Code',
                         border: OutlineInputBorder(),
                       ),
@@ -119,7 +82,6 @@ class JoinCreatePage extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      //This is Join Game Button
                       SizedBox(
                         width: 130,
                         height: 50,
@@ -130,35 +92,35 @@ class JoinCreatePage extends StatelessWidget {
                             shadowColor: joinButtonColor, // elevation color
                             elevation: 5, // elevation of button
                           ),
-                          onPressed: () => JoinGame(context),
-                          child: Text('Join Game',
+                          onPressed: () => joinGame(context),
+                          child: const Text('Join Game',
                               style: (TextStyle(fontSize: 17.0))),
                         ),
                       ),
-                      SizedBox(height: 20.0),
+                      const SizedBox(height: 20.0),
                       Row(children: [
                         Expanded(
-                          child: new Container(
+                          child: Container(
                               margin: const EdgeInsets.only(
                                   left: 30.0, right: 20.0),
-                              child: Divider(
+                              child: const Divider(
                                 color: Colors.black,
                                 height: 36,
                               )),
                         ),
-                        Text("OR"),
+                        const Text("OR"),
                         Expanded(
-                          child: new Container(
+                          child:  Container(
                               margin: const EdgeInsets.only(
                                   left: 20.0, right: 30.0),
-                              child: Divider(
+                              child: const Divider(
                                 color: Colors.black,
                                 height: 36,
                               )),
                         ),
                       ]),
-                      SizedBox(height: 20.0),
-                      // This is Create Game Button
+                      const SizedBox(height: 20.0),
+
                       SizedBox(
                         width: 170.0,
                         height: 70.0,
@@ -168,12 +130,12 @@ class JoinCreatePage extends StatelessWidget {
                               onPrimary: Colors.white, // foreground color
                               shadowColor: createButtonColor, // elevation color
                               elevation: 5, // elevation of button
-                              shape: StadiumBorder()),
+                              shape: const StadiumBorder()),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CreateGamePage()),
+                                  builder: (context) => const CreateGamePage()),
                             );
                           },
                           child: const Text('Create Game',

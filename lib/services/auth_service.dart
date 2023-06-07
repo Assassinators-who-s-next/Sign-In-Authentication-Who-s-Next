@@ -2,18 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import "package:basic_auth/globals.dart";
-
-// to check current platform
-// source: https://stackoverflow.com/questions/71249485/flutter-web-is-giving-error-about-unsupported-operation-platform-operatingsyst
+import 'package:whos_next/globals.dart' as globals;
 import 'package:flutter/foundation.dart';
 
-class AuthService {
-//  final GoogleSignIn googleSignIn = GoogleSignIn();
-//  String? name;
-//  String? imageUrl;
+// source: https://stackoverflow.com/questions/71249485/flutter-web-is-giving-error-about-unsupported-operation-platform-operatingsyst
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+class AuthService {
+  final FirebaseAuth auth = FirebaseAuth.instance;
   String? uid;
 //  String? userEmail;
 
@@ -78,41 +74,38 @@ class AuthService {
     // do mobile signin if platform is mobile
     if (defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS) {
-      print('mobile');
       // begin interactive sign in
-      final GoogleSignInAccount? google_user = await GoogleSignIn().signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       // obtain auth details from request
-      final GoogleSignInAuthentication google_auth =
-          await google_user!.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
 
       // create new credential for user
       final credential = GoogleAuthProvider.credential(
-          accessToken: google_auth.accessToken, idToken: google_auth.idToken);
+          accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
       try {
         final UserCredential userCredential =
-            await _auth.signInWithCredential(credential);
+            await auth.signInWithCredential(credential);
 
         user = userCredential.user;
-        print(userCredential.user);
-        fireBaseUser = user;
+        globals.fireBaseUser = user;
       } catch (e) {
         print(e);
       }
 
       // otherwise do the popup with web (not sure if works with MacOS or Windows)
     } else {
-      print('not mobile');
       // The `GoogleAuthProvider` can only be used while running on the web
       GoogleAuthProvider authProvider = GoogleAuthProvider();
 
       try {
         final UserCredential userCredential =
-            await _auth.signInWithPopup(authProvider);
+            await auth.signInWithPopup(authProvider);
 
         user = userCredential.user;
-        fireBaseUser = user;
+        globals.fireBaseUser = user;
       } catch (e) {
         print(e);
       }
@@ -121,12 +114,7 @@ class AuthService {
     if (user != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('auth', true);
-
-      print(
-          "uID: ${uid} \n name: ${myUserData.name} \n email: ${myUserData.email} \n imageURL ${myUserData.imagePath}");
-      print("Prefs: $prefs");
     }
-    print("User Print from auth service: ${user}");
 
     return user;
   }

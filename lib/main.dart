@@ -1,9 +1,7 @@
-import 'package:basic_auth/models/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'auth.dart';
-import 'pages/join_create_game_page.dart';
+import 'package:whos_next/firebase_options.dart';
+import 'package:whos_next/auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +21,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepOrange,
         primaryColor: Colors.orange.shade800,
-
-        // primaryColor: Colors.orange,
       ),
-      // primary
       home: AuthPage(),
-      // home: JoinCreatePage()
     );
   }
 }

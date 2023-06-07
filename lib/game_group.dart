@@ -1,10 +1,10 @@
 import 'player.dart';
-import '../models/match_options.dart';
+import 'package:whos_next/models/match_options.dart';
 
 enum GroupState { notStarted, running, finished }
 
 class Group {
-  String group_name;
+  String groupName;
   Map<String, Player> players;
   MatchOptions matchOptions;
 
@@ -13,7 +13,7 @@ class Group {
 
   String groupHost;
   GroupState state = GroupState.notStarted;
-  Group(this.group_name, this.players, this.matchOptions, this.groupHost,
+  Group(this.groupName, this.players, this.matchOptions, this.groupHost,
       this.timeStarted, this.timeEnding,
       {this.state = GroupState.notStarted});
 
@@ -21,13 +21,13 @@ class Group {
 
   @override
   String toString() {
-    String result = "Group: " + group_name + "\n";
+    String result = "Group: $groupName\n";
     result += "Players: \n";
     for (int i = 0; i < players.length; i++) {
-      result += players[i].toString() + "\n";
+      result += "${players[i]}\n";
     }
     result += "Match Options: \n";
-    result += matchOptions.toString() + "\n";
+    result += "$matchOptions\n";
     return result;
   }
 }

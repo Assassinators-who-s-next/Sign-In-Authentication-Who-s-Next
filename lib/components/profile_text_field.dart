@@ -40,7 +40,6 @@ class TextFieldWidgetState extends State<ProfileTextField> {
   @override
   Widget build(BuildContext context)
   {
-    var blockSizeHorizontal = widget.width / 100;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +50,7 @@ class TextFieldWidgetState extends State<ProfileTextField> {
           ),
         const SizedBox(height: 5),
         SizedBox(
-          width: MediaQuery.of(context).size.width * 1,
+          width: MediaQuery.of(context).size.width,
           child: TextField(
             controller: controller,
             maxLength: widget.maxLength,

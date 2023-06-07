@@ -1,14 +1,10 @@
-import 'package:basic_auth/networking.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+import 'package:whos_next/networking.dart';
 import 'package:flutter/material.dart';
-import 'package:basic_auth/pages/leaderboard.dart';
-import 'package:basic_auth/pages/profile.dart';
-import 'package:basic_auth/pages/user_home.dart';
-import '../globals.dart' as globals;
-
-import '../game_group.dart';
-import '../globals.dart';
+import 'package:whos_next/pages/leaderboard.dart';
+import 'package:whos_next/pages/profile.dart';
+import 'package:whos_next/pages/user_home.dart';
+import 'package:whos_next/globals.dart' as globals;
+import 'package:whos_next/game_group.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -18,32 +14,27 @@ class HomePage extends StatefulWidget {
   });
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 1;
+class HomePageState extends State<HomePage> {
+  int selectedIndex = 1;
 
-  void _navigateBottomBar(int index) {
+  void navigateBottomBar(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 
-  final List<Widget> _pages = [
-    LeaderBoard(),
-    UserHome(),
-    Profile(),
+  final List<Widget> pages = [
+    const LeaderBoard(),
+    const UserHome(),
+    const Profile(),
   ];
 
-  Widget LoadingScreen() {
-    return Stack(children: [
-      /*
-        const Opacity(
-        opacity: 0.8,
-        child: ModalBarrier(dismissible: false, color: Colors.black),
-      ),*/
-      Center(child: const CircularProgressIndicator()),
+  Widget loadingScreen() {
+    return Stack(children: const [
+      Center(child: CircularProgressIndicator()),
     ]);
   }
 
@@ -51,26 +42,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-          stream: finishedLoadingUserController.stream,
+          stream: globals.finishedLoadingUserController.stream,
           builder: (context, snapshot) {
-            if (!finishedLoadingUser && (!snapshot.hasData || !snapshot.data)) return LoadingScreen();
+            if (!globals.finishedLoadingUser && (!snapshot.hasData || !snapshot.data)) return loadingScreen();
             return Stack(children: [
-              _pages[_selectedIndex],
-              //if (_selectedIndex < 2)
-              if (_selectedIndex < 3)
+              pages[selectedIndex],
+              if (selectedIndex < 3)
                 SafeArea(
                   child: Align(
                       alignment: Alignment.topRight,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 4, right: 4),
-                        child: InkWell(child: Icon(Icons.refresh, size: 45), onTap: () => Refresh()),
+                        child: InkWell(child: const Icon(Icons.refresh, size: 45), onTap: () => refresh()),
                       )),
                 ),
             ]);
           }),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _navigateBottomBar,
+        currentIndex: selectedIndex,
+        onTap: navigateBottomBar,
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(

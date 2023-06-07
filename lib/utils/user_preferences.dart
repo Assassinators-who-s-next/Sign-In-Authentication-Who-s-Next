@@ -1,4 +1,4 @@
-import 'package:basic_auth/models/user_data.dart';
+import 'package:whos_next/models/user_data.dart';
 
 class UserPreferences {
   static String placeholderImagePath = "lib/images/placeHolderProfileImage.jpg";

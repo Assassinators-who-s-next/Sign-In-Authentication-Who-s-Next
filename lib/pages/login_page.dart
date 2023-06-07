@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:basic_auth/components/my_button.dart';
-import 'package:basic_auth/components/my_textfield.dart';
-import 'package:basic_auth/components/square_tile.dart';
-import 'package:basic_auth/networking.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'join_create_game_page.dart';
-
-import '../services/auth_service.dart';
+import 'package:whos_next/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -21,14 +12,11 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // sign in user method
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.grey[300],
         body: SafeArea(
-            //child: oldLoginScreen(context))
             child: newLoginScreen(context)));
   }
 
@@ -51,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
                 fontSize: 40,
               ),
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             googleButton(context)
           ])),
     );
@@ -68,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
           width: MediaQuery.of(context).size.width * .6,
           height: 45,
           child: Stack(children: [
-            Center(
+            const Center(
                 child: Text("Sign in with Google",
                     style: TextStyle(color: Colors.white))),
             Align(

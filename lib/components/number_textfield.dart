@@ -6,11 +6,11 @@ import 'package:flutter/services.dart';
  */
 
 class NumberTextField extends StatelessWidget {
-  final controller; // lets developer access what the user types in textField
+  final TextEditingController controller;
   final String hintText;
   final bool obscureText;
 
-  NumberTextField({
+  const NumberTextField({
     super.key,
     required this.controller,
     required this.hintText,
@@ -31,7 +31,7 @@ class NumberTextField extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                     color: Colors.grey
-                        .shade400)), // focused border shows that user is in text field when they click into it
+                        .shade400)), 
             fillColor: Colors.grey.shade200,
             filled: true,
             hintText: hintText,
