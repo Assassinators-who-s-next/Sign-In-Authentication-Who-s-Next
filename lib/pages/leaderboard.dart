@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:basic_auth/networking.dart';
-import 'package:basic_auth/components/leaderboard_element.dart';
-import '../player.dart';
-import '../globals.dart' as globals;
+import 'package:whos_next/networking.dart';
+import 'package:whos_next/components/leaderboard_element.dart';
+import 'package:whos_next/player.dart';
+import 'package:whos_next/globals.dart' as globals;
 
 class LeaderBoard extends StatefulWidget {
   const LeaderBoard({Key? key}) : super(key: key);

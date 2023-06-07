@@ -1,10 +1,10 @@
-import 'package:basic_auth/networking.dart';
+import 'package:whos_next/networking.dart';
 import 'package:flutter/material.dart';
-import 'package:basic_auth/pages/leaderboard.dart';
-import 'package:basic_auth/pages/profile.dart';
-import 'package:basic_auth/pages/user_home.dart';
-import '../globals.dart' as globals;
-import '../game_group.dart';
+import 'package:whos_next/pages/leaderboard.dart';
+import 'package:whos_next/pages/profile.dart';
+import 'package:whos_next/pages/user_home.dart';
+import 'package:whos_next/globals.dart' as globals;
+import 'package:whos_next/game_group.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({

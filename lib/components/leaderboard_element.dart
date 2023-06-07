@@ -1,5 +1,5 @@
-import 'package:basic_auth/player.dart';
-import 'package:basic_auth/utils/user_preferences.dart';
+import 'package:whos_next/player.dart';
+import 'package:whos_next/utils/user_preferences.dart';
 import 'package:flutter/material.dart';
 import 'profile_picture.dart';
 

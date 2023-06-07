@@ -1,10 +1,10 @@
-import 'package:basic_auth/components/profile_text_field.dart';
-import 'package:basic_auth/image_upload.dart';
-import 'package:basic_auth/networking.dart';
+import 'package:whos_next/components/profile_text_field.dart';
+import 'package:whos_next/image_upload.dart';
+import 'package:whos_next/networking.dart';
 import 'package:flutter/material.dart';
-import '../models/user_data.dart';
-import '../globals.dart' as globals;
-import 'package:basic_auth/components/profile_picture.dart';
+import 'package:whos_next/models/user_data.dart';
+import 'package:whos_next/globals.dart' as globals;
+import 'package:whos_next/components/profile_picture.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});

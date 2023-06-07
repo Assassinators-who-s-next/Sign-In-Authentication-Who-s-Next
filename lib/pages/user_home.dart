@@ -1,16 +1,16 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:basic_auth/components/game_list_drawer.dart';
-import 'package:basic_auth/components/profile_picture.dart';
-import 'package:basic_auth/player.dart';
-import 'package:basic_auth/utils/popup_modal.dart';
+import 'package:whos_next/components/game_list_drawer.dart';
+import 'package:whos_next/components/profile_picture.dart';
+import 'package:whos_next/player.dart';
+import 'package:whos_next/utils/popup_modal.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:basic_auth/models/user_data.dart';
-import 'package:basic_auth/networking.dart';
-import 'package:basic_auth/pages/join_create_game_page.dart';
-import '../game_group.dart';
-import '../globals.dart' as globals;
+import 'package:whos_next/models/user_data.dart';
+import 'package:whos_next/networking.dart';
+import 'package:whos_next/pages/join_create_game_page.dart';
+import 'package:whos_next/game_group.dart';
+import 'package:whos_next/globals.dart' as globals;
 
 class UserHome extends StatefulWidget {
   const UserHome({super.key});

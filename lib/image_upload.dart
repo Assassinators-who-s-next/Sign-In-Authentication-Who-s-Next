@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:basic_auth/models/user_data.dart';
-import 'package:basic_auth/networking.dart';
+import 'package:whos_next/models/user_data.dart';
+import 'package:whos_next/networking.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
-import '../globals.dart' as globals;
+import 'package:whos_next/globals.dart' as globals;
 
 class ProfilePage {
   static Future<String?> retrieveImage(UserData user) async {

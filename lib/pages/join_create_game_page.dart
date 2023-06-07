@@ -1,11 +1,11 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
-import 'package:basic_auth/pages/create_game_page.dart';
+import 'package:whos_next/pages/create_game_page.dart';
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import '../models/join_game_results.dart';
-import '../networking.dart';
-import '../utils/popup_modal.dart';
+import 'package:whos_next/models/join_game_results.dart';
+import 'package:whos_next/networking.dart';
+import 'package:whos_next/utils/popup_modal.dart';
 import 'home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

@@ -1,5 +1,5 @@
-import 'package:basic_auth/networking.dart';
-import 'package:basic_auth/pages/login_page.dart';
+import 'package:whos_next/networking.dart';
+import 'package:whos_next/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'globals.dart';

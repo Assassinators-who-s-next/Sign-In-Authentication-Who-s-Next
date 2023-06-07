@@ -2,11 +2,11 @@ library whos_next.globals;
 
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:basic_auth/player.dart';
-import 'models/user_data.dart';
-import 'models/match_options.dart';
-import 'game_group.dart';
-import 'networking.dart';
+import 'package:whos_next/player.dart';
+import 'package:whos_next/models/user_data.dart';
+import 'package:whos_next/models/match_options.dart';
+import 'package:whos_next/game_group.dart';
+import 'package:whos_next/networking.dart';
 
 UserData myUserData = UserData(
   uid: "",

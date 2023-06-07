@@ -2,10 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../globals.dart' as globals;
+import 'package:whos_next/globals.dart' as globals;
+import 'package:flutter/foundation.dart';
 
 // source: https://stackoverflow.com/questions/71249485/flutter-web-is-giving-error-about-unsupported-operation-platform-operatingsyst
-import 'package:flutter/foundation.dart';
+
 
 class AuthService {
   final FirebaseAuth auth = FirebaseAuth.instance;

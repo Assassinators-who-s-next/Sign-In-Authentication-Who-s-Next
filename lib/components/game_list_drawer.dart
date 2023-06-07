@@ -1,8 +1,8 @@
-import 'package:basic_auth/globals.dart';
-import 'package:basic_auth/networking.dart';
+import 'package:whos_next/globals.dart';
+import 'package:whos_next/networking.dart';
 import 'package:flutter/material.dart';
-import 'package:basic_auth/pages/join_create_game_page.dart';
-import '../game_group.dart';
+import 'package:whos_next/pages/join_create_game_page.dart';
+import 'package:whos_next/game_group.dart';
 
 class GameListDrawer extends StatelessWidget {
   const GameListDrawer(

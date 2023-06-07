@@ -1,14 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:basic_auth/components/number_textfield.dart';
-import '../globals.dart' as globals;
-import 'package:basic_auth/utils/popup_modal.dart';
+import 'package:whos_next/components/number_textfield.dart';
+import 'package:whos_next/globals.dart' as globals;
+import 'package:whos_next/utils/popup_modal.dart';
 import 'package:flutter/material.dart';
-import 'package:basic_auth/components/login_text_field.dart';
+import 'package:whos_next/components/login_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import '../models/match_options.dart';
-import 'package:basic_auth/networking.dart';
+import 'package:whos_next/models/match_options.dart';
+import 'package:whos_next/networking.dart';
 import 'home_page.dart';
 
 /**

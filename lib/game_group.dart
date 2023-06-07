@@ -1,5 +1,5 @@
 import 'player.dart';
-import '../models/match_options.dart';
+import 'package:whos_next/models/match_options.dart';
 
 enum GroupState { notStarted, running, finished }
 

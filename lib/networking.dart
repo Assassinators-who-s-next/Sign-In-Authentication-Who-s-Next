@@ -1,18 +1,18 @@
-import 'package:basic_auth/image_upload.dart';
-import 'package:basic_auth/player.dart';
+import 'package:whos_next/image_upload.dart';
+import 'package:whos_next/player.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'models/join_game_results.dart';
+import 'package:whos_next/models/join_game_results.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
-import 'utils/random_string_generator.dart';
-import 'game_group.dart';
-import 'models/match_options.dart';
-import 'models/user_data.dart';
-import 'auth.dart';
-import 'globals.dart' as globals;
+import 'package:whos_next/utils/random_string_generator.dart';
+import 'package:whos_next/game_group.dart';
+import 'package:whos_next/models/match_options.dart';
+import 'package:whos_next/models/user_data.dart';
+import 'package:whos_next/auth.dart';
+import 'package:whos_next/globals.dart' as globals;
 
 // to check current platform
 // source: https://stackoverflow.com/questions/71249485/flutter-web-is-giving-error-about-unsupported-operation-platform-operatingsyst
