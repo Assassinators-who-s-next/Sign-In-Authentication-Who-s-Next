@@ -19,7 +19,7 @@ Never heard of Assassin? [Check out this Wikipedia Article](https://en.wikipedia
 
 ## Getting Started
 
-Download the Android APK here: **COMING VERY SOON**
+[Download the Android APK here](https://drive.google.com/file/d/1nfgvSb3kRw1BpuUiKEj7K_k-6LUn0asG/view?usp=sharing) (note it is named basic_auth, this will be changed soon)
 
 Unfamiliar with download Android APK's? [Check Out This Link](https://www.groovypost.com/howto/install-apk-files-on-android/)
 
@@ -41,6 +41,7 @@ Go to the website here: **COMING SOON**
 * IOS support
 
 ## Known Bugs
+* Incorrect App Name on android APK
 * Flashing of error on user home (likely caused by the user's target being null)
 * Flickering info on user home caused by heavily redundant network calls
 * Being offline while using the app will likely break the app in many places
