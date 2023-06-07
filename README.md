@@ -8,8 +8,6 @@ This project is an effort to create a location independent, hostless, customizab
 
 [Link to Demo Video](https://drive.google.com/file/d/1K8PCjNQylRhfiDU9aogObCZWhVPEUg9q/view?usp=share_link)
 
-Currently supports: Android
-
 Never heard of Assassin? [Check out this Wikipedia Article](https://en.wikipedia.org/wiki/Assassin_(game))
 
 ## Features
@@ -21,7 +19,7 @@ Never heard of Assassin? [Check out this Wikipedia Article](https://en.wikipedia
 
 ## Getting Started
 
-Download the Android APK here: 
+Download the Android APK here: **COMING VERY SOON**
 
 Unfamiliar with download Android APK's? [Check Out This Link](https://www.groovypost.com/howto/install-apk-files-on-android/)
 
